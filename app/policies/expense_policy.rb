@@ -1,10 +1,10 @@
 class ExpensePolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
-      if user.admin?
-        scope.all
+      if user.superadmin? || user.admin?
+        company_scoped
       elsif user.analista?
-        scope.where(restricted_access: false)
+        company_scoped.where(restricted_access: false)
       else
         scope.none
       end
@@ -12,22 +12,23 @@ class ExpensePolicy < ApplicationPolicy
   end
 
   def index?
-    user.admin? || user.analista?
+    user.superadmin? || user.admin? || user.analista?
   end
 
   def show?
-    user.admin? || (user.analista? && !record.restricted_access)
+    return false unless same_company?
+    user.superadmin? || user.admin? || (user.analista? && !record.restricted_access)
   end
 
   def create?
-    user.admin?
+    user.superadmin? || user.admin?
   end
 
   def update?
-    user.admin?
+    same_company? && (user.superadmin? || user.admin?)
   end
 
   def destroy?
-    user.admin?
+    update?
   end
 end

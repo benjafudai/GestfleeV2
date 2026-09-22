@@ -25,21 +25,13 @@ class SupplyRequestPolicy < ApplicationPolicy
 
   class Scope < ApplicationPolicy::Scope
     def resolve
-      if user.superadmin?
-        scope.all
-      elsif user.admin? || user.analista?
-        scope.where(company_id: user.company_id)
+      if user.superadmin? || user.admin? || user.analista?
+        company_scoped
       elsif user.mecanico?
-        scope.where(company_id: user.company_id, user: user)
+        company_scoped.where(user: user)
       else
         scope.none
       end
     end
-  end
-
-  private
-
-  def same_company?
-    user.superadmin? || record.company_id == user.company_id
   end
 end

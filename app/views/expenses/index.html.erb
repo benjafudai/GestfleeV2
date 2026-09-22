@@ -13,9 +13,11 @@
       <div class="card bg-primary text-white shadow-sm border-0 h-100">
         <div class="card-body">
           <h6 class="text-uppercase fw-semibold mb-1 opacity-75" style="letter-spacing: 0.5px; font-size: 0.8rem;">Gasto Total (Unificado)</h6>
-          <% 
-            total_clp = @expenses.where(currency: 'CLP').sum(:amount) + converted_to_clp(@expenses.where(currency: 'USD').sum(:amount), 'USD')
-            total_usd = @expenses.where(currency: 'USD').sum(:amount) + converted_to_usd(@expenses.where(currency: 'CLP').sum(:amount), 'CLP')
+          <%
+            clp_sum = @expenses.where(currency: 'CLP').sum(:amount)
+            usd_sum = @expenses.where(currency: 'USD').sum(:amount)
+            total_clp = clp_sum + converted_to_clp(usd_sum, 'USD')
+            total_usd = usd_sum + converted_to_usd(clp_sum, 'CLP')
           %>
           <div class="d-flex justify-content-between align-items-center">
             <h3 class="fw-bold mb-0" id="total_display_clp"><%= format_money(total_clp, 'CLP') %></h3>

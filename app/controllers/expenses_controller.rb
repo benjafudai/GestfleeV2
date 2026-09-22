@@ -4,7 +4,7 @@ class ExpensesController < ApplicationController
 
   # GET /expenses or /expenses.json
   def index
-    @expenses = policy_scope(Expense).order(date: :desc)
+    @expenses = policy_scope(Expense).includes(:vehicle).order(date: :desc)
     authorize Expense
   end
 

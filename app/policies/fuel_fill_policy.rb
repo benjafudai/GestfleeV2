@@ -1,10 +1,10 @@
 class FuelFillPolicy < ApplicationPolicy
   def index?
-    admin_or_superadmin? || chofer?
+    admin_or_superadmin? || chofer? || analista?
   end
 
   def show?
-    same_company? && (admin_or_superadmin? || record.user_id == user.id)
+    same_company? && (admin_or_superadmin? || analista? || record.user_id == user.id)
   end
 
   def new?
@@ -29,10 +29,8 @@ class FuelFillPolicy < ApplicationPolicy
 
   class Scope < Scope
     def resolve
-      if user.superadmin?
-        scope.all
-      elsif user.admin?
-        scope.where(company_id: user.company_id)
+      if user.superadmin? || user.admin? || user.analista?
+        company_scoped
       else
         scope.where(user_id: user.id)
       end
@@ -49,7 +47,7 @@ class FuelFillPolicy < ApplicationPolicy
     user.chofer?
   end
 
-  def same_company?
-    user.superadmin? || record.company_id == user.company_id
+  def analista?
+    user.analista?
   end
 end
