@@ -11,6 +11,18 @@
     <% end %>
   </div>
 
+  <% if @company_vehicles.present? %>
+    <div class="bg-white shadow sm:rounded-lg mb-6 p-4">
+      <label class="block text-sm font-medium text-gray-700 mb-2">Ver combustible de un vehículo específico</label>
+      <div class="flex flex-wrap gap-2">
+        <%= link_to "Todos", fuel_fills_path, class: "px-3 py-1.5 rounded-md text-sm font-medium #{@vehicle ? 'bg-gray-100 text-gray-700 hover:bg-gray-200' : 'bg-blue-600 text-white'}" %>
+        <% @company_vehicles.each do |v| %>
+          <%= link_to v.plate, vehicle_fuel_fills_path(v), class: "px-3 py-1.5 rounded-md text-sm font-medium #{@vehicle == v ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}" %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
   <div class="bg-white shadow overflow-hidden sm:rounded-lg">
     <div class="px-4 py-5 sm:px-6 flex justify-between bg-gray-50 border-b border-gray-200">
       <h3 class="text-lg leading-6 font-medium text-gray-900">Historial de Cargas</h3>

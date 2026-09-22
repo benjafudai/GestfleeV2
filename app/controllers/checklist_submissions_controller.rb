@@ -15,7 +15,7 @@ class ChecklistSubmissionsController < ApplicationController
 
   def new
     authorize ChecklistSubmission
-    
+
     if current_user.checklist_submissions.where(submitted_at: Time.current.all_day).exists?
       redirect_to checklist_submissions_path, alert: "Ya has completado tu checklist del día de hoy."
       return
@@ -41,12 +41,11 @@ class ChecklistSubmissionsController < ApplicationController
     if @submission.save
       redirect_to @submission, notice: "Checklist enviado correctamente."
     else
-      puts "=== SUBMISSION ERRORS ==="
-      puts @submission.errors.full_messages
-      puts "========================="
       @templates = ChecklistTemplate.all.order(:name)
       @assignment = current_user.vehicle_assignments.find_by(ended_on: nil)
       @vehicle    = @assignment&.vehicle
+      # Conserva la plantilla que el chofer venía llenando en vez de resetear a la primera.
+      @selected_template = @templates.find { |t| t.id == @submission.checklist_template_id } || @templates.first
       render :new, status: :unprocessable_entity
     end
   end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_09_22_010000) do
+ActiveRecord::Schema[7.1].define(version: 2026_09_22_020000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -72,7 +72,9 @@ ActiveRecord::Schema[7.1].define(version: 2026_09_22_010000) do
     t.text "admin_notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "company_id", null: false
     t.index ["checklist_template_id"], name: "index_checklist_submissions_on_checklist_template_id"
+    t.index ["company_id"], name: "index_checklist_submissions_on_company_id"
     t.index ["user_id"], name: "index_checklist_submissions_on_user_id"
     t.index ["vehicle_id"], name: "index_checklist_submissions_on_vehicle_id"
   end
@@ -393,6 +395,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_09_22_010000) do
   add_foreign_key "checklist_answers", "checklist_submissions"
   add_foreign_key "checklist_items", "checklist_templates"
   add_foreign_key "checklist_submissions", "checklist_templates"
+  add_foreign_key "checklist_submissions", "companies"
   add_foreign_key "checklist_submissions", "users"
   add_foreign_key "checklist_submissions", "vehicles"
   add_foreign_key "checklist_templates", "companies"

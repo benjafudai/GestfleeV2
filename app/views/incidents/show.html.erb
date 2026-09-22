@@ -81,8 +81,10 @@
             <div class="list-group list-group-flush">
               <% @incident.photos.each do |photo| %>
                 <div class="list-group-item text-center p-3">
-                  <%= image_tag photo, class: "img-fluid border rounded rounded-3 mb-2", style: "max-width: 100%; max-height: 400px; object-fit: contain;" %>
-                  <br>
+                  <% if photo.image? %>
+                    <%= image_tag photo, class: "img-fluid border rounded rounded-3 mb-2", style: "max-width: 100%; max-height: 400px; object-fit: contain;" %>
+                    <br>
+                  <% end %>
                   <%= link_to "Descargar Imagen", rails_blob_path(photo, disposition: "attachment"), class: "btn btn-sm btn-outline-secondary mt-2" %>
                 </div>
               <% end %>

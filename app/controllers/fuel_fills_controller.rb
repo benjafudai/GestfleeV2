@@ -1,16 +1,18 @@
 class FuelFillsController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_vehicle, only: %i[new create index]
   before_action :set_fuel_fill, only: %i[show edit update destroy]
 
   def index
+    @company_vehicles = Current.company&.vehicles&.order(:plate) || Vehicle.none
+
     if @vehicle
-      @fuel_fills = @vehicle.fuel_fills.order(date: :desc, odometer: :desc)
+      @fuel_fills = policy_scope(FuelFill).where(vehicle: @vehicle)
+                                           .includes(:vehicle, :user)
+                                           .order(date: :desc, odometer: :desc)
     else
-      if current_user.superadmin?
-        @fuel_fills = FuelFill.all.order(date: :desc, odometer: :desc)
-      else
-        @fuel_fills = current_user.company.fuel_fills.order(date: :desc, odometer: :desc)
-      end
+      @fuel_fills = policy_scope(FuelFill).includes(:vehicle, :user)
+                                           .order(date: :desc, odometer: :desc)
     end
     authorize @fuel_fills
   end
@@ -31,8 +33,7 @@ class FuelFillsController < ApplicationController
   def create
     @fuel_fill = @vehicle.fuel_fills.new(fuel_fill_params)
     @fuel_fill.user = current_user
-    @fuel_fill.company = current_user.company || @vehicle.company
-    
+
     authorize @fuel_fill
 
     if @fuel_fill.save

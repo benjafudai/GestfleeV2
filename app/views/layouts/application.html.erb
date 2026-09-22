@@ -183,9 +183,6 @@
         <%= link_to fuel_fills_path, class: "gf-tab #{request.path.start_with?('/fuel_fills') ? 'active' : ''}" do %>
           <i class="fa-solid fa-gas-pump"></i> Combustible
         <% end %>
-        <%= link_to roadside_assistance_events_path, class: "gf-tab #{request.path.start_with?('/roadside') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-truck-medical"></i> Auxilio
-        <% end %>
         <%= link_to users_path, class: "gf-tab #{request.path.start_with?('/users') ? 'active' : ''}" do %>
           <i class="fa-solid fa-users"></i> Usuarios
         <% end %>
@@ -206,10 +203,6 @@
         <% end %>
         <%= link_to fuel_fills_path, class: "gf-tab #{request.path.start_with?('/fuel_fills') ? 'active' : ''}" do %>
           <i class="fa-solid fa-gas-pump"></i> Combustible
-        <% end %>
-        <%= link_to roadside_assistance_events_path, class: "gf-tab #{request.path.start_with?('/roadside') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-truck-medical" style="color: var(--danger);"></i>
-          <strong style="color: var(--danger);">Auxilio</strong>
         <% end %>
 
       <%# --- MECÁNICO --- %>

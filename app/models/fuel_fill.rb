@@ -1,7 +1,10 @@
 class FuelFill < ApplicationRecord
+  include CompanyScoped
+  include VehicleAssignable
+  vehicle_assignable_actor :user
+
   belongs_to :vehicle
   belongs_to :user
-  belongs_to :company
 
   has_one_attached :ticket
   has_one :expense, as: :source, dependent: :destroy
@@ -10,25 +13,25 @@ class FuelFill < ApplicationRecord
   validates :cost, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :odometer, presence: true, numericality: { greater_than: 0 }
   validates :date, presence: true
-  validate :ticket_presence_if_required
+  validates :currency, inclusion: { in: %w[CLP USD] }
+  validate :ticket_must_be_attached
+  validate :ticket_must_be_image
 
   before_save :calculate_km_per_liter
   after_create :sync_expense
   after_commit :check_anomaly_and_notify, on: :create
 
-  default_scope { where(company: Current.company) }
-  before_validation :assign_company
-
   private
 
-  def assign_company
-    self.company ||= Current.company
+  def ticket_must_be_attached
+    errors.add(:ticket, "la fotografía de la boleta es obligatoria para registrar cargas.") unless ticket.attached?
   end
 
-  def ticket_presence_if_required
-    if company&.require_ticket? && !ticket.attached?
-      errors.add(:ticket, "La fotografía de la boleta es obligatoria para registrar cargas.")
-    end
+  def ticket_must_be_image
+    return unless ticket.attached?
+    return if ticket.content_type.to_s.start_with?("image/")
+
+    errors.add(:ticket, "debe ser una imagen (jpg, png, etc.)")
   end
 
   def calculate_km_per_liter

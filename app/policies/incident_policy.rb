@@ -4,7 +4,7 @@ class IncidentPolicy < ApplicationPolicy
   end
 
   def show?
-    user.admin? || user.mecanico? || user.superadmin? || record.reporter == user
+    same_company? && (user.admin? || user.mecanico? || user.superadmin? || record.reporter == user)
   end
 
   def create?
@@ -12,16 +12,24 @@ class IncidentPolicy < ApplicationPolicy
   end
 
   def update?
-    user.admin? || user.mecanico? || user.superadmin?
+    same_company? && (user.admin? || user.mecanico? || user.superadmin?)
   end
 
   class Scope < ApplicationPolicy::Scope
     def resolve
-      if user.admin? || user.mecanico? || user.superadmin?
+      if user.superadmin?
         scope.all
+      elsif user.admin? || user.mecanico?
+        scope.where(company_id: user.company_id)
       else
         scope.where(reporter: user)
       end
     end
+  end
+
+  private
+
+  def same_company?
+    user.superadmin? || record.company_id == user.company_id
   end
 end

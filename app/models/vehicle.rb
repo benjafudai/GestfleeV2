@@ -22,6 +22,7 @@ class Vehicle < ApplicationRecord
   has_many :checklist_submissions, dependent: :destroy
   has_many :incidents, dependent: :destroy
   has_many :roadside_assistance_events, dependent: :destroy
+  has_many :fuel_fills, dependent: :destroy
 
   enum status: { active: 0, maintenance: 1, inactive: 2 }
 

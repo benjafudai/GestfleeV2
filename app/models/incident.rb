@@ -1,7 +1,10 @@
 class Incident < ApplicationRecord
+  include CompanyScoped
+  include VehicleAssignable
+  vehicle_assignable_actor :reporter
+
   belongs_to :vehicle
   belongs_to :reporter, class_name: 'User'
-  belongs_to :company
 
   has_many_attached :photos
   has_paper_trail
@@ -12,6 +15,7 @@ class Incident < ApplicationRecord
   after_initialize :set_defaults, if: :new_record?
 
   validates :description, presence: true
+  validate :photos_must_be_images
 
   private
 
@@ -19,14 +23,11 @@ class Incident < ApplicationRecord
     self.status ||= :pending
     self.severity ||= :low
   end
-  validate :reporter_must_be_assigned_to_vehicle, on: :create
 
-  private
-
-  def reporter_must_be_assigned_to_vehicle
-    return unless reporter && vehicle
-    if reporter.chofer? && reporter.active_assignment&.vehicle_id != vehicle_id
-      errors.add(:vehicle, "debe ser el que tienes asignado actualmente")
+  def photos_must_be_images
+    photos.each do |photo|
+      next if photo.content_type.to_s.start_with?("image/")
+      errors.add(:photos, "debe ser una imagen (jpg, png, etc.)")
     end
   end
 end

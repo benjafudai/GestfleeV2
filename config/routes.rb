@@ -72,7 +72,8 @@ Rails.application.routes.draw do
   # Sprint 3: Evidencias e Incidentes
   resources :incidents
 
-  # Sprint 9: Auxilio en Ruta & PWA
-  resources :roadside_assistance_events
+  # Auxilio en Ruta: deshabilitado por decisión de producto (con una llamada basta).
+  # Código en app/controllers/roadside_assistance_events_controller.rb queda sin usar,
+  # no se borró por si se retoma más adelante.
   resources :push_subscriptions, only: [:create]
 end

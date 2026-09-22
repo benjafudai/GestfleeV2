@@ -4,27 +4,27 @@ class FuelFillPolicy < ApplicationPolicy
   end
 
   def show?
-    admin_or_superadmin? || record.user_id == user.id
+    same_company? && (admin_or_superadmin? || record.user_id == user.id)
   end
 
   def new?
-    true # Depends on user, chofer can create
+    create?
   end
 
   def create?
-    true
+    chofer? || admin_or_superadmin?
   end
 
   def edit?
-    admin_or_superadmin?
+    same_company? && admin_or_superadmin?
   end
 
   def update?
-    admin_or_superadmin?
+    same_company? && admin_or_superadmin?
   end
 
   def destroy?
-    admin_or_superadmin?
+    same_company? && admin_or_superadmin?
   end
 
   class Scope < Scope
@@ -47,5 +47,9 @@ class FuelFillPolicy < ApplicationPolicy
 
   def chofer?
     user.chofer?
+  end
+
+  def same_company?
+    user.superadmin? || record.company_id == user.company_id
   end
 end

@@ -74,7 +74,11 @@
             <div class="row g-3">
               <% @submission.photos.each do |photo| %>
                 <div class="col-6 col-md-4">
-                  <%= image_tag photo, class: "img-fluid img-thumbnail rounded shadow-sm", style: "object-fit: contain; width: 100%; max-height: 200px;" %>
+                  <% if photo.image? %>
+                    <%= image_tag photo, class: "img-fluid img-thumbnail rounded shadow-sm", style: "object-fit: contain; width: 100%; max-height: 200px;" %>
+                  <% else %>
+                    <%= link_to "Descargar archivo", rails_blob_path(photo, disposition: "attachment"), class: "btn btn-sm btn-outline-secondary" %>
+                  <% end %>
                 </div>
               <% end %>
             </div>

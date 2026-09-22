@@ -23,7 +23,7 @@
         <label class="form-label fw-semibold">Seleccionar Plantilla</label>
         <select id="template-selector" class="form-select" onchange="loadTemplate(this.value)">
           <% @templates.each do |tpl| %>
-            <option value="<%= tpl.id %>" data-items='<%= tpl.checklist_items.map { |i| { id: i.id, label: i.label, item_type: i.item_type, required: i.required } }.to_json.html_safe %>'>
+            <option value="<%= tpl.id %>" data-items='<%= tpl.checklist_items.map { |i| { id: i.id, label: i.label, item_type: i.item_type, required: i.required } }.to_json.html_safe %>' <%= "selected" if tpl == @selected_template %>>
               <%= tpl.name %>
             </option>
           <% end %>
@@ -46,12 +46,12 @@
         </div>
       <% end %>
 
-      <%= f.hidden_field :checklist_template_id, id: "hidden-template-id", value: @templates.first.id %>
+      <%= f.hidden_field :checklist_template_id, id: "hidden-template-id", value: @selected_template.id %>
       <%= f.hidden_field :vehicle_id, value: @vehicle.id %>
 
       <div id="items-container" class="card shadow-sm mb-4">
         <div class="card-header bg-white">
-          <h5 class="mb-0" id="template-title"><%= @templates.first.name %></h5>
+          <h5 class="mb-0" id="template-title"><%= @selected_template.name %></h5>
         </div>
         <div class="card-body" id="items-body">
           <%# Populated by JS on load %>
