@@ -1,7 +1,7 @@
 class WorkOrderPolicy < ApplicationPolicy
   class Scope < ApplicationPolicy::Scope
     def resolve
-      scope.where(company: user.company)
+      user.superadmin? ? scope.all : scope.where(company: user.company)
     end
   end
 

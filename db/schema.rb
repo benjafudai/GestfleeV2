@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_09_22_020000) do
+ActiveRecord::Schema[7.1].define(version: 2026_09_22_040000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -188,6 +188,8 @@ ActiveRecord::Schema[7.1].define(version: 2026_09_22_020000) do
     t.bigint "vehicle_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "company_id", null: false
+    t.index ["company_id"], name: "index_part_fitments_on_company_id"
     t.index ["part_id", "vehicle_id"], name: "index_part_fitments_on_part_id_and_vehicle_id", unique: true
     t.index ["part_id"], name: "index_part_fitments_on_part_id"
     t.index ["vehicle_id"], name: "index_part_fitments_on_vehicle_id"
@@ -270,6 +272,8 @@ ActiveRecord::Schema[7.1].define(version: 2026_09_22_020000) do
     t.text "admin_notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "company_id", null: false
+    t.index ["company_id"], name: "index_supply_requests_on_company_id"
     t.index ["user_id"], name: "index_supply_requests_on_user_id"
     t.index ["vehicle_id"], name: "index_supply_requests_on_vehicle_id"
   end
@@ -410,6 +414,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_09_22_020000) do
   add_foreign_key "maintenance_plans", "companies"
   add_foreign_key "maintenance_task_templates", "maintenance_plans"
   add_foreign_key "notifications", "users"
+  add_foreign_key "part_fitments", "companies"
   add_foreign_key "part_fitments", "parts"
   add_foreign_key "part_fitments", "vehicles"
   add_foreign_key "parts", "companies"
@@ -422,6 +427,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_09_22_020000) do
   add_foreign_key "stock_movements", "parts"
   add_foreign_key "supply_request_lines", "parts"
   add_foreign_key "supply_request_lines", "supply_requests"
+  add_foreign_key "supply_requests", "companies"
   add_foreign_key "supply_requests", "users"
   add_foreign_key "supply_requests", "vehicles"
   add_foreign_key "user_documents", "users"

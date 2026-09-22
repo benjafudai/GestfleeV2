@@ -1,27 +1,29 @@
 class MaintenancePlanPolicy < ApplicationPolicy
   class Scope < ApplicationPolicy::Scope
     def resolve
-      scope.where(company: user.company)
+      user.superadmin? ? scope.all : scope.where(company: user.company)
     end
   end
 
+  # Ver planes: admin, superadmin y mecánico (los necesita para las OT).
   def index?
-    user.superadmin? || user.admin?
+    user.superadmin? || user.admin? || user.mecanico?
   end
 
   def show?
     index?
   end
 
+  # Definir/editar/eliminar planes: solo admin (ver roadmap — es tarea de admin).
   def create?
-    index?
+    user.superadmin? || user.admin?
   end
 
   def update?
-    index?
+    create?
   end
 
   def destroy?
-    index?
+    create?
   end
 end

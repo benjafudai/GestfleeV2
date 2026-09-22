@@ -1,31 +1,28 @@
 class PartPolicy < ApplicationPolicy
   def index?
-    user.admin? || user.mecanico? || user.analista?
+    user.superadmin? || user.admin? || user.mecanico? || user.analista?
   end
 
   def show?
-    user.admin? || user.mecanico? || user.analista?
+    index?
   end
 
   def create?
-    user.admin?
+    user.superadmin? || user.admin?
   end
 
   def update?
-    user.admin?
+    create?
   end
 
   def destroy?
-    user.admin?
+    create?
   end
 
   class Scope < ApplicationPolicy::Scope
     def resolve
-      if user.admin? || user.mecanico? || user.analista?
-        scope.all
-      else
-        scope.none
-      end
+      allowed = user.superadmin? || user.admin? || user.mecanico? || user.analista?
+      allowed ? scope.all : scope.none
     end
   end
 end

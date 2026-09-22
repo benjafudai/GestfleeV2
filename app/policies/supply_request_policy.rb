@@ -1,11 +1,10 @@
 class SupplyRequestPolicy < ApplicationPolicy
-  # NOTE: Up to Pundit v2.3.1, the inheritance was declared as
   def index?
-    user.admin? || user.mecanico? || user.analista?
+    user.superadmin? || user.admin? || user.mecanico? || user.analista?
   end
 
   def show?
-    user.admin? || user.mecanico? || user.analista?
+    same_company? && (user.superadmin? || user.admin? || user.mecanico? || user.analista?)
   end
 
   def create?
@@ -13,26 +12,34 @@ class SupplyRequestPolicy < ApplicationPolicy
   end
 
   def update?
-    user.admin?
+    same_company? && user.admin?
   end
 
   def destroy?
-    user.admin?
+    same_company? && user.admin?
   end
 
   def change_status?
-    user.admin?
+    same_company? && user.admin?
   end
 
   class Scope < ApplicationPolicy::Scope
     def resolve
-      if user.admin? || user.analista?
-        scope.joins(:vehicle)
+      if user.superadmin?
+        scope.all
+      elsif user.admin? || user.analista?
+        scope.where(company_id: user.company_id)
       elsif user.mecanico?
-        scope.joins(:vehicle).where(user: user)
+        scope.where(company_id: user.company_id, user: user)
       else
         scope.none
       end
     end
+  end
+
+  private
+
+  def same_company?
+    user.superadmin? || record.company_id == user.company_id
   end
 end

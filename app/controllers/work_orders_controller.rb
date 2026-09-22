@@ -4,7 +4,7 @@ class WorkOrdersController < ApplicationController
 
   # GET /work_orders or /work_orders.json
   def index
-    @work_orders = policy_scope(WorkOrder)
+    @work_orders = policy_scope(WorkOrder).includes(:vehicle, :maintenance_plan, :mechanic)
     authorize WorkOrder
   end
 
@@ -72,7 +72,7 @@ class WorkOrdersController < ApplicationController
       if @work_order.update(status: new_status)
         redirect_to @work_order, notice: "Estado actualizado exitosamente."
       else
-        redirect_to @work_order, alert: "No se pudo actualizar el estado."
+        redirect_to @work_order, alert: @work_order.errors.full_messages.to_sentence.presence || "No se pudo actualizar el estado."
       end
     else
       redirect_to @work_order, alert: "Estado inválido."

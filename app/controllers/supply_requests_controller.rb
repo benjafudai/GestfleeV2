@@ -4,7 +4,7 @@ class SupplyRequestsController < ApplicationController
 
   def index
     authorize SupplyRequest
-    @supply_requests = policy_scope(SupplyRequest).order(created_at: :desc)
+    @supply_requests = policy_scope(SupplyRequest).includes(:vehicle, :user, :supply_request_lines).order(created_at: :desc)
   end
 
   def show
@@ -62,7 +62,7 @@ class SupplyRequestsController < ApplicationController
       if @supply_request.update(status: new_status)
         redirect_to @supply_request, notice: "Estado de la solicitud actualizado."
       else
-        redirect_to @supply_request, alert: 'No se pudo actualizar el estado.'
+        redirect_to @supply_request, alert: @supply_request.errors.full_messages.to_sentence.presence || 'No se pudo actualizar el estado.'
       end
     else
       redirect_to @supply_request, alert: 'Estado no válido.'

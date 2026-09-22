@@ -41,7 +41,7 @@
 
             <div class="col-md-6">
               <%= form.label :mechanic_id, "Mecánico Asignado", class: "form-label fw-medium" %>
-              <%= form.collection_select :mechanic_id, User.where(role: 'mecanico').or(User.where(role: 'admin')), :id, :email, { prompt: "Seleccione un mecánico" }, { class: "form-select" } %>
+              <%= form.collection_select :mechanic_id, Current.company.users.where(role: [:mecanico, :admin]), :id, :email, { prompt: "Seleccione un mecánico" }, { class: "form-select" } %>
             </div>
 
             <div class="col-md-6">
