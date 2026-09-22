@@ -1,0 +1,47 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3">Plantillas de Checklist</h1>
+    <% if policy(ChecklistTemplate).create? %>
+      <%= link_to new_checklist_template_path, class: "btn btn-primary" do %>
+        <i class="bi bi-plus-lg me-1"></i> Nueva Plantilla
+      <% end %>
+    <% end %>
+  </div>
+
+  <% if @templates.any? %>
+    <div class="row g-3">
+      <% @templates.each do |tpl| %>
+        <div class="col-md-6 col-lg-4">
+          <div class="card shadow-sm h-100">
+            <div class="card-body">
+              <h5 class="card-title"><%= tpl.name %></h5>
+              <p class="card-text text-muted small"><%= tpl.description.presence || "Sin descripción" %></p>
+              <span class="badge text-bg-secondary">
+                <%= pluralize(tpl.checklist_items.size, "ítem") %>
+              </span>
+            </div>
+            <div class="card-footer bg-white border-0 d-flex gap-2">
+              <%= link_to "Ver", tpl, class: "btn btn-sm btn-outline-primary" %>
+              <% if policy(tpl).update? %>
+                <%= link_to "Editar", edit_checklist_template_path(tpl), class: "btn btn-sm btn-outline-secondary" %>
+              <% end %>
+              <% if policy(tpl).destroy? %>
+                <%= button_to "Eliminar", tpl, method: :delete,
+                      form: { data: { turbo_confirm: "¿Eliminar esta plantilla?" } },
+                      class: "btn btn-sm btn-outline-danger" %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="text-center py-5">
+      <i class="bi bi-clipboard-x display-4 text-muted opacity-50 d-block mb-3"></i>
+      <p class="text-muted">No hay plantillas de checklist creadas aún.</p>
+      <% if policy(ChecklistTemplate).create? %>
+        <%= link_to "Crear primera plantilla", new_checklist_template_path, class: "btn btn-primary mt-2" %>
+      <% end %>
+    </div>
+  <% end %>
+</div>

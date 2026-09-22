@@ -1,0 +1,56 @@
+<div class="container mt-4" style="max-width: 600px;">
+  <div class="card shadow-sm">
+    <div class="card-header bg-white">
+      <h5 class="mb-0">
+        <i class="bi bi-person-badge me-2 text-primary"></i>
+        Asignar Chofer a <strong><%= @vehicle.plate %></strong>
+      </h5>
+    </div>
+    <div class="card-body">
+      <%= form_with(model: [@vehicle, @assignment]) do |f| %>
+
+        <% if @assignment.errors.any? %>
+          <div class="alert alert-danger">
+            <ul class="mb-0">
+              <% @assignment.errors.full_messages.each do |msg| %>
+                <li><%= msg %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <% if @available_drivers.empty? %>
+          <div class="alert alert-warning">
+            <i class="bi bi-exclamation-triangle me-1"></i>
+            No hay choferes disponibles en tu empresa. Agrega primero un usuario con rol <strong>Chofer</strong>.
+          </div>
+        <% else %>
+          <div class="mb-3">
+            <%= f.label :user_id, "Chofer", class: "form-label fw-medium" %>
+            <%= f.select :user_id,
+                  @available_drivers.map { |u| [u.email, u.id] },
+                  { prompt: "Selecciona un chofer…" },
+                  class: "form-select" %>
+          </div>
+
+          <div class="mb-3">
+            <%= f.label :started_on, "Fecha de inicio", class: "form-label fw-medium" %>
+            <%= f.date_field :started_on, class: "form-control" %>
+          </div>
+
+          <div class="mb-3">
+            <%= f.label :notes, "Notas (opcional)", class: "form-label fw-medium" %>
+            <%= f.text_area :notes, rows: 2, class: "form-control",
+                  placeholder: "Ej: turno mañana, ruta norte…" %>
+          </div>
+
+          <div class="d-flex gap-2">
+            <%= f.submit "Asignar Chofer", class: "btn btn-primary" %>
+            <%= link_to "Cancelar", vehicle_path(@vehicle), class: "btn btn-outline-secondary" %>
+          </div>
+        <% end %>
+
+      <% end %>
+    </div>
+  </div>
+</div>

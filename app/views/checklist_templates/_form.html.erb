@@ -1,0 +1,123 @@
+<%= form_with model: template, local: true do |f| %>
+  <% if template.errors.any? %>
+    <div class="alert alert-danger">
+      <ul class="mb-0">
+        <% template.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <div class="mb-3">
+        <%= f.label :name, "Nombre de la plantilla", class: "form-label fw-semibold" %>
+        <%= f.text_field :name, class: "form-control #{template.errors[:name].any? ? 'is-invalid' : ''}", placeholder: "Ej: Inspección diaria general" %>
+        <%= f.label :name, template.errors[:name].first, class: "invalid-feedback" if template.errors[:name].any? %>
+      </div>
+
+      <div class="mb-2">
+        <%= f.label :description, "Descripción (opcional)", class: "form-label fw-semibold" %>
+        <%= f.text_area :description, class: "form-control", rows: 2, placeholder: "Descripción breve de cuándo aplicar esta plantilla" %>
+      </div>
+    </div>
+  </div>
+
+  <%# Items section %>
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">Ítems del Checklist</h5>
+      <button type="button" id="add-item" class="btn btn-sm btn-outline-primary">
+        <i class="bi bi-plus-lg"></i> Agregar ítem
+      </button>
+    </div>
+    <div class="card-body" id="items-container">
+      <%= f.fields_for :checklist_items do |item_f| %>
+        <%= render "checklist_item_fields", f: item_f %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="d-flex gap-2 justify-content-end">
+    <%= link_to "Cancelar", checklist_templates_path, class: "btn btn-outline-secondary" %>
+    <%= f.submit template.new_record? ? "Crear Plantilla" : "Guardar Cambios", class: "btn btn-primary" %>
+  </div>
+<% end %>
+
+<%# Template for new JS-added items %>
+<template id="item-template">
+  <div class="item-fields border rounded p-3 mb-3 position-relative" data-item>
+    <button type="button" class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-2 remove-item">
+      <i class="bi bi-trash"></i>
+    </button>
+    <div class="row g-2">
+      <div class="col-md-5">
+        <label class="form-label small fw-semibold">Descripción del ítem</label>
+        <input type="text" name="checklist_template[checklist_items_attributes][NEW_INDEX][label]"
+               class="form-control form-control-sm" placeholder="Ej: Verificar nivel de aceite" required>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label small fw-semibold">Tipo</label>
+        <select name="checklist_template[checklist_items_attributes][NEW_INDEX][item_type]" class="form-select form-select-sm">
+          <option value="boolean">Sí/No</option>
+          <option value="text">Texto</option>
+          <option value="number">Número</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label small fw-semibold">Posición</label>
+        <input type="number" name="checklist_template[checklist_items_attributes][NEW_INDEX][position]"
+               class="form-control form-control-sm item-position" value="0">
+      </div>
+      <div class="col-md-2 d-flex align-items-end">
+        <div class="form-check mb-2">
+          <input class="form-check-input" type="checkbox"
+                 name="checklist_template[checklist_items_attributes][NEW_INDEX][required]" value="1">
+          <label class="form-check-label small">Obligatorio</label>
+        </div>
+        <input type="hidden" name="checklist_template[checklist_items_attributes][NEW_INDEX][required]" value="0">
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+  (function() {
+    let itemIndex = <%= template.checklist_items.size %>;
+    const addBtn = document.getElementById('add-item');
+    const container = document.getElementById('items-container');
+    const tmpl = document.getElementById('item-template');
+
+    addBtn.addEventListener('click', function() {
+      const html = tmpl.innerHTML.replace(/NEW_INDEX/g, itemIndex);
+      const wrapper = document.createElement('div');
+      wrapper.innerHTML = html;
+      container.appendChild(wrapper.firstElementChild);
+      autoPositions();
+      itemIndex++;
+    });
+
+    container.addEventListener('click', function(e) {
+      const btn = e.target.closest('.remove-item');
+      if (btn) {
+        const itemDiv = btn.closest('[data-item]');
+        // If persisted record, mark for destruction; else remove DOM
+        const destroyInput = itemDiv.querySelector('input[name*="_destroy"]');
+        if (destroyInput) {
+          destroyInput.value = '1';
+          itemDiv.style.display = 'none';
+        } else {
+          itemDiv.remove();
+        }
+        autoPositions();
+      }
+    });
+
+    function autoPositions() {
+      container.querySelectorAll('.item-position').forEach((inp, idx) => {
+        inp.value = idx;
+      });
+    }
+  })();
+</script>

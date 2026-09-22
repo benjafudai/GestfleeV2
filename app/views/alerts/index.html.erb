@@ -1,0 +1,88 @@
+<div class="max-w-7xl mx-auto mt-8 px-4 sm:px-6 lg:px-8">
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-900">
+      Tablero de Cumplimiento y Alertas
+    </h1>
+    <p class="mt-2 text-sm text-gray-600">Revisa los documentos vencidos o próximos a vencer de los vehículos y del personal.</p>
+  </div>
+
+  <div class="space-y-8">
+    <!-- Documentos de Vehículos -->
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+      <div class="px-4 py-5 sm:px-6 bg-gray-50 border-b border-gray-200">
+        <h3 class="text-lg leading-6 font-medium text-gray-900">Alertas de Vehículos</h3>
+      </div>
+      <% if @vehicle_documents.any? %>
+        <ul role="list" class="divide-y divide-gray-200">
+          <% @vehicle_documents.each do |doc| %>
+            <li class="px-4 py-4 sm:px-6 hover:bg-gray-50">
+              <div class="flex items-center justify-between">
+                <div class="flex flex-col">
+                  <p class="text-sm font-medium text-blue-600 truncate">
+                    Patente: <%= doc.vehicle.plate %> <%= "(#{doc.vehicle.model})" %>
+                  </p>
+                  <p class="mt-1 flex items-center text-sm text-gray-500">
+                    <span class="truncate"><%= doc.doc_type.titleize %></span>
+                  </p>
+                </div>
+                <div class="flex items-center justify-end flex-col sm:flex-row sm:space-x-4">
+                  <p class="text-sm text-gray-900 mb-2 sm:mb-0">
+                    Vence: <%= l doc.due_on, format: :short %>
+                  </p>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                    <%= doc.status == 'ok' ? 'bg-green-100 text-green-800' : (doc.status == 'expiring' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') %>">
+                    <%= doc.status.capitalize %>
+                  </span>
+                  <%= link_to "Ver Vehículo", vehicle_path(doc.vehicle), class: "ml-4 text-sm font-medium text-blue-600 hover:text-blue-500" %>
+                </div>
+              </div>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <div class="px-4 py-5 sm:p-6 text-center text-gray-500">
+          No hay alertas pendientes para vehículos.
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Documentos del Personal -->
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+      <div class="px-4 py-5 sm:px-6 bg-gray-50 border-b border-gray-200">
+        <h3 class="text-lg leading-6 font-medium text-gray-900">Alertas de Personal</h3>
+      </div>
+      <% if @user_documents.any? %>
+        <ul role="list" class="divide-y divide-gray-200">
+          <% @user_documents.each do |doc| %>
+            <li class="px-4 py-4 sm:px-6 hover:bg-gray-50">
+              <div class="flex items-center justify-between">
+                <div class="flex flex-col">
+                  <p class="text-sm font-medium text-blue-600 truncate">
+                    Usuario: <%= doc.user.email %> (<%= doc.user.role.titleize %>)
+                  </p>
+                  <p class="mt-1 flex items-center text-sm text-gray-500">
+                    <span class="truncate"><%= doc.doc_type.titleize %></span>
+                  </p>
+                </div>
+                <div class="flex items-center justify-end flex-col sm:flex-row sm:space-x-4">
+                  <p class="text-sm text-gray-900 mb-2 sm:mb-0">
+                    Vence: <%= l doc.due_on, format: :short %>
+                  </p>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                    <%= doc.status == 'ok' ? 'bg-green-100 text-green-800' : (doc.status == 'expiring' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') %>">
+                    <%= doc.status.capitalize %>
+                  </span>
+                  <%= link_to "Ver Perfil", user_path(doc.user), class: "ml-4 text-sm font-medium text-blue-600 hover:text-blue-500" %>
+                </div>
+              </div>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <div class="px-4 py-5 sm:p-6 text-center text-gray-500">
+          No hay alertas pendientes para el personal.
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

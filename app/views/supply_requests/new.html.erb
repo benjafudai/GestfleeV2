@@ -1,0 +1,7 @@
+<div class="container mt-4" style="max-width: 900px;">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3"><i class="bi bi-file-earmark-plus me-2 text-primary"></i>Nueva Solicitud de Suministros</h1>
+  </div>
+  <% provide(:submit_text, "Añadir Solicitud") %>
+  <%= render 'form', supply_request: @supply_request %>
+</div>

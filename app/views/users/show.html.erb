@@ -1,0 +1,88 @@
+<div class="max-w-4xl mx-auto mt-8">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-3xl font-bold text-gray-900">
+      Perfil de <%= @user.email %>
+    </h1>
+    <%= link_to "Volver", users_path, class: "text-blue-600 hover:text-blue-800 font-medium" %>
+  </div>
+
+  <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-8">
+    <div class="px-4 py-5 sm:px-6">
+      <h3 class="text-lg leading-6 font-medium text-gray-900">
+        Información del Usuario
+      </h3>
+    </div>
+    <div class="border-t border-gray-200 px-4 py-5 sm:p-0">
+      <dl class="sm:divide-y sm:divide-gray-200">
+        <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <dt class="text-sm font-medium text-gray-500">Rol</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+            <%= @user.role.capitalize %>
+          </dd>
+        </div>
+        <% if @user.company %>
+        <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <dt class="text-sm font-medium text-gray-500">Empresa</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+            <%= @user.company.name %>
+          </dd>
+        </div>
+        <% end %>
+      </dl>
+    </div>
+  </div>
+
+  <!-- Documentos del Empleado -->
+  <div class="bg-white shadow sm:rounded-lg">
+    <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
+      <h3 class="text-lg leading-6 font-medium text-gray-900">
+        Documentos de Personal
+      </h3>
+      <% if policy(UserDocument).new? %>
+        <%= link_to "Añadir Documento", new_user_user_document_path(@user), class: "inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700" %>
+      <% end %>
+    </div>
+    
+    <% if @user.user_documents.any? %>
+      <div class="border-t border-gray-200">
+        <ul role="list" class="divide-y divide-gray-200">
+          <% @user.user_documents.each do |doc| %>
+            <li class="px-4 py-4 flex items-center justify-between sm:px-6">
+              <div class="flex items-center">
+                <div class="ml-3">
+                  <p class="text-sm font-medium text-gray-900">
+                    <%= doc.doc_type.titleize %>
+                  </p>
+                  <p class="text-sm text-gray-500">
+                    Vence: <%= l doc.due_on, format: :long %>
+                  </p>
+                </div>
+              </div>
+              <div class="flex items-center space-x-4">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                  <%= doc.status == 'ok' ? 'bg-green-100 text-green-800' : (doc.status == 'expiring' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') %>">
+                  <%= doc.status.capitalize %>
+                </span>
+                
+                <% if doc.file.attached? %>
+                  <%= link_to "Ver PDF", rails_blob_path(doc.file, disposition: "inline"), target: "_blank", class: "text-blue-600 hover:text-blue-900 text-sm font-medium" %>
+                <% end %>
+
+                <% if policy(doc).edit? %>
+                  <%= link_to "Editar", edit_user_user_document_path(@user, doc), class: "text-gray-500 hover:text-gray-900 text-sm" %>
+                <% end %>
+                <% if policy(doc).destroy? %>
+                  <%= button_to "Eliminar", user_user_document_path(@user, doc), method: :delete, data: { turbo_confirm: "¿Estás seguro?" }, class: "text-red-600 hover:text-red-900 text-sm" %>
+                <% end %>
+              </div>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    <% else %>
+      <div class="border-t border-gray-200 px-4 py-5 sm:p-6 text-center text-gray-500">
+        No hay documentos registrados para este usuario.
+      </div>
+    <% end %>
+  </div>
+</div>

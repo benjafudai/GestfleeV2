@@ -1,0 +1,41 @@
+<div class="d-flex align-items-center justify-content-center min-vh-100 bg-light" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
+  <div class="card shadow-lg border-0 rounded-4" style="width: 100%; max-width: 450px;">
+    <div class="card-body p-5">
+      <div class="text-center mb-4">
+        <h2 class="fw-bold text-primary mb-1">Actualiza tu Contraseña</h2>
+        <p class="text-muted small">Por tu seguridad, debes crear una nueva contraseña antes de continuar.</p>
+      </div>
+
+      <%= form_with model: current_user, url: user_force_password_change_path(current_user), method: :patch, local: true do |f| %>
+        
+        <% if current_user.errors.any? %>
+          <div class="alert alert-danger">
+            <ul class="mb-0">
+              <% current_user.errors.full_messages.each do |msg| %>
+                <li><%= msg %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <div class="form-floating mb-3">
+          <%= f.password_field :password, autocomplete: "new-password", class: "form-control", id: "floatingPassword", placeholder: "Nueva Contraseña", required: true, minlength: 6 %>
+          <%= f.label :password, "Nueva Contraseña", for: "floatingPassword" %>
+        </div>
+
+        <div class="form-floating mb-4">
+          <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "form-control", id: "floatingPasswordConfirmation", placeholder: "Confirmar Contraseña", required: true, minlength: 6 %>
+          <%= f.label :password_confirmation, "Confirmar Contraseña", for: "floatingPasswordConfirmation" %>
+        </div>
+
+        <div class="d-grid mb-3">
+          <%= f.submit "Guardar y Continuar", class: "btn btn-primary btn-lg rounded-pill fw-semibold shadow-sm" %>
+        </div>
+      <% end %>
+      
+      <div class="text-center mt-3">
+         <%= button_to "Cerrar Sesión", destroy_user_session_path, method: :delete, class: "btn btn-link text-muted text-decoration-none small" %>
+      </div>
+    </div>
+  </div>
+</div>

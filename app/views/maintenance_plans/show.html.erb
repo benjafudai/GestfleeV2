@@ -1,0 +1,96 @@
+<div class="container mt-4">
+  <div class="row mb-4 align-items-center">
+    <div class="col">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-1">
+          <li class="breadcrumb-item"><%= link_to "Planes de Mantenimiento", maintenance_plans_path, class: "text-decoration-none" %></li>
+          <li class="breadcrumb-item active" aria-current="page"><%= @maintenance_plan.name %></li>
+        </ol>
+      </nav>
+      <h1 class="h3 mb-0"><i class="bi bi-card-checklist me-2"></i> Detalle del Plan</h1>
+    </div>
+    <div class="col-auto">
+      <%= link_to maintenance_plans_path, class: "btn btn-outline-secondary shadow-sm me-2" do %>
+        <i class="bi bi-arrow-left me-1"></i> Volver
+      <% end %>
+      <% if policy(@maintenance_plan).edit? %>
+        <%= link_to edit_maintenance_plan_path(@maintenance_plan), class: "btn btn-primary shadow-sm" do %>
+          <i class="bi bi-pencil me-1"></i> Editar Plan
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-5">
+      <div class="card shadow-sm border-0 mb-4 h-100">
+        <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
+          <h5 class="card-title fw-bold">Información General</h5>
+        </div>
+        <div class="card-body">
+          <dl class="row mb-0">
+            <dt class="col-12 text-uppercase text-muted" style="font-size: 0.8rem">Nombre del Plan</dt>
+            <dd class="col-12 mb-3 fs-5 fw-medium"><%= @maintenance_plan.name %></dd>
+
+            <dt class="col-12 text-uppercase text-muted" style="font-size: 0.8rem">Descripción</dt>
+            <dd class="col-12 mb-3"><%= @maintenance_plan.description.presence || "Sin descripción" %></dd>
+
+            <dt class="col-12 text-uppercase text-muted" style="font-size: 0.8rem">Intervalos</dt>
+            <dd class="col-12 mb-0">
+              <div class="d-flex gap-2">
+                <% if @maintenance_plan.interval_km.present? %>
+                  <span class="badge bg-info text-dark rounded-pill px-3 py-2">
+                    <i class="bi bi-speedometer2 me-1"></i> <%= number_with_delimiter(@maintenance_plan.interval_km) %> км
+                  </span>
+                <% end %>
+                <% if @maintenance_plan.interval_days.present? %>
+                  <span class="badge bg-secondary rounded-pill px-3 py-2">
+                    <i class="bi bi-calendar3 me-1"></i> <%= @maintenance_plan.interval_days %> días
+                  </span>
+                <% end %>
+                <% if @maintenance_plan.interval_km.blank? && @maintenance_plan.interval_days.blank? %>
+                  <span class="text-muted fst-italic">No definidos</span>
+                <% end %>
+              </div>
+            </dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-7">
+      <div class="card shadow-sm border-0 mb-4 h-100">
+        <div class="card-header bg-white border-bottom-0 pt-4 pb-0 d-flex justify-content-between align-items-center">
+          <h5 class="card-title fw-bold mb-0">Pautas Técnicas (Tareas)</h5>
+          <span class="badge bg-primary rounded-pill"><%= @maintenance_plan.maintenance_task_templates.count %></span>
+        </div>
+        <div class="card-body">
+          <% if @maintenance_plan.maintenance_task_templates.any? %>
+            <ul class="list-group list-group-flush border rounded-3 overflow-hidden shadow-sm">
+              <% @maintenance_plan.maintenance_task_templates.each do |task| %>
+                <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                  <div class="d-flex align-items-center w-75">
+                    <i class="bi bi-wrench-adjustable-circle fs-4 text-secondary me-3"></i>
+                    <div>
+                      <h6 class="mb-0 fw-semibold"><%= task.description %></h6>
+                    </div>
+                  </div>
+                  <% if task.expected_duration_minutes.present? %>
+                    <span class="badge bg-light text-dark border p-2">
+                      <i class="bi bi-stopwatch me-1"></i> <%= task.expected_duration_minutes %> min
+                    </span>
+                  <% end %>
+                </li>
+              <% end %>
+            </ul>
+          <% else %>
+            <div class="text-center py-5 text-muted bg-light rounded-3">
+              <i class="bi bi-list-task display-4 d-block mb-3 opacity-50"></i>
+              No hay pautas técnicas para este plan.
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

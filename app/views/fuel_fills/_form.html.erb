@@ -1,0 +1,89 @@
+<%= form_with(model: [@vehicle, @fuel_fill], class: "space-y-6") do |form| %>
+  <% if @fuel_fill.errors.any? %>
+    <div class="bg-red-50 p-4 rounded-md">
+      <h3 class="text-sm font-medium text-red-800">
+        <%= pluralize(@fuel_fill.errors.count, "error") %> impidieron guardar el registro:
+      </h3>
+      <div class="mt-2 text-sm text-red-700">
+        <ul class="list-disc pl-5 space-y-1">
+          <% @fuel_fill.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  <% end %>
+
+  <% if current_user.company&.require_ticket? %>
+    <div class="bg-blue-50 p-4 rounded-md mb-4 border border-blue-200">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="ml-3">
+          <p class="text-sm text-blue-700">
+            <strong>Requerido:</strong> Tu empresa requiere subir obligatoriamente una fotografía de la boleta.
+          </p>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+    <div>
+      <%= form.label :date, "Fecha de Carga", class: "block text-sm font-medium text-gray-700" %>
+      <div class="mt-1">
+        <%= form.date_field :date, class: "shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md" %>
+      </div>
+    </div>
+
+    <div>
+      <%= form.label :odometer, "Odómetro (km)", class: "block text-sm font-medium text-gray-700" %>
+      <div class="mt-1">
+        <%= form.number_field :odometer, class: "shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md", min: (@vehicle ? @vehicle.odometer : 0) %>
+      </div>
+      <p class="mt-1 text-xs text-gray-500">Lectura actual del tablero.</p>
+    </div>
+
+    <div>
+      <%= form.label :liters, "Litros Cargados", class: "block text-sm font-medium text-gray-700" %>
+      <div class="mt-1 flex rounded-md shadow-sm">
+        <%= form.number_field :liters, step: "0.01", class: "flex-1 focus:ring-blue-500 focus:border-blue-500 block w-full min-w-0 rounded-none rounded-l-md sm:text-sm border-gray-300" %>
+        <span class="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
+          L
+        </span>
+      </div>
+    </div>
+
+    <div>
+      <%= form.label :cost, "Costo Total", class: "block text-sm font-medium text-gray-700" %>
+      <div class="mt-1 flex rounded-md shadow-sm">
+        <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
+          $
+        </span>
+        <%= form.number_field :cost, step: "0.01", class: "flex-1 focus:ring-blue-500 focus:border-blue-500 block w-full min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300" %>
+      </div>
+    </div>
+
+    <div class="sm:col-span-2">
+      <%= form.label :ticket, "Subir Boleta/Factura (Foto)", class: "block text-sm font-medium text-gray-700" %>
+      <div class="mt-1">
+        <%= form.file_field :ticket, accept: "image/*", capture: "environment", class: "shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" %>
+      </div>
+    </div>
+
+    <div class="sm:col-span-2">
+      <%= form.label :notes, "Notas u Observaciones", class: "block text-sm font-medium text-gray-700" %>
+      <div class="mt-1">
+        <%= form.text_area :notes, rows: 2, class: "shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="pt-5 flex justify-end space-x-3">
+    <%= link_to "Cancelar", @vehicle ? vehicle_path(@vehicle) : root_path, class: "bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+    <%= form.submit "Guardar Carga", class: "inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+  </div>
+<% end %>

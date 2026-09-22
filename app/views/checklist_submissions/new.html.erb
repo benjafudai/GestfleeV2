@@ -1,0 +1,157 @@
+<div class="container mt-4" style="max-width: 760px;">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3">
+      <i class="bi bi-clipboard-check me-2"></i>Checklist del día
+    </h1>
+    <%= link_to "Cancelar", checklist_submissions_path, class: "btn btn-outline-secondary btn-sm" %>
+  </div>
+
+  <% if @vehicle.nil? %>
+    <div class="alert alert-warning">
+      <i class="bi bi-exclamation-triangle me-2"></i>
+      No tienes un vehículo asignado actualmente. Contacta al administrador para que te asigne uno.
+    </div>
+  <% elsif @templates.empty? %>
+    <div class="alert alert-info">
+      <i class="bi bi-info-circle me-2"></i>
+      No hay plantillas de checklist disponibles. El administrador debe crear una primero.
+    </div>
+  <% else %>
+    <%# Template selector %>
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <label class="form-label fw-semibold">Seleccionar Plantilla</label>
+        <select id="template-selector" class="form-select" onchange="loadTemplate(this.value)">
+          <% @templates.each do |tpl| %>
+            <option value="<%= tpl.id %>" data-items='<%= tpl.checklist_items.map { |i| { id: i.id, label: i.label, item_type: i.item_type, required: i.required } }.to_json.html_safe %>'>
+              <%= tpl.name %>
+            </option>
+          <% end %>
+        </select>
+
+        <div class="mt-2 text-muted small">
+          <strong>Vehículo:</strong> <%= @vehicle.plate %> — <%= @vehicle.brand %> <%= @vehicle.model %>
+        </div>
+      </div>
+    </div>
+
+    <%= form_with url: checklist_submissions_path, method: :post, local: true, id: "checklist-form", model: @submission, html: { multipart: true } do |f| %>
+      <% if @submission.errors.any? %>
+        <div class="alert alert-danger mb-4">
+          <ul class="mb-0">
+            <% @submission.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <%= f.hidden_field :checklist_template_id, id: "hidden-template-id", value: @templates.first.id %>
+      <%= f.hidden_field :vehicle_id, value: @vehicle.id %>
+
+      <div id="items-container" class="card shadow-sm mb-4">
+        <div class="card-header bg-white">
+          <h5 class="mb-0" id="template-title"><%= @templates.first.name %></h5>
+        </div>
+        <div class="card-body" id="items-body">
+          <%# Populated by JS on load %>
+        </div>
+      </div>
+
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <label class="form-label fw-semibold">Evidencias Fotográficas</label>
+          <%= f.file_field :photos, multiple: true, class: "form-control", accept: "image/*" %>
+          <div class="form-text">Puedes seleccionar múltiples imágenes.</div>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-end">
+        <%= f.submit "Enviar Checklist", class: "btn btn-primary px-4" %>
+      </div>
+    <% end %>
+  <% end %>
+</div>
+
+<script>
+  document.addEventListener("turbo:load", initChecklistForm);
+  document.addEventListener("DOMContentLoaded", initChecklistForm);
+
+  function initChecklistForm() {
+    // Evitar inicializar dos veces si ambos eventos se disparan
+    if (window.checklistFormInitialized) return;
+    const selector = document.getElementById('template-selector');
+    if (!selector) return; // No estamos en la página correcta
+    window.checklistFormInitialized = true;
+
+    const allTemplates = {};
+    document.querySelectorAll('#template-selector option').forEach(opt => {
+      try {
+        allTemplates[opt.value] = JSON.parse(opt.dataset.items);
+      } catch(e) {
+        allTemplates[opt.value] = [];
+      }
+    });
+
+    function renderItem(item, index) {
+      let inputHtml = '';
+      const baseName = `checklist_submission[checklist_answers_attributes][${index}]`;
+      const required = item.required ? 'required' : '';
+
+      if (item.item_type === 'boolean') {
+        inputHtml = `
+          <div class="d-flex gap-3">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="${baseName}[value]" value="si" id="item_${index}_si" ${required}>
+              <label class="form-check-label" for="item_${index}_si">Sí / Conforme</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="${baseName}[value]" value="no" id="item_${index}_no">
+              <label class="form-check-label text-danger" for="item_${index}_no">No / No conforme</label>
+            </div>
+          </div>`;
+      } else if (item.item_type === 'text') {
+        inputHtml = `<textarea class="form-control form-control-sm" name="${baseName}[value]" rows="2" placeholder="Observación..." ${required}></textarea>`;
+      } else {
+        inputHtml = `<input type="number" step="any" class="form-control form-control-sm" name="${baseName}[value]" placeholder="0" ${required}>`;
+      }
+
+      return `
+        <div class="border rounded p-3 mb-3">
+          <input type="hidden" name="${baseName}[checklist_item_id]" value="${item.id}">
+          <div class="d-flex align-items-start justify-content-between mb-2">
+            <label class="fw-medium">${index + 1}. ${item.label}</label>
+            ${item.required ? '<span class="badge text-bg-danger ms-2">Obligatorio</span>' : '<span class="badge text-bg-secondary ms-2">Opcional</span>'}
+          </div>
+          ${inputHtml}
+        </div>`;
+    }
+
+    window.loadTemplate = function(templateId) {
+      const items = allTemplates[templateId] || [];
+      const body = document.getElementById('items-body');
+      const title = document.getElementById('template-title');
+      const hiddenId = document.getElementById('hidden-template-id');
+
+      if (!body) return;
+
+      hiddenId.value = templateId;
+      const opt = document.querySelector(`#template-selector option[value="${templateId}"]`);
+      if (opt && title) title.textContent = opt.textContent.trim();
+
+      body.innerHTML = items.length
+        ? items.map((item, idx) => renderItem(item, idx)).join('')
+        : '<p class="text-muted">Esta plantilla no tiene ítems.</p>';
+    };
+
+    // Render first template on page load
+    if (selector.value) {
+      window.loadTemplate(selector.value);
+    }
+  }
+
+  // Limpiar flag al salir de la página para que Turbo vuelva a ejecutar al entrar
+  document.addEventListener("turbo:before-cache", function() {
+    window.checklistFormInitialized = false;
+  });
+</script>

@@ -1,0 +1,140 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="h4 mb-0">
+        <i class="bi bi-clipboard-check me-2"></i>
+        <%= @submission.checklist_template.name %>
+      </h1>
+      <p class="text-muted small mb-0 mt-1">
+        Vehículo: <strong><%= @submission.vehicle.plate %></strong> —
+        Chofer: <strong><%= @submission.user.email %></strong> —
+        <%= l(@submission.submitted_at, format: :long) %>
+      </p>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <% badge_class = case @submission.status
+          when 'pending'  then 'text-bg-warning'
+          when 'approved' then 'text-bg-success'
+          when 'rejected' then 'text-bg-danger'
+          end %>
+      <span class="badge <%= badge_class %> fs-6">
+        <%= @submission.status == 'pending' ? 'Pendiente revisión' : @submission.status == 'approved' ? 'Aprobado' : 'Rechazado' %>
+      </span>
+      <%= link_to "Volver", checklist_submissions_path, class: "btn btn-outline-secondary btn-sm" %>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <%# Answers panel %>
+    <div class="col-lg-8">
+      <div class="card shadow-sm">
+        <div class="card-header bg-white">
+          <h5 class="mb-0">Respuestas</h5>
+        </div>
+        <div class="card-body p-0">
+          <% if @answers.any? %>
+            <ul class="list-group list-group-flush">
+              <% @answers.each_with_index do |ans, idx| %>
+                <li class="list-group-item">
+                  <div class="d-flex align-items-start justify-content-between">
+                    <div>
+                      <span class="text-muted small me-2"><%= idx + 1 %>.</span>
+                      <span class="fw-medium"><%= ans.checklist_item.label %></span>
+                      <br>
+                      <% case ans.checklist_item.item_type
+                         when 'boolean' %>
+                        <% if ans.value == 'si' %>
+                          <span class="badge text-bg-success mt-1"><i class="bi bi-check-lg"></i> Sí / Conforme</span>
+                        <% else %>
+                          <span class="badge text-bg-danger mt-1"><i class="bi bi-x-lg"></i> No / No conforme</span>
+                        <% end %>
+                      <% else %>
+                        <span class="text-secondary small mt-1 d-block"><%= ans.value.presence || "—" %></span>
+                      <% end %>
+                    </div>
+                    <% if ans.checklist_item.required? %>
+                      <span class="badge text-bg-secondary ms-3 flex-shrink-0">Obligatorio</span>
+                    <% end %>
+                  </div>
+                </li>
+              <% end %>
+            </ul>
+          <% else %>
+            <div class="text-center py-4 text-muted">Sin respuestas registradas.</div>
+          <% end %>
+        </div>
+      </div>
+
+      <% if @submission.photos.attached? %>
+        <div class="card shadow-sm mt-4">
+          <div class="card-header bg-white">
+            <h5 class="mb-0"><i class="bi bi-images me-1"></i> Evidencias Fotográficas</h5>
+          </div>
+          <div class="card-body">
+            <div class="row g-3">
+              <% @submission.photos.each do |photo| %>
+                <div class="col-6 col-md-4">
+                  <%= image_tag photo, class: "img-fluid img-thumbnail rounded shadow-sm", style: "object-fit: contain; width: 100%; max-height: 200px;" %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <%# Admin review panel %>
+    <div class="col-lg-4">
+      <% if policy(@submission).review? %>
+        <div class="card shadow-sm">
+          <div class="card-header bg-white">
+            <h5 class="mb-0"><i class="bi bi-shield-check me-1"></i> Revisión</h5>
+          </div>
+          <div class="card-body">
+            <% if @submission.admin_notes.present? %>
+              <div class="alert alert-secondary small mb-3">
+                <strong>Notas previas:</strong><br>
+                <%= @submission.admin_notes %>
+              </div>
+            <% end %>
+
+            <%= form_with url: review_checklist_submission_path(@submission), method: :patch, local: true do |f| %>
+              <div class="mb-3">
+                <%= f.label :admin_notes, "Observaciones", class: "form-label small fw-semibold" %>
+                <%= f.text_area :admin_notes, class: "form-control form-control-sm", rows: 3,
+                      value: @submission.admin_notes,
+                      placeholder: "Agregue comentarios de la revisión..." %>
+              </div>
+
+              <div class="d-grid gap-2">
+                <%= f.submit "✓ Aprobar",
+                      name: "checklist_submission[status]",
+                      value: "approved",
+                      class: "btn btn-success",
+                      data: { turbo_confirm: "¿Aprobar este checklist?" } %>
+                <%= f.submit "✗ Rechazar",
+                      name: "checklist_submission[status]",
+                      value: "rejected",
+                      class: "btn btn-outline-danger",
+                      data: { turbo_confirm: "¿Rechazar este checklist?" } %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <%# Audit trail note %>
+      <div class="card shadow-sm mt-3">
+        <div class="card-body">
+          <p class="small text-muted mb-0">
+            <i class="bi bi-clock-history me-1"></i>
+            Enviado el <%= l(@submission.submitted_at, format: :long) %>.
+            <% if @submission.updated_at != @submission.created_at %>
+              Última actualización: <%= l(@submission.updated_at, format: :long) %>.
+            <% end %>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

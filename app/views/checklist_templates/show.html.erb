@@ -1,0 +1,64 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="h3 mb-0"><%= @template.name %></h1>
+      <p class="text-muted small mt-1"><%= @template.description %></p>
+    </div>
+    <div class="d-flex gap-2">
+      <% if policy(@template).update? %>
+        <%= link_to "Editar", edit_checklist_template_path(@template), class: "btn btn-outline-primary btn-sm" %>
+      <% end %>
+      <%= link_to "Volver", checklist_templates_path, class: "btn btn-outline-secondary btn-sm" %>
+    </div>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-header bg-white">
+      <h5 class="mb-0">Ítems (<%= @template.checklist_items.size %>)</h5>
+    </div>
+    <div class="card-body p-0">
+      <% if @template.checklist_items.any? %>
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th width="40">#</th>
+              <th>Descripción</th>
+              <th>Tipo</th>
+              <th>Obligatorio</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @template.checklist_items.each_with_index do |item, idx| %>
+              <tr>
+                <td class="text-muted"><%= idx + 1 %></td>
+                <td class="fw-medium"><%= item.label %></td>
+                <td>
+                  <% badge = case item.item_type
+                              when 'boolean' then ['text-bg-success', 'Sí/No']
+                              when 'text'    then ['text-bg-info', 'Texto']
+                              when 'number'  then ['text-bg-warning', 'Número']
+                              end %>
+                  <span class="badge <%= badge[0] %>"><%= badge[1] %></span>
+                </td>
+                <td>
+                  <% if item.required? %>
+                    <span class="badge text-bg-danger">Obligatorio</span>
+                  <% else %>
+                    <span class="text-muted small">Opcional</span>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <div class="text-center py-4 text-muted">
+          <i class="bi bi-list-check display-5 d-block mb-2 opacity-50"></i>
+          <p>Esta plantilla no tiene ítems aún. <br>
+            <%= link_to "Editarla para agregar ítems", edit_checklist_template_path(@template) %>.
+          </p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,144 @@
+<%= form_with(model: work_order, class: "needs-validation") do |form| %>
+  <% if work_order.errors.any? %>
+    <div class="alert alert-danger shadow-sm rounded-3">
+      <h5 class="alert-heading fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i>Errores al guardar la Orden de Trabajo:</h5>
+      <ul class="mb-0">
+        <% work_order.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row g-4">
+    <div class="col-md-8">
+      <div class="card shadow-sm border-0 h-100">
+        <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
+          <h5 class="fw-bold mb-0">Información Principal</h5>
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <%= form.label :vehicle_id, "Vehículo", class: "form-label fw-medium" %>
+              <%= form.collection_select :vehicle_id, Vehicle.all, :id, ->(v){ "#{v.plate} - #{v.brand} #{v.model}" }, { prompt: "Seleccione un vehículo" }, { class: "form-select", required: true } %>
+            </div>
+
+            <div class="col-md-6">
+              <%= form.label :maintenance_plan_id, "Plan de Mantenimiento", class: "form-label fw-medium" %>
+              <%= form.collection_select :maintenance_plan_id, MaintenancePlan.all, :id, :name, { prompt: "Mantenimiento Correctivo (Sin Plan)" }, { class: "form-select" } %>
+              <div class="form-text">Opcional. Si se deja en blanco, será un mantenimiento correctivo.</div>
+            </div>
+
+            <div class="col-md-6">
+              <%= form.label :start_date, "Fecha de Inicio", class: "form-label fw-medium" %>
+              <%= form.date_field :start_date, class: "form-control", required: true %>
+            </div>
+
+            <div class="col-md-6">
+              <%= form.label :end_date, "Fecha de Finalización", class: "form-label fw-medium" %>
+              <%= form.date_field :end_date, class: "form-control" %>
+            </div>
+
+            <div class="col-md-6">
+              <%= form.label :mechanic_id, "Mecánico Asignado", class: "form-label fw-medium" %>
+              <%= form.collection_select :mechanic_id, User.where(role: 'mecanico').or(User.where(role: 'admin')), :id, :email, { prompt: "Seleccione un mecánico" }, { class: "form-select" } %>
+            </div>
+
+            <div class="col-md-6">
+              <%= form.label :status, "Estado de la Orden", class: "form-label fw-medium" %>
+              <%= form.select :status, WorkOrder.statuses.keys.map { |s| [s.humanize, s] }, {}, { class: "form-select" } %>
+            </div>
+
+            <div class="col-12">
+              <%= form.label :notes, "Notas y Observaciones", class: "form-label fw-medium" %>
+              <%= form.text_area :notes, class: "form-control", rows: 4, placeholder: "Detalles adicionales, recomendaciones, etc." %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
+          <h5 class="fw-bold mb-0">Tareas Realizadas</h5>
+        </div>
+        <div class="card-body">
+          <% 
+            tasks = work_order.work_order_tasks
+            if tasks.empty?
+              2.times { work_order.work_order_tasks.build }
+            else
+              work_order.work_order_tasks.build
+            end
+          %>
+          
+          <%= form.fields_for :work_order_tasks do |task_form| %>
+            <div class="mb-3 border p-2 rounded bg-light">
+              <%= task_form.label :description, "Descripción", class: "form-label small mb-1" %>
+              <%= task_form.text_field :description, class: "form-control form-control-sm mb-2" %>
+              
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="form-check">
+                  <%= task_form.check_box :completed, class: "form-check-input" %>
+                  <%= task_form.label :completed, "Completada", class: "form-check-label small" %>
+                </div>
+                
+                <% if task_form.object&.persisted? %>
+                  <div class="form-check text-danger">
+                    <%= task_form.check_box :_destroy, class: "form-check-input" %>
+                    <%= task_form.label :_destroy, "Quitar", class: "form-check-label small" %>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
+          <h5 class="fw-bold mb-0">Repuestos Utilizados</h5>
+        </div>
+        <div class="card-body">
+          <% 
+            parts_usage = work_order.work_order_part_usages
+            if parts_usage.empty?
+              2.times { work_order.work_order_part_usages.build }
+            else
+              work_order.work_order_part_usages.build
+            end
+          %>
+          
+          <%= form.fields_for :work_order_part_usages do |usage_form| %>
+            <div class="mb-3 border p-2 rounded bg-light">
+              <div class="mb-2">
+                <%= usage_form.label :part_id, "Repuesto", class: "form-label small mb-1" %>
+                <%= usage_form.collection_select :part_id, Part.all, :id, ->(p){ "#{p.sku} - #{p.name} (Stock: #{p.stock})" }, { prompt: "Seleccione" }, { class: "form-select form-select-sm" } %>
+              </div>
+              
+              <div class="d-flex gap-2 align-items-end">
+                <div class="flex-grow-1">
+                  <%= usage_form.label :quantity, "Cantidad", class: "form-label small mb-1" %>
+                  <%= usage_form.number_field :quantity, class: "form-control form-control-sm", step: "0.01", min: "0" %>
+                </div>
+                
+                <% if usage_form.object&.persisted? %>
+                  <div class="form-check text-danger ms-2 pb-1">
+                    <%= usage_form.check_box :_destroy, class: "form-check-input" %>
+                    <%= usage_form.label :_destroy, "Quitar", class: "form-check-label small" %>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-end gap-2 mt-4">
+    <%= link_to "Cancelar", work_orders_path, class: "btn btn-light shadow-sm px-3" %>
+    <%= form.submit "Guardar Orden de Trabajo", class: "btn btn-primary shadow-sm px-4 fw-medium" %>
+  </div>
+<% end %>

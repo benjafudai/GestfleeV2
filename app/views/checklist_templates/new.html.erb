@@ -1,0 +1,7 @@
+<div class="container mt-4" style="max-width: 720px;">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3">Nueva Plantilla de Checklist</h1>
+    <%= link_to "Volver", checklist_templates_path, class: "btn btn-outline-secondary btn-sm" %>
+  </div>
+  <%= render "form", template: @template %>
+</div>

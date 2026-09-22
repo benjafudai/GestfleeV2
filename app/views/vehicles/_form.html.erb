@@ -1,0 +1,50 @@
+<%= form_with(model: vehicle, class: "needs-validation") do |form| %>
+  <% if vehicle.errors.any? %>
+    <div class="alert alert-danger">
+      <h4 class="alert-heading"><%= pluralize(vehicle.errors.count, "error") %> impidieron guardar este vehículo:</h4>
+      <ul>
+        <% vehicle.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row g-3">
+    <div class="col-md-6">
+      <%= form.label :plate, "Patente", class: "form-label" %>
+      <%= form.text_field :plate, class: "form-control", placeholder: "ABCD-12", required: true %>
+    </div>
+
+    <div class="col-md-6">
+      <%= form.label :brand, "Marca", class: "form-label" %>
+      <%= form.text_field :brand, class: "form-control", placeholder: "Volvo" %>
+    </div>
+
+    <div class="col-md-6">
+      <%= form.label :model, "Modelo", class: "form-label" %>
+      <%= form.text_field :model, class: "form-control", placeholder: "FH16" %>
+    </div>
+
+    <div class="col-md-6">
+      <%= form.label :year, "Año", class: "form-label" %>
+      <%= form.number_field :year, class: "form-control", min: 1950, max: Date.today.year + 1 %>
+    </div>
+
+    <div class="col-md-6">
+      <%= form.label :odometer, "Odómetro (km)", class: "form-label" %>
+      <%= form.number_field :odometer, class: "form-control" %>
+    </div>
+
+    <div class="col-md-6">
+      <%= form.label :status, "Estado", class: "form-label" %>
+      <%= form.select :status, Vehicle.statuses.keys.map { |s| [s.humanize, s] }, {}, class: "form-select" %>
+    </div>
+  
+  </div>
+
+  <div class="mt-4 d-flex justify-content-end gap-2">
+    <%= link_to "Cancelar", vehicles_path, class: "btn btn-outline-secondary" %>
+    <%= form.submit "Guardar Vehículo", class: "btn btn-primary" %>
+  </div>
+<% end %>

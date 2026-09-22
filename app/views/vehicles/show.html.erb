@@ -1,0 +1,230 @@
+<div class="container mt-4">
+  <div class="row">
+    <!-- Detalles del Vehículo -->
+    <div class="col-lg-4 mb-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <h1 class="h3 mb-0"><%= @vehicle.plate %></h1>
+            <% badge_class = case @vehicle.status
+               when 'active' then 'text-bg-success'
+               when 'maintenance' then 'text-bg-warning'
+               when 'inactive' then 'text-bg-secondary'
+               else 'text-bg-light'
+               end %>
+            <span class="badge <%= badge_class %> rounded-pill">
+              <%= @vehicle.status.humanize %>
+            </span>
+          </div>
+          
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between px-0">
+              <span class="text-muted">Marca</span>
+              <span class="fw-medium"><%= @vehicle.brand %></span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between px-0">
+              <span class="text-muted">Modelo</span>
+              <span class="fw-medium"><%= @vehicle.model %></span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between px-0">
+              <span class="text-muted">Año</span>
+              <span class="fw-medium"><%= @vehicle.year %></span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between px-0">
+              <span class="text-muted">Odómetro</span>
+              <span class="fw-medium"><%= number_with_delimiter(@vehicle.odometer) %> km</span>
+            </li>
+          </ul>
+
+            <div class="mt-4 d-grid gap-2">
+              <%= link_to "Registro de Combustible", vehicle_fuel_fills_path(@vehicle), class: "btn btn-info text-white" %>
+            <% if policy(@vehicle).edit? %>
+              <%= link_to "Editar Vehículo", edit_vehicle_path(@vehicle), class: "btn btn-primary" %>
+            <% end %>
+            <%= link_to "Volver al listado", vehicles_path, class: "btn btn-outline-secondary" %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel Derecho: Documentos e Historial (Futuro) -->
+    <div class="col-lg-8">
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Documentación</h5>
+          <% if policy(VehicleDocument.new(vehicle: @vehicle)).create? %>
+            <%= link_to new_vehicle_vehicle_document_path(@vehicle), class: "btn btn-sm btn-primary" do %>
+              <i class="bi bi-plus-lg"></i> Nuevo Documento
+            <% end %>
+          <% end %>
+        </div>
+        <div class="card-body">
+          <% if @documents.any? %>
+            <div class="table-responsive">
+              <table class="table table-hover align-middle">
+                <thead class="table-light">
+                  <tr>
+                    <th>Tipo</th>
+                    <th>Vence el</th>
+                    <th>Estado</th>
+                    <th>PDF</th>
+                    <th>Notas</th>
+                    <th class="text-end">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @documents.each do |doc| %>
+                    <tr>
+                      <td class="fw-medium">
+                        <%= doc.doc_type.humanize.tr('_', ' ').capitalize %>
+                      </td>
+                      <td>
+                        <% if doc.due_on %>
+                          <%= l(doc.due_on, format: :long) %>
+                          <% if doc.due_on < Date.today %>
+                            <span class="badge text-bg-danger ms-1">Vencido</span>
+                          <% elsif doc.due_on < Date.today + 30.days %>
+                            <span class="badge text-bg-warning ms-1">Por vencer</span>
+                          <% end %>
+                        <% else %>
+                          <span class="text-muted">-</span>
+                        <% end %>
+                      </td>
+                      <td>
+                        <% status_class = case doc.status
+                             when 'ok'       then 'text-bg-success'
+                             when 'expiring' then 'text-bg-warning'
+                             when 'expired'  then 'text-bg-danger'
+                             else 'text-bg-secondary'
+                             end %>
+                        <span class="badge <%= status_class %>"><%= doc.status.humanize %></span>
+                      </td>
+                      <td>
+                        <% if doc.file.attached? %>
+                          <%= link_to rails_blob_path(doc.file, disposition: "inline"),
+                                target: "_blank",
+                                class: "btn btn-outline-danger btn-sm",
+                                title: doc.file.filename.to_s do %>
+                            <i class="bi bi-file-earmark-pdf-fill"></i> Ver PDF
+                          <% end %>
+                        <% else %>
+                          <span class="text-muted small">Sin archivo</span>
+                        <% end %>
+                      </td>
+                      <td class="small text-muted"><%= doc.notes %></td>
+                      <td class="text-end">
+                        <div class="btn-group btn-group-sm">
+                          <% if policy(doc).update? %>
+                            <%= link_to "Editar",
+                                  edit_vehicle_vehicle_document_path(@vehicle, doc),
+                                  class: "btn btn-outline-secondary" %>
+                          <% end %>
+                          <% if policy(doc).destroy? %>
+                            <%= button_to "Eliminar",
+                                  vehicle_vehicle_document_path(@vehicle, doc),
+                                  method: :delete,
+                                  form: { data: { turbo_confirm: "¿Eliminar este documento?" } },
+                                  class: "btn btn-outline-danger" %>
+                          <% end %>
+                        </div>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          <% else %>
+            <div class="text-center py-5">
+              <i class="bi bi-file-earmark-x display-4 text-muted opacity-50 d-block mb-3"></i>
+              <p class="text-muted">No hay documentos registrados para este vehículo.</p>
+              <% if policy(VehicleDocument.new(vehicle: @vehicle)).create? %>
+                <%= link_to "Agregar primer documento",
+                      new_vehicle_vehicle_document_path(@vehicle),
+                      class: "btn btn-sm btn-outline-primary mt-1" %>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Módulo de Asignación de Choferes -->
+      <div class="card shadow-sm">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">
+            <i class="bi bi-person-badge me-1"></i>
+            Chofer Asignado
+          </h5>
+          <% if policy(VehicleAssignment.new(vehicle: @vehicle)).create? %>
+            <% unless @vehicle.active_assignment %>
+              <%= link_to new_vehicle_vehicle_assignment_path(@vehicle),
+                    class: "btn btn-sm btn-primary" do %>
+                <i class="bi bi-person-plus-fill me-1"></i> Asignar Chofer
+              <% end %>
+            <% end %>
+          <% end %>
+        </div>
+        <div class="card-body">
+
+          <%# ─── Asignación activa ─── %>
+          <% if @vehicle.active_assignment %>
+            <% active = @vehicle.active_assignment %>
+            <div class="d-flex align-items-center justify-content-between p-3 border rounded mb-3 bg-success-subtle">
+              <div class="d-flex align-items-center gap-3">
+                <i class="bi bi-person-circle fs-2 text-success"></i>
+                <div>
+                  <div class="fw-semibold"><%= active.user.email %></div>
+                  <div class="small text-muted">
+                    Desde <%= l(active.started_on, format: :long) %>
+                  </div>
+                  <% if active.notes.present? %>
+                    <div class="small text-muted fst-italic"><%= active.notes %></div>
+                  <% end %>
+                </div>
+              </div>
+              <% if policy(active).destroy? %>
+                <%= button_to "Terminar Asignación",
+                      vehicle_vehicle_assignment_path(@vehicle, active),
+                      method: :delete,
+                      form: { data: { turbo_confirm: "¿Terminar la asignación de #{active.user.email}?" } },
+                      class: "btn btn-sm btn-outline-danger" %>
+              <% end %>
+            </div>
+          <% else %>
+            <div class="text-center py-4 text-muted">
+              <i class="bi bi-person-x display-5 d-block mb-2 opacity-50"></i>
+              <p class="mb-0">Sin chofer asignado actualmente.</p>
+            </div>
+          <% end %>
+
+          <%# ─── Historial ─── %>
+          <% past = @vehicle.vehicle_assignments.historical.chronological.includes(:user) %>
+          <% if past.any? %>
+            <hr class="my-3">
+            <h6 class="text-muted small text-uppercase fw-semibold mb-2">Historial</h6>
+            <table class="table table-sm table-hover align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>Chofer</th>
+                  <th>Desde</th>
+                  <th>Hasta</th>
+                  <th>Notas</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% past.each do |a| %>
+                  <tr>
+                    <td class="small"><%= a.user.email %></td>
+                    <td class="small"><%= l(a.started_on, format: :long) %></td>
+                    <td class="small"><%= l(a.ended_on, format: :long) %></td>
+                    <td class="small text-muted"><%= a.notes %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          <% end %>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

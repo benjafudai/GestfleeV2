@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "gestflee-rails",
+      "runtimeExecutable": "ruby",
+      "runtimeArgs": ["bin/rails", "server"],
+      "port": 3000
+    }
+  ]
+}

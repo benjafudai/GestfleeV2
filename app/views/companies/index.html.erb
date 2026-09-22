@@ -1,0 +1,82 @@
+<div class="container py-4" data-controller="delete-confirmation">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3">Gestión de Empresas</h1>
+    
+    <%= form_with url: companies_path, method: :get, class: "d-flex gap-2" do |f| %>
+      <%= f.text_field :query, value: params[:query], placeholder: "Buscar empresa...", class: "form-control" %>
+      <%= f.submit "Buscar", class: "btn btn-outline-primary" %>
+      <%= link_to new_company_path, class: "btn btn-success d-flex align-items-center gap-1" do %>
+        <i class="bi bi-plus-lg"></i> Nuevo
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    <% @companies.each do |company| %>
+      <div class="col">
+        <div class="card h-100 shadow-sm hover-shadow transition-all">
+          <div class="card-body">
+            <h5 class="card-title text-primary mb-1"><%= company.name %></h5>
+            <h6 class="card-subtitle mb-3 text-muted"><%= company.rut %></h6>
+            
+            <div class="mb-3">
+              <span class="badge bg-<%= company.has_mechanic? ? 'success' : 'secondary' %>">
+                Mecánico
+              </span>
+              <span class="badge bg-<%= company.has_analyst? ? 'info' : 'secondary' %>">
+                Analista
+              </span>
+            </div>
+
+            <div class="d-grid gap-2">
+              <%= link_to "Configurar", edit_company_path(company), class: "btn btn-outline-dark btn-sm" %>
+              <button class="btn btn-outline-danger btn-sm" 
+                      data-bs-toggle="modal" 
+                      data-bs-target="#deleteConfirmationModal"
+                      data-action="click->delete-confirmation#setDeleteTarget"
+                      data-delete-confirmation-company-id-param="<%= company.id %>"
+                      data-delete-confirmation-company-name-param="<%= company.name %>">
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  
+  <% if @companies.empty? %>
+    <div class="alert alert-info mt-4">
+      No se encontraron empresas.
+    </div>
+  <% end %>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title" id="deleteConfirmationModalLabel">Eliminar Empresa</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>¿Estás seguro que deseas eliminar la empresa <strong data-delete-confirmation-target="companyNameDisplay"></strong>?</p>
+          <div class="alert alert-warning">
+            <i class="bi bi-exclamation-triangle-fill"></i> Esta acción es irreversible. Se eliminarán todos los <strong>usuarios, vehículos y datos asociados</strong>.
+          </div>
+          <p>Para confirmar, escribe <code>eliminar</code> en el campo de abajo:</p>
+          <input type="text" class="form-control" 
+                 data-delete-confirmation-target="input" 
+                 data-action="input->delete-confirmation#checkInput keyup->delete-confirmation#checkInput keydown->delete-confirmation#handleEnter" 
+                 placeholder="Escribe 'eliminar'">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <%= form_with url: "", method: :delete, data: { delete_confirmation_target: "form" } do |f| %>
+            <%= f.submit "Eliminar Definitivamente", class: "btn btn-danger", disabled: true, data: { delete_confirmation_target: "button" } %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

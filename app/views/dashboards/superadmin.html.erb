@@ -1,0 +1,33 @@
+<div class="row">
+  <div class="col-12 mb-4">
+    <div class="card bg-danger text-white shadow">
+      <div class="card-body">
+        <h2 class="card-title">Panel de Super Administración</h2>
+        <p class="card-text">Bienvenido, <%= current_user.email %></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6 mb-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title">Gestión de Usuarios</h5>
+        <p class="card-text">Administra los usuarios y administradores de la empresa.</p>
+        <%= link_to "Ver Usuarios", users_path, class: "btn btn-primary" %>
+        <%= link_to "Crear Nuevo Usuario", new_user_path, class: "btn btn-outline-primary ms-2" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6 mb-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title">Configuración de Empresa</h5>
+        <p class="card-text">Activa o desactiva módulos (Mecánico, Analista) para cada empresa.</p>
+        <%= link_to "Ver Empresas", companies_path, class: "btn btn-dark" %>
+      </div>
+    </div>
+  </div>
+</div>

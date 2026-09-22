@@ -1,0 +1,102 @@
+<div class="max-w-7xl mx-auto mt-8 px-4 sm:px-6 lg:px-8">
+  <div class="flex justify-between items-center mb-6">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">
+        <%= @vehicle ? "Registro de Combustible: #{@vehicle.plate}" : "Dashboard de Combustible" %>
+      </h1>
+      <p class="mt-2 text-sm text-gray-600">Historial de cargas y eficiencia.</p>
+    </div>
+    <% if @vehicle && policy(FuelFill).new? %>
+      <%= link_to "Nueva Carga", new_vehicle_fuel_fill_path(@vehicle), class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700" %>
+    <% end %>
+  </div>
+
+  <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+    <div class="px-4 py-5 sm:px-6 flex justify-between bg-gray-50 border-b border-gray-200">
+      <h3 class="text-lg leading-6 font-medium text-gray-900">Historial de Cargas</h3>
+    </div>
+    <% if @fuel_fills.any? %>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
+              <% unless @vehicle %>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vehículo</th>
+              <% end %>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Chofer</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Odómetro</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Litros / Costo</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rendimiento (km/l)</th>
+              <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <% @fuel_fills.each do |fill| %>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <%= l fill.date, format: :short %>
+                </td>
+                <% unless @vehicle %>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <%= link_to fill.vehicle.plate, vehicle_fuel_fills_path(fill.vehicle), class: "text-blue-600 hover:underline" %>
+                  </td>
+                <% end %>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <%= fill.user.email %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <%= number_with_delimiter fill.odometer %> km
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <%= fill.liters %>L <br>
+                  <span class="text-gray-500"><%= fill.currency %> <%= number_to_currency(fill.cost, unit: "$", precision: fill.currency == 'CLP' ? 0 : 2) %></span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                  <% if fill.km_per_liter.present? %>
+                    <% 
+                       # Visual status for km_per_liter
+                       avg = FuelFill.where(vehicle: fill.vehicle).where.not(km_per_liter: nil).average(:km_per_liter).to_f
+                       avg = fill.km_per_liter if avg == 0 # fallback
+                       threshold = (fill.company.anomaly_threshold.to_f / 100.0) rescue 0.2
+                       lower_limit = avg * (1.0 - threshold)
+                       upper_limit = avg * (1.0 + threshold)
+
+                       if fill.km_per_liter < lower_limit
+                         badge_color = "bg-red-100 text-red-800"
+                       elsif fill.km_per_liter > upper_limit
+                         badge_color = "bg-blue-100 text-blue-800"
+                       else
+                         badge_color = "bg-green-100 text-green-800"
+                       end
+                    %>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= badge_color %>">
+                      <%= fill.km_per_liter.round(2) %> km/l
+                    </span>
+                  <% else %>
+                    <span class="text-gray-400 italic">--</span>
+                  <% end %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+                  <% if fill.ticket.attached? %>
+                    <%= link_to "Boleta", rails_blob_path(fill.ticket, disposition: "inline"), target: "_blank", class: "text-blue-600 hover:text-blue-900" %>
+                  <% end %>
+                  <% if policy(fill).edit? %>
+                    <%= link_to "Editar", edit_fuel_fill_path(fill), class: "text-indigo-600 hover:text-indigo-900" %>
+                  <% end %>
+                  <% if policy(fill).destroy? %>
+                    <%= button_to "Eliminar", fuel_fill_path(fill), method: :delete, data: { turbo_confirm: "¿Estás seguro?" }, class: "inline text-red-600 hover:text-red-900", form_class: "inline" %>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="px-4 py-12 text-center text-gray-500">
+        No hay registros de combustible aún.
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,36 @@
+<div class="item-fields border rounded p-3 mb-3 position-relative" data-item>
+  <% if f.object.persisted? %>
+    <%= f.hidden_field :id %>
+    <button type="button" class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-2 remove-item">
+      <i class="bi bi-trash"></i>
+    </button>
+    <%= f.hidden_field :_destroy, value: '0', class: 'destroy-field' %>
+  <% else %>
+    <button type="button" class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-2 remove-item">
+      <i class="bi bi-trash"></i>
+    </button>
+  <% end %>
+
+  <div class="row g-2">
+    <div class="col-md-5">
+      <label class="form-label small fw-semibold">Descripción del ítem</label>
+      <%= f.text_field :label, class: "form-control form-control-sm", placeholder: "Ej: Verificar presión de neumáticos" %>
+    </div>
+    <div class="col-md-3">
+      <label class="form-label small fw-semibold">Tipo</label>
+      <%= f.select :item_type,
+            [["Sí/No", "boolean"], ["Texto", "text"], ["Número", "number"]],
+            {}, class: "form-select form-select-sm" %>
+    </div>
+    <div class="col-md-2">
+      <label class="form-label small fw-semibold">Posición</label>
+      <%= f.number_field :position, class: "form-control form-control-sm item-position", min: 0 %>
+    </div>
+    <div class="col-md-2 d-flex align-items-end">
+      <div class="form-check mb-2">
+        <%= f.check_box :required, class: "form-check-input" %>
+        <%= f.label :required, "Obligatorio", class: "form-check-label small" %>
+      </div>
+    </div>
+  </div>
+</div>

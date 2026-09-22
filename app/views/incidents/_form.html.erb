@@ -1,0 +1,134 @@
+<%= form_with(model: incident, local: true, class: "needs-validation") do |form| %>
+  <% if incident.errors.any? %>
+    <div class="alert alert-danger">
+      <h4 class="alert-heading h5"><%= pluralize(incident.errors.count, "error") %> impidieron guardar el incidente:</h4>
+      <ul class="mb-0">
+        <% incident.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :vehicle_id, "Vehículo", class: "form-label fw-bold" %>
+    <% if current_user.chofer? %>
+      <% assigned_vehicle = current_user.active_assignment&.vehicle %>
+      <% if assigned_vehicle %>
+        <%= form.hidden_field :vehicle_id, value: assigned_vehicle.id %>
+        <p class="form-control-plaintext"><%= assigned_vehicle.plate %></p>
+      <% else %>
+        <p class="text-danger mb-0">No tienes un vehículo asignado actualmente.</p>
+        <%= form.hidden_field :vehicle_id, value: "" %>
+      <% end %>
+    <% else %>
+      <%= form.collection_select :vehicle_id, Current.company.vehicles.active, :id, :plate, { prompt: "Seleccione un vehículo" }, { class: "form-select", required: true } %>
+    <% end %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :severity, "Severidad", class: "form-label fw-bold" %>
+    <%= form.select :severity, Incident.severities.keys.map { |k| [k.humanize, k] }, {}, { class: "form-select" } %>
+  </div>
+
+  <% if policy(incident).update? && incident.persisted? %>
+    <div class="mb-3">
+      <%= form.label :status, "Estado", class: "form-label fw-bold" %>
+      <%= form.select :status, Incident.statuses.keys.map { |k| [k.humanize, k] }, {}, { class: "form-select" } %>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :description, "Descripción del Incidente", class: "form-label fw-bold" %>
+    <%= form.text_area :description, rows: 4, class: "form-control", required: true, placeholder: "Describa lo sucedido..." %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :photos, "Evidencias (Fotos)", class: "form-label fw-bold" %>
+    <%= form.file_field :photos, multiple: true, accept: "image/*", class: "form-control" %>
+    <div class="form-text">Puede seleccionar múltiples imágenes.</div>
+  </div>
+
+  <div class="mb-4">
+    <label class="form-label fw-bold">Ubicación (Opcional)</label>
+    <div class="d-flex align-items-center mb-2">
+      <button type="button" id="btn-get-location" class="btn btn-outline-info btn-sm me-3">
+        Obtener mi ubicación actual
+      </button>
+      <span id="location-status" class="text-muted small">Ubicación no obtenida</span>
+    </div>
+    
+    <%= form.hidden_field :latitude, id: "incident_latitude" %>
+    <%= form.hidden_field :longitude, id: "incident_longitude" %>
+    
+    <div id="map-preview-container" style="display: none; width: 100%; height: 200px; border-radius: 8px; overflow: hidden; border: 1px solid #dee2e6;">
+      <iframe id="map-preview" width="100%" height="100%" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-between">
+    <%= link_to "Cancelar", incidents_path, class: "btn btn-outline-secondary" %>
+    <%= form.submit "Guardar Incidente", class: "btn btn-primary" %>
+  </div>
+<% end %>
+
+<script>
+  document.addEventListener("turbo:load", function() {
+    const btnLocation = document.getElementById("btn-get-location");
+    const statusText = document.getElementById("location-status");
+    const latField = document.getElementById("incident_latitude");
+    const lngField = document.getElementById("incident_longitude");
+    const mapContainer = document.getElementById("map-preview-container");
+    const mapIframe = document.getElementById("map-preview");
+
+    if (btnLocation) {
+      btnLocation.addEventListener("click", function() {
+        if (!navigator.geolocation) {
+          statusText.textContent = "La geolocalización no es soportada por tu navegador";
+          statusText.className = "text-danger small";
+          return;
+        }
+
+        statusText.textContent = "Obteniendo ubicación...";
+        btnLocation.disabled = true;
+
+        navigator.geolocation.getCurrentPosition(
+          function(position) {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            
+            latField.value = lat;
+            lngField.value = lng;
+            
+            statusText.textContent = `Ubicación obtenida: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+            statusText.className = "text-success small fw-bold";
+            btnLocation.disabled = false;
+            
+            // Show simple map via embed without API Key (uses generic search query)
+            mapContainer.style.display = "block";
+            mapIframe.src = `https://maps.google.com/maps?q=${lat},${lng}&z=15&output=embed`;
+          },
+          function(error) {
+            btnLocation.disabled = false;
+            statusText.className = "text-danger small";
+            switch(error.code) {
+              case error.PERMISSION_DENIED:
+                statusText.textContent = "Permiso denegado para obtener ubicación.";
+                break;
+              case error.POSITION_UNAVAILABLE:
+                statusText.textContent = "Información de ubicación no disponible.";
+                break;
+              case error.TIMEOUT:
+                statusText.textContent = "Tiempo de espera agotado.";
+                break;
+              default:
+                statusText.textContent = "Error desconocido al obtener la ubicación.";
+                break;
+            }
+          },
+          { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        );
+      });
+    }
+  });
+</script>

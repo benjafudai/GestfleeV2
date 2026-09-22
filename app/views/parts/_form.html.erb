@@ -1,0 +1,62 @@
+<%= form_with(model: part, local: true) do |f| %>
+  <% if part.errors.any? %>
+    <div class="alert alert-danger">
+      <ul class="mb-0">
+        <% part.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row g-3">
+    <div class="col-md-4">
+      <%= f.label :sku, "SKU", class: "form-label fw-bold" %>
+      <%= f.text_field :sku, class: "form-control", required: true %>
+    </div>
+    <div class="col-md-8">
+      <%= f.label :name, "Nombre del Repuesto", class: "form-label fw-bold" %>
+      <%= f.text_field :name, class: "form-control", required: true %>
+    </div>
+    
+    <div class="col-md-4">
+      <%= f.label :unit_of_measure, "Unidad de Medida", class: "form-label fw-bold" %>
+      <%= f.text_field :unit_of_measure, class: "form-control", placeholder: "ej. Unidades, Litros", required: true %>
+    </div>
+    <div class="col-md-4">
+      <%= f.label :stock, "Stock Inicial", class: "form-label fw-bold" %>
+      <%= f.number_field :stock, step: :any, class: "form-control", required: true %>
+    </div>
+    <div class="col-md-2">
+      <%= f.label :currency, "Moneda", class: "form-label fw-bold" %>
+      <%= f.select :currency, ['CLP', 'USD'], {}, { class: "form-select" } %>
+    </div>
+    <div class="col-md-2">
+      <%= f.label :cost, "Costo Unitario", class: "form-label fw-bold" %>
+      <%= f.number_field :cost, step: :any, class: "form-control", required: true %>
+    </div>
+
+    <div class="col-12 mt-4">
+      <label class="form-label fw-bold"><i class="bi bi-truck"></i> Vehículos Compatibles</label>
+      <div class="card shadow-sm border-0 bg-light">
+        <div class="card-body">
+          <div class="row g-2">
+            <%= f.collection_check_boxes :vehicle_ids, Vehicle.all.order(:plate), :id, :plate do |b| %>
+              <div class="col-sm-6 col-md-4 col-lg-3">
+                <div class="form-check">
+                  <%= b.check_box class: "form-check-input" %>
+                  <%= b.label class: "form-check-label" %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-end gap-2 mt-4">
+    <%= link_to "Cancelar", parts_path, class: "btn btn-outline-secondary" %>
+    <%= f.submit yield(:submit_text), class: "btn btn-primary" %>
+  </div>
+<% end %>

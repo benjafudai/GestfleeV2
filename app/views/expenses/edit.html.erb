@@ -1,0 +1,22 @@
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-2">
+          <li class="breadcrumb-item"><%= link_to "Costos", expenses_path, class: "text-decoration-none" %></li>
+          <li class="breadcrumb-item"><%= link_to "Gasto ##{@expense.id}", @expense, class: "text-decoration-none" %></li>
+          <li class="breadcrumb-item active" aria-current="page">Editar</li>
+        </ol>
+      </nav>
+      
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0"><i class="bi bi-pencil-square text-primary me-2"></i> Editar Gasto ##{@expense.id}</h1>
+        <%= link_to @expense, class: "btn btn-outline-secondary btn-sm shadow-sm" do %>
+          <i class="bi bi-eye me-1"></i> Ver Detalles
+        <% end %>
+      </div>
+
+      <%= render "form", expense: @expense %>
+    </div>
+  </div>
+</div>

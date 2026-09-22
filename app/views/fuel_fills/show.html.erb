@@ -1,0 +1,68 @@
+<div class="max-w-3xl mx-auto mt-8 px-4 sm:px-6 lg:px-8">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-3xl font-bold text-gray-900">
+      Detalle de Carga de Combustible
+    </h1>
+    <%= link_to "Volver al Historial", vehicle_fuel_fills_path(@fuel_fill.vehicle), class: "text-blue-600 hover:text-blue-800 font-medium" %>
+  </div>
+
+  <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+    <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
+      <h3 class="text-lg leading-6 font-medium text-gray-900">
+        Información de Carga
+      </h3>
+      <% if policy(@fuel_fill).edit? %>
+        <%= link_to "Editar", edit_fuel_fill_path(@fuel_fill), class: "text-sm text-indigo-600 hover:text-indigo-900 font-medium" %>
+      <% end %>
+    </div>
+    <div class="border-t border-gray-200">
+      <dl>
+        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <dt class="text-sm font-medium text-gray-500">Vehículo</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><%= @fuel_fill.vehicle.plate %> (<%= @fuel_fill.vehicle.model %>)</dd>
+        </div>
+        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <dt class="text-sm font-medium text-gray-500">Chofer</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><%= @fuel_fill.user.email %></dd>
+        </div>
+        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <dt class="text-sm font-medium text-gray-500">Fecha de Carga</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><%= l @fuel_fill.date, format: :long %></dd>
+        </div>
+        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <dt class="text-sm font-medium text-gray-500">Odómetro</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><%= number_with_delimiter @fuel_fill.odometer %> km</dd>
+        </div>
+        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <dt class="text-sm font-medium text-gray-500">Cantidad y Costo</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+            <%= @fuel_fill.liters %>L | <%= @fuel_fill.currency %> <%= number_to_currency(@fuel_fill.cost, unit: "$", precision: @fuel_fill.currency == 'CLP' ? 0 : 2) %>
+          </dd>
+        </div>
+        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <dt class="text-sm font-medium text-gray-500">Rendimiento Estimado (km/l)</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+            <%= @fuel_fill.km_per_liter.present? ? @fuel_fill.km_per_liter.round(2) : "Dato insuficiente (primera carga)" %>
+          </dd>
+        </div>
+        <% if @fuel_fill.notes.present? %>
+          <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt class="text-sm font-medium text-gray-500">Notas Adicionales</dt>
+            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><%= @fuel_fill.notes %></dd>
+          </div>
+        <% end %>
+        <% if @fuel_fill.ticket.attached? %>
+          <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 border-t border-gray-200">
+            <dt class="text-sm font-medium text-gray-500">Boleta / Respaldo</dt>
+            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+              <%= link_to "Ver Archivo Adjunto", rails_blob_path(@fuel_fill.ticket, disposition: "inline"), target: "_blank", class: "text-blue-600 hover:underline" %>
+              <div class="mt-4">
+                <%= image_tag @fuel_fill.ticket, class: "max-w-full h-auto rounded-lg border border-gray-300" if @fuel_fill.ticket.image? %>
+              </div>
+            </dd>
+          </div>
+        <% end %>
+      </dl>
+    </div>
+  </div>
+</div>

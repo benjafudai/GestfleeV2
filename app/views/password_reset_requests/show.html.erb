@@ -1,0 +1,34 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0">Validar Solicitud de Contraseña</h4>
+        </div>
+        <div class="card-body p-4">
+          <p class="mb-4">
+            El usuario <strong><%= @password_reset_request.user.email %></strong> ha solicitado restablecer su contraseña.
+            Por favor, asigna una contraseña temporal y comunícasela al usuario. El usuario podrá cambiarla posteriormente.
+          </p>
+
+          <%= form_with url: password_reset_request_path(@password_reset_request), method: :patch, local: true do |f| %>
+            <div class="mb-3">
+              <%= f.label :password, "Nueva Contraseña Temporal", class: "form-label fw-bold" %>
+              <%= f.password_field :password, class: "form-control", required: true, minlength: 6 %>
+            </div>
+
+            <div class="mb-4">
+              <%= f.label :password_confirmation, "Confirmar Contraseña", class: "form-label fw-bold" %>
+              <%= f.password_field :password_confirmation, class: "form-control", required: true, minlength: 6 %>
+            </div>
+
+            <div class="d-flex justify-content-between">
+              <%= link_to "Cancelar", password_reset_requests_path, class: "btn btn-outline-secondary" %>
+              <%= f.submit "Validar y Guardar Contraseña", class: "btn btn-primary" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

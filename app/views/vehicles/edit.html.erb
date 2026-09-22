@@ -1,0 +1,14 @@
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow-sm">
+        <div class="card-header bg-white">
+          <h2 class="h4 mb-0">Editar Vehículo <%= @vehicle.plate %></h2>
+        </div>
+        <div class="card-body">
+          <%= render "form", vehicle: @vehicle %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,155 @@
+<%= form_with(model: supply_request, local: true, id: "supply-request-form") do |f| %>
+  <% if supply_request.errors.any? %>
+    <div class="alert alert-danger">
+      <ul class="mb-0">
+        <% supply_request.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row g-4">
+    <div class="col-md-5">
+      <div class="card shadow-sm border-0 h-100">
+        <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
+          <h5 class="mb-0 fw-bold"><i class="bi bi-truck me-2 text-primary"></i>Datos Generales</h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <%= f.label :vehicle_id, "Vehículo", class: "form-label fw-bold" %>
+            <%= f.collection_select :vehicle_id, @vehicles, :id, :plate, { prompt: "Seleccione un vehículo" }, { class: "form-select", required: true, onchange: "updateAvailableParts(this.value)" } %>
+          </div>
+          
+          <div class="mb-3">
+            <%= f.label :admin_notes, "Notas / Observaciones", class: "form-label fw-bold" %>
+            <%= f.text_area :admin_notes, class: "form-control", rows: 4, placeholder: "Información adicional para bodega..." %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-7">
+      <div class="card shadow-sm border-0 h-100">
+        <div class="card-header bg-white border-bottom-0 pt-4 pb-0 d-flex justify-content-between align-items-center">
+          <h5 class="mb-0 fw-bold"><i class="bi bi-tools me-2 text-primary"></i>Repuestos Solicitados</h5>
+          <button type="button" class="btn btn-sm btn-outline-primary shadow-sm" onclick="addRequestLine()">
+            <i class="bi bi-plus-lg me-1"></i> Línea
+          </button>
+        </div>
+        <div class="card-body">
+          <div id="request-lines-container">
+            <%= f.fields_for :supply_request_lines do |line_form| %>
+              <div class="row g-2 mb-3 align-items-center request-line">
+                <div class="col-7">
+                  <%= line_form.collection_select :part_id, Part.all, :id, :name, { prompt: "Seleccione un repuesto" }, { class: "form-select part-selector", required: true, "data-fitments" => PartFitment.all.to_json(only: [:part_id, :vehicle_id]) } %>
+                </div>
+                <div class="col-4">
+                  <div class="input-group">
+                    <%= line_form.number_field :quantity, step: :any, class: "form-control", placeholder: "Cant.", required: true %>
+                  </div>
+                </div>
+                <div class="col-1 text-end">
+                  <% if line_form.object.persisted? %>
+                    <%= line_form.hidden_field :_destroy, class: "destroy-input" %>
+                  <% end %>
+                  <button type="button" class="btn btn-outline-danger btn-sm border-0" onclick="removeRequestLine(this)">
+                    <i class="bi bi-trash3"></i>
+                  </button>
+                </div>
+              </div>
+            <% end %>
+          </div>
+          <div class="text-muted small mt-2">
+            Solo aparecerán repuestos compatibles con el vehículo seleccionado.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-end gap-2 mt-4">
+    <%= link_to "Cancelar", supply_requests_path, class: "btn btn-outline-secondary" %>
+    <%= f.submit yield(:submit_text), class: "btn btn-primary shadow" %>
+  </div>
+<% end %>
+
+<template id="line-template">
+  <div class="row g-2 mb-3 align-items-center request-line">
+    <div class="col-7">
+      <select name="supply_request[supply_request_lines_attributes][NEW_RECORD][part_id]" class="form-select part-selector" required>
+        <option value="">Seleccione un repuesto</option>
+        <% Part.all.each do |p| %>
+          <option value="<%= p.id %>"><%= p.name %></option>
+        <% end %>
+      </select>
+    </div>
+    <div class="col-4">
+      <div class="input-group">
+        <input type="number" name="supply_request[supply_request_lines_attributes][NEW_RECORD][quantity]" step="any" class="form-control" placeholder="Cant." required>
+      </div>
+    </div>
+    <div class="col-1 text-end">
+      <button type="button" class="btn btn-outline-danger btn-sm border-0" onclick="removeRequestLine(this)">
+        <i class="bi bi-trash3"></i>
+      </button>
+    </div>
+  </div>
+</template>
+
+<script>
+  const fitments = <%= raw PartFitment.all.to_json(only: [:part_id, :vehicle_id]) %>;
+  const allParts = <%= raw Part.all.map { |p| { id: p.id, name: p.name } }.to_json %>;
+
+  window.addRequestLine = function() {
+    const time = new Date().getTime();
+    const template = document.getElementById('line-template').innerHTML.replace(/NEW_RECORD/g, time);
+    const container = document.getElementById('request-lines-container');
+    container.insertAdjacentHTML('beforeend', template);
+    
+    const vehicleId = document.getElementById('supply_request_vehicle_id').value;
+    if(vehicleId) { updateAvailableParts(vehicleId); }
+  }
+
+  window.removeRequestLine = function(btn) {
+    const line = btn.closest('.request-line');
+    const destroyInput = line.querySelector('.destroy-input');
+    if(destroyInput) {
+      destroyInput.value = '1';
+      line.style.display = 'none';
+    } else {
+      line.remove();
+    }
+  }
+
+  window.updateAvailableParts = function(vehicleId) {
+    const vehicleIdInt = parseInt(vehicleId);
+    const allowedPartIds = fitments.filter(f => f.vehicle_id === vehicleIdInt).map(f => f.part_id);
+    const selectors = document.querySelectorAll('.part-selector');
+    
+    selectors.forEach(select => {
+      const currentValue = select.value;
+      select.innerHTML = '';
+      
+      if (allowedPartIds.length === 0 && vehicleIdInt) {
+        select.innerHTML = '<option value="">(Vehículo sin repuestos compatibles)</option>';
+      } else {
+        select.innerHTML = '<option value="">Seleccione un repuesto</option>';
+        allParts.forEach(part => {
+          if (allowedPartIds.includes(part.id)) {
+            const opt = document.createElement('option');
+            opt.value = part.id;
+            opt.text = part.name;
+            if (currentValue == part.id) opt.selected = true;
+            select.appendChild(opt);
+          }
+        });
+      }
+    });
+  }
+
+  document.addEventListener("turbo:load", () => {
+    const select = document.getElementById('supply_request_vehicle_id');
+    if (select && select.value) { updateAvailableParts(select.value); }
+  });
+</script>

@@ -1,0 +1,64 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3"><i class="bi bi-inboxes me-2 text-primary"></i> Solicitudes de Suministros</h1>
+    <% if policy(SupplyRequest).create? %>
+      <%= link_to new_supply_request_path, class: "btn btn-primary shadow-sm" do %>
+        <i class="bi bi-plus-lg me-1"></i> Nueva Solicitud
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Folio</th>
+              <th>Vehículo</th>
+              <th>Solicitante</th>
+              <th>Fecha</th>
+              <th>Líneas</th>
+              <th>Estado</th>
+              <th class="text-end">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if @supply_requests.any? %>
+              <% @supply_requests.each do |req| %>
+                <tr>
+                  <td class="fw-bold text-muted">#<%= req.id %></td>
+                  <td><span class="fw-bold"><%= req.vehicle.plate %></span></td>
+                  <td class="text-muted small"><%= req.user.email %></td>
+                  <td><%= l(req.created_at, format: :short) %></td>
+                  <td><span class="badge bg-secondary rounded-pill"><%= req.supply_request_lines.count %></span></td>
+                  <td>
+                    <% badge_class = case req.status
+                        when 'requested' then 'text-bg-secondary'
+                        when 'received' then 'text-bg-warning text-dark'
+                        when 'purchasing' then 'text-bg-info text-dark'
+                        when 'delivered' then 'text-bg-success'
+                        end %>
+                    <span class="badge <%= badge_class %> px-2 py-1 shadow-sm">
+                      <%= SupplyRequest.human_enum_name(:status, req.status).upcase %>
+                    </span>
+                  </td>
+                  <td class="text-end">
+                    <%= link_to "Ver", req, class: "btn btn-sm btn-outline-primary" %>
+                  </td>
+                </tr>
+              <% end %>
+            <% else %>
+              <tr>
+                <td colspan="7" class="text-center py-5 text-muted">
+                  <i class="bi bi-folder2-open display-4 d-block mb-3 opacity-50"></i>
+                  No hay solicitudes en curso.
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

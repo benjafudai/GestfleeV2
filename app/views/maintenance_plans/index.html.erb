@@ -1,0 +1,73 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3"><i class="bi bi-calendar-check me-2"></i> Planes de Mantenimiento</h1>
+    <% if policy(MaintenancePlan).create? %>
+      <%= link_to new_maintenance_plan_path, class: "btn btn-primary shadow-sm" do %>
+        <i class="bi bi-plus-lg me-1"></i> Nuevo Plan
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Nombre</th>
+              <th>Descripción</th>
+              <th class="text-center">Intervalo (Km)</th>
+              <th class="text-center">Intervalo (Días)</th>
+              <th class="text-end" style="min-width: 150px;">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if @maintenance_plans.any? %>
+              <% @maintenance_plans.each do |plan| %>
+                <tr>
+                  <td class="fw-bold"><%= plan.name %></td>
+                  <td class="text-muted text-truncate" style="max-width: 200px;"><%= plan.description %></td>
+                  <td class="text-center">
+                    <% if plan.interval_km.present? %>
+                      <span class="badge bg-info text-dark rounded-pill px-3 py-2 shadow-sm">
+                        <i class="bi bi-speedometer2 me-1"></i> <%= number_with_delimiter(plan.interval_km) %> km
+                      </span>
+                    <% else %>
+                      <span class="text-muted">-</span>
+                    <% end %>
+                  </td>
+                  <td class="text-center">
+                    <% if plan.interval_days.present? %>
+                      <span class="badge bg-secondary rounded-pill px-3 py-2 shadow-sm">
+                        <i class="bi bi-calendar3 me-1"></i> <%= plan.interval_days %> días
+                      </span>
+                    <% else %>
+                      <span class="text-muted">-</span>
+                    <% end %>
+                  </td>
+                  <td class="text-end">
+                    <%= link_to plan, class: "btn btn-sm btn-outline-primary shadow-sm me-1", title: "Ver detalles" do %>
+                      <i class="bi bi-eye"></i>
+                    <% end %>
+                    <% if policy(plan).edit? %>
+                      <%= link_to edit_maintenance_plan_path(plan), class: "btn btn-sm btn-outline-secondary shadow-sm", title: "Editar" do %>
+                        <i class="bi bi-pencil"></i>
+                      <% end %>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            <% else %>
+              <tr>
+                <td colspan="5" class="text-center py-5 text-muted">
+                  <i class="bi bi-journal-x display-4 d-block mb-3 opacity-50"></i>
+                  No hay planes de mantenimiento registrados.
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

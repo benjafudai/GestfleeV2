@@ -1,0 +1,82 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3">Incidentes</h1>
+    <% if policy(Incident).new? %>
+      <%= link_to new_incident_path, class: "btn btn-primary" do %>
+        <i class="bi bi-plus-lg"></i> Reportar Incidente
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover table-striped mb-0 align-middle">
+          <thead class="table-light">
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Vehículo</th>
+              <th scope="col">Reportado por</th>
+              <th scope="col">Fecha</th>
+              <th scope="col">Severidad</th>
+              <th scope="col">Estado</th>
+              <th scope="col" class="text-end">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @incidents.each do |incident| %>
+              <tr>
+                <td class="fw-bold">
+                  <%= link_to "##{incident.id}", incident_path(incident), class: "text-decoration-none" %>
+                </td>
+                <td>
+                  <%= link_to incident.vehicle.plate, vehicle_path(incident.vehicle), class: "text-decoration-none" if incident.vehicle %>
+                </td>
+                <td><%= incident.reporter&.email %></td>
+                <td><%= incident.created_at.strftime("%d/%m/%Y %H:%M") %></td>
+                <td>
+                  <% severity_class = case incident.severity
+                     when 'low' then 'text-bg-info'
+                     when 'medium' then 'text-bg-warning'
+                     when 'high' then 'text-bg-danger'
+                     when 'critical' then 'text-bg-dark'
+                     else 'text-bg-light'
+                     end %>
+                  <span class="badge <%= severity_class %> rounded-pill">
+                    <%= incident.severity&.humanize || 'No especificada' %>
+                  </span>
+                </td>
+                <td>
+                  <% status_class = case incident.status
+                     when 'pending' then 'text-bg-secondary'
+                     when 'in_review' then 'text-bg-primary'
+                     when 'resolved' then 'text-bg-success'
+                     else 'text-bg-light'
+                     end %>
+                  <span class="badge <%= status_class %> rounded-pill">
+                    <%= incident.status&.humanize || 'Pendiente' %>
+                  </span>
+                </td>
+                <td class="text-end">
+                  <div class="btn-group btn-group-sm">
+                    <%= link_to "Ver", incident_path(incident), class: "btn btn-outline-secondary" %>
+                    <% if policy(incident).edit? %>
+                      <%= link_to "Editar", edit_incident_path(incident), class: "btn btn-outline-primary" %>
+                    <% end %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+            <% if @incidents.empty? %>
+              <tr>
+                <td colspan="7" class="text-center py-5 text-muted">
+                  No hay incidentes reportados.
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

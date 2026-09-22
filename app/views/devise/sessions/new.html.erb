@@ -1,0 +1,379 @@
+<% content_for :title, "Acceso | GestFlee" %>
+<style>
+  html, body { height: 100%; margin: 0; padding: 0; }
+  body { background: #f0f4fa; }
+
+  .gf-login-page {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ── PANEL IZQUIERDO ── */
+  .gf-login-hero {
+    flex: 1.1;
+    background: #0c1b3a;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 52px 56px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .gf-login-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(37,99,235,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(37,99,235,0.06) 1px, transparent 1px);
+    background-size: 44px 44px;
+  }
+
+  .gf-login-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -120px;
+    right: -80px;
+    width: 380px;
+    height: 380px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(37,99,235,0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .gf-hero-top { position: relative; z-index: 1; }
+
+  .gf-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 64px;
+  }
+
+  .gf-brand-icon {
+    width: 42px;
+    height: 42px;
+    background: #f97316;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .gf-brand-name {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.9);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    line-height: 1.2;
+  }
+
+  .gf-brand-sub {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.38);
+    font-weight: 400;
+  }
+
+  .gf-hero-heading {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+    letter-spacing: -0.03em;
+    margin-bottom: 16px;
+    max-width: 360px;
+  }
+
+  .gf-hero-heading span { color: #f97316; }
+
+  .gf-hero-desc {
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.48);
+    max-width: 320px;
+    line-height: 1.7;
+  }
+
+  .gf-hero-roles { position: relative; z-index: 1; margin-top: 48px; }
+
+  .gf-hero-roles-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .gf-roles-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  .gf-role-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.55);
+    font-weight: 500;
+  }
+
+  .gf-hero-footer {
+    position: relative;
+    z-index: 1;
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.20);
+  }
+
+  /* ── PANEL DERECHO ── */
+  .gf-login-side {
+    flex: 0.9;
+    background: #f0f4fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 40px;
+  }
+
+  .gf-login-box {
+    width: 100%;
+    max-width: 400px;
+    animation: gfSlideUp 0.45s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+
+  @keyframes gfSlideUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .gf-login-eyebrow {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #2563eb;
+    margin-bottom: 8px;
+  }
+
+  .gf-login-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #0c1b3a;
+    letter-spacing: -0.03em;
+    margin-bottom: 6px;
+  }
+
+  .gf-login-subtitle {
+    font-size: 0.9rem;
+    color: #64748b;
+    margin-bottom: 32px;
+  }
+
+  /* Campos */
+  .gf-login-field { margin-bottom: 18px; }
+
+  .gf-login-label {
+    display: block;
+    font-size: 0.83rem;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 7px;
+  }
+
+  .gf-login-input-wrap { position: relative; }
+
+  .gf-login-input-wrap i.prefix {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    font-size: 0.9rem;
+    pointer-events: none;
+    transition: color 0.22s;
+  }
+
+  .gf-login-input-wrap input {
+    width: 100%;
+    height: 48px;
+    padding: 0 44px;
+    background: #fff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.93rem;
+    color: #0c1b3a;
+    outline: none;
+    transition: border-color 0.22s, box-shadow 0.22s;
+    margin: 0;
+  }
+
+  .gf-login-input-wrap:focus-within input {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+  }
+
+  .gf-login-input-wrap:focus-within i.prefix { color: #2563eb; }
+
+  /* Botón login */
+  .gf-btn-login {
+    width: 100%;
+    height: 50px;
+    background: #0c1b3a;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.22s, box-shadow 0.22s, transform 0.22s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    letter-spacing: -0.01em;
+    margin-top: 22px;
+  }
+
+  .gf-btn-login:hover {
+    background: #1a3260;
+    box-shadow: 0 6px 20px rgba(12,27,58,0.30);
+    transform: translateY(-1px);
+  }
+
+  /* Error / Alert devise */
+  .gf-login-errors {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    padding: 11px 14px;
+    font-size: 0.86rem;
+    color: #dc2626;
+    font-weight: 500;
+    margin-bottom: 18px;
+  }
+
+  /* Enlace olvidé contraseña */
+  .gf-forgot-link {
+    display: block;
+    text-align: right;
+    margin-top: -10px;
+    margin-bottom: 16px;
+    font-size: 0.82rem;
+    color: #2563eb;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .gf-forgot-link:hover { text-decoration: underline; }
+
+  @media (max-width: 900px) {
+    .gf-login-page { flex-direction: column; }
+    .gf-login-hero { flex: none; padding: 36px 28px 32px; min-height: auto; }
+    .gf-hero-heading { font-size: 1.6rem; }
+    .gf-hero-roles { margin-top: 28px; }
+    .gf-login-side { padding: 36px 24px; }
+    .gf-login-box { max-width: 100%; }
+  }
+</style>
+
+<div class="gf-login-page">
+
+  <!-- ── PANEL IZQUIERDO — MARCA ── -->
+  <aside class="gf-login-hero">
+    <div class="gf-hero-top">
+
+      <div class="gf-brand">
+        <div class="gf-brand-icon">
+          <i class="fa-solid fa-truck-fast"></i>
+        </div>
+        <div>
+          <div class="gf-brand-name">GestFlee</div>
+          <div class="gf-brand-sub">Gestión de Flota Vehicular</div>
+        </div>
+      </div>
+
+      <h1 class="gf-hero-heading">
+        Control total<br>de tu <span>flota</span><br>en un solo lugar.
+      </h1>
+      <p class="gf-hero-desc">
+        Checklists, mantenimiento, combustible, incidentes y gestión de flota integrados y en tiempo real.
+      </p>
+
+      <div class="gf-hero-roles">
+        <div class="gf-hero-roles-label">Roles del sistema</div>
+        <div class="gf-roles-chips">
+          <span class="gf-role-chip"><i class="fa-solid fa-user-gear"></i> Administrador</span>
+          <span class="gf-role-chip"><i class="fa-solid fa-truck"></i> Conductor</span>
+          <span class="gf-role-chip"><i class="fa-solid fa-wrench"></i> Técnico Mecánico</span>
+          <span class="gf-role-chip"><i class="fa-solid fa-chart-column"></i> Analista</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="gf-hero-footer">
+      © <%= Date.current.year %> GestFlee — Sistema interno de flota
+    </div>
+  </aside>
+
+  <!-- ── PANEL DERECHO — FORMULARIO ── -->
+  <main class="gf-login-side">
+    <div class="gf-login-box">
+
+      <div class="gf-login-eyebrow">Acceso al sistema</div>
+      <h2 class="gf-login-title">Bienvenido de vuelta</h2>
+      <p class="gf-login-subtitle">Ingresa tus credenciales para continuar.</p>
+
+      <% if flash[:alert] %>
+        <div class="gf-login-errors">
+          <i class="fa-solid fa-circle-exclamation" style="margin-right:6px;"></i>
+          <%= flash[:alert] %>
+        </div>
+      <% end %>
+
+      <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+        <%= render "devise/shared/error_messages", resource: resource %>
+
+        <div class="gf-login-field">
+          <label class="gf-login-label" for="user_email">Correo electrónico</label>
+          <div class="gf-login-input-wrap">
+            <%= f.email_field :email, autofocus: true, autocomplete: "email",
+                placeholder: "ej: admin@empresa.cl", id: "user_email" %>
+            <i class="fa-solid fa-envelope prefix"></i>
+          </div>
+        </div>
+
+        <div class="gf-login-field">
+          <label class="gf-login-label" for="user_password">Contraseña</label>
+          <div class="gf-login-input-wrap">
+            <%= f.password_field :password, autocomplete: "current-password",
+                placeholder: "••••••••", id: "user_password" %>
+            <i class="fa-solid fa-lock prefix"></i>
+          </div>
+        </div>
+
+        <%= link_to "¿Olvidaste tu contraseña?", new_user_password_path, class: "gf-forgot-link" %>
+
+        <% if devise_mapping.rememberable? %>
+          <div style="margin-bottom:16px; display:flex; align-items:center; gap:8px;">
+            <%= f.check_box :remember_me, style: "width:auto; accent-color:#2563eb;" %>
+            <label style="font-size:0.85rem; color:#64748b; margin:0; font-weight:500;">Recordar sesión</label>
+          </div>
+        <% end %>
+
+        <button type="submit" class="gf-btn-login">
+          <i class="fa-solid fa-arrow-right-to-bracket"></i>
+          Ingresar
+        </button>
+      <% end %>
+
+    </div>
+  </main>
+
+</div>

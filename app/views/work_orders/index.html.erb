@@ -1,0 +1,97 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3"><i class="bi bi-tools me-2"></i> Órdenes de Trabajo</h1>
+    <% if policy(WorkOrder).create? %>
+      <%= link_to new_work_order_path, class: "btn btn-primary shadow-sm" do %>
+        <i class="bi bi-plus-lg me-1"></i> Nueva Orden
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>ID</th>
+              <th>Vehículo</th>
+              <th>Plan / Tipo</th>
+              <th>Asignado a</th>
+              <th>Estado</th>
+              <th>Fechas</th>
+              <th class="text-end" style="min-width: 150px;">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if @work_orders.any? %>
+              <% @work_orders.order(created_at: :desc).each do |work_order| %>
+                <tr>
+                  <td class="fw-medium text-muted">#<%= work_order.id %></td>
+                  <td class="fw-bold">
+                    <%= work_order.vehicle&.plate %>
+                    <span class="d-block text-muted fw-normal small"><%= work_order.vehicle&.brand %> <%= work_order.vehicle&.model %></span>
+                  </td>
+                  <td>
+                    <% if work_order.maintenance_plan %>
+                      <span class="badge bg-light text-dark border"><i class="bi bi-journal-check me-1"></i> <%= work_order.maintenance_plan.name %></span>
+                    <% else %>
+                      <span class="badge bg-light text-dark border"><i class="bi bi-wrench me-1"></i> Correctivo</span>
+                    <% end %>
+                  </td>
+                  <td>
+                    <% if work_order.mechanic %>
+                      <div class="d-flex align-items-center">
+                        <i class="bi bi-person-badge text-primary me-2"></i>
+                        <span><%= work_order.mechanic.email.split('@').first.capitalize %></span>
+                      </div>
+                    <% else %>
+                      <span class="text-muted fst-italic">Sin asignar</span>
+                    <% end %>
+                  </td>
+                  <td>
+                    <% case work_order.status %>
+                    <% when 'pending' %>
+                      <span class="badge bg-warning text-dark rounded-pill px-3 py-2 shadow-sm"><i class="bi bi-hourglass-split me-1"></i> Pendiente</span>
+                    <% when 'in_progress' %>
+                      <span class="badge bg-primary rounded-pill px-3 py-2 shadow-sm"><i class="bi bi-play-circle me-1"></i> En Progreso</span>
+                    <% when 'completed' %>
+                      <span class="badge bg-success rounded-pill px-3 py-2 shadow-sm"><i class="bi bi-check-circle me-1"></i> Completada</span>
+                    <% when 'cancelled' %>
+                      <span class="badge bg-danger rounded-pill px-3 py-2 shadow-sm"><i class="bi bi-x-circle me-1"></i> Cancelada</span>
+                    <% end %>
+                  </td>
+                  <td>
+                    <div class="small">
+                      <div class="text-muted"><i class="bi bi-calendar-event me-1"></i> <%= work_order.start_date&.strftime("%d/%m/%Y") || "No definida" %></div>
+                      <% if work_order.end_date.present? %>
+                        <div class="text-secondary"><i class="bi bi-calendar-check me-1"></i> <%= work_order.end_date.strftime("%d/%m/%Y") %></div>
+                      <% end %>
+                    </div>
+                  </td>
+                  <td class="text-end">
+                    <%= link_to work_order, class: "btn btn-sm btn-outline-primary shadow-sm me-1", title: "Ver detalles" do %>
+                      <i class="bi bi-eye"></i>
+                    <% end %>
+                    <% if policy(work_order).edit? %>
+                      <%= link_to edit_work_order_path(work_order), class: "btn btn-sm btn-outline-secondary shadow-sm", title: "Editar" do %>
+                        <i class="bi bi-pencil"></i>
+                      <% end %>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            <% else %>
+              <tr>
+                <td colspan="7" class="text-center py-5 text-muted">
+                  <i class="bi bi-clipboard-x display-4 d-block mb-3 opacity-50"></i>
+                  No hay órdenes de trabajo registradas.
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

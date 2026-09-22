@@ -1,0 +1,224 @@
+<div class="container mt-4">
+
+  <%# ── Bienvenida ── %>
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card border-0 bg-warning-subtle shadow-sm">
+        <div class="card-body d-flex align-items-center gap-3 py-3">
+          <i class="bi bi-truck fs-2 text-warning"></i>
+          <div>
+            <h4 class="mb-0 fw-semibold">Bienvenido, <%= current_user.email %></h4>
+            <span class="badge bg-warning text-dark">Chofer</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%# ── Vehículo asignado ── %>
+  <div class="row">
+    <div class="col-12 mb-4">
+      <h5 class="text-muted text-uppercase small fw-semibold mb-3">
+        <i class="bi bi-car-front me-1"></i> Mi Vehículo Asignado
+      </h5>
+
+      <% if @vehicle %>
+        <div class="row g-3">
+
+          <%# Card info vehículo %>
+          <div class="col-lg-5">
+            <div class="card shadow-sm h-100">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                  <h3 class="h4 mb-0 fw-bold"><%= @vehicle.plate %></h3>
+                  <% badge_class = case @vehicle.status
+                       when 'active'      then 'text-bg-success'
+                       when 'maintenance' then 'text-bg-warning'
+                       when 'inactive'    then 'text-bg-secondary'
+                       else 'text-bg-light'
+                       end %>
+                  <span class="badge <%= badge_class %> rounded-pill">
+                    <%= @vehicle.status.humanize %>
+                  </span>
+                </div>
+
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item d-flex justify-content-between px-0">
+                    <span class="text-muted">Marca</span>
+                    <span class="fw-medium"><%= @vehicle.brand %></span>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between px-0">
+                    <span class="text-muted">Modelo</span>
+                    <span class="fw-medium"><%= @vehicle.model %></span>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between px-0">
+                    <span class="text-muted">Año</span>
+                    <span class="fw-medium"><%= @vehicle.year %></span>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between px-0">
+                    <span class="text-muted">Odómetro</span>
+                    <span class="fw-medium"><%= number_with_delimiter(@vehicle.odometer) %> km</span>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between px-0">
+                    <span class="text-muted">Asignado desde</span>
+                    <span class="fw-medium"><%= l(@assignment.started_on, format: :long) %></span>
+                  </li>
+                </ul>
+
+                <% if @assignment.notes.present? %>
+                  <div class="mt-3 p-2 bg-light rounded small text-muted">
+                    <i class="bi bi-chat-left-text me-1"></i><%= @assignment.notes %>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+
+          <%# Card documentos del vehículo %>
+          <div class="col-lg-7">
+            <div class="card shadow-sm h-100">
+              <div class="card-header bg-white">
+                <h6 class="mb-0">
+                  <i class="bi bi-file-earmark-text me-1"></i>
+                  Documentación del Vehículo
+                </h6>
+              </div>
+              <div class="card-body p-0">
+                <% if @documents.any? %>
+                  <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                      <thead class="table-light">
+                        <tr>
+                          <th>Tipo</th>
+                          <th>Vencimiento</th>
+                          <th>Estado</th>
+                          <th>PDF</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% @documents.each do |doc| %>
+                          <tr>
+                            <td class="small fw-medium">
+                              <%= doc.doc_type.humanize.tr('_',' ').capitalize %>
+                            </td>
+                            <td class="small">
+                              <% if doc.due_on %>
+                                <%= l(doc.due_on, format: :long) %>
+                                <% if doc.due_on < Date.today %>
+                                  <span class="badge text-bg-danger ms-1">Vencido</span>
+                                <% elsif doc.due_on < Date.today + 30.days %>
+                                  <span class="badge text-bg-warning ms-1">Por vencer</span>
+                                <% end %>
+                              <% else %>
+                                <span class="text-muted">-</span>
+                              <% end %>
+                            </td>
+                            <td>
+                              <% sc = case doc.status
+                                   when 'ok'       then 'text-bg-success'
+                                   when 'expiring' then 'text-bg-warning'
+                                   when 'expired'  then 'text-bg-danger'
+                                   else 'text-bg-secondary'
+                                   end %>
+                              <span class="badge <%= sc %>"><%= doc.status.humanize %></span>
+                            </td>
+                            <td>
+                              <% if doc.file.attached? %>
+                                <%= link_to rails_blob_path(doc.file, disposition: "inline"),
+                                      target: "_blank",
+                                      class: "btn btn-outline-danger btn-sm",
+                                      title: doc.file.filename.to_s do %>
+                                  <i class="bi bi-file-earmark-pdf-fill"></i>
+                                <% end %>
+                              <% else %>
+                                <span class="text-muted small">—</span>
+                              <% end %>
+                            </td>
+                          </tr>
+                        <% end %>
+                      </tbody>
+                    </table>
+                  </div>
+                <% else %>
+                  <div class="text-center py-4 text-muted">
+                    <i class="bi bi-file-earmark-x d-block mb-2 fs-3 opacity-50"></i>
+                    <p class="small mb-0">Sin documentos registrados.</p>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+
+        </div><%# /row g-3 %>
+
+        <%# ── Acciones Adicionales y Checklists ── %>
+        <div class="row mt-4">
+          <div class="col-12">
+            <div class="card shadow-sm border-start border-4 border-primary">
+              <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h6 class="mb-0"><i class="bi bi-clipboard-check me-1"></i> Mis Checklists Recientes</h6>
+                <%= link_to new_checklist_submission_path, class: "btn btn-sm btn-primary" do %>
+                  <i class="bi bi-pencil-square me-1"></i> Completar Checklist del Día
+                <% end %>
+              </div>
+              <div class="card-body p-0">
+                <% if @my_submissions.any? %>
+                  <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                      <thead class="table-light">
+                        <tr>
+                          <th>Plantilla</th>
+                          <th>Fecha</th>
+                          <th>Estado</th>
+                          <th class="text-end">Acciones</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% @my_submissions.each do |sub| %>
+                          <tr>
+                            <td class="small fw-medium"><%= sub.checklist_template.name %></td>
+                            <td class="small"><%= l(sub.submitted_at, format: :long) %></td>
+                            <td>
+                              <% badge_class = case sub.status
+                                  when 'pending'  then 'text-bg-warning'
+                                  when 'approved' then 'text-bg-success'
+                                  when 'rejected' then 'text-bg-danger'
+                                  end %>
+                              <span class="badge <%= badge_class %>">
+                                <%= sub.status == 'pending' ? 'Pendiente' : sub.status == 'approved' ? 'Aprobado' : 'Rechazado' %>
+                              </span>
+                            </td>
+                            <td class="text-end">
+                              <%= link_to "Ver", sub, class: "btn btn-sm btn-outline-secondary" %>
+                            </td>
+                          </tr>
+                        <% end %>
+                      </tbody>
+                    </table>
+                  </div>
+                <% else %>
+                  <div class="text-center py-4 text-muted">Aún no has completado ningún checklist pre-operativo.</div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      <% else %>
+        <%# Sin asignación activa %>
+        <div class="card shadow-sm border-0 bg-light">
+          <div class="card-body text-center py-5 text-muted">
+            <i class="bi bi-truck display-4 d-block mb-3 opacity-40"></i>
+            <h5>Sin vehículo asignado</h5>
+            <p class="small mb-0">
+              Aún no tienes un vehículo asignado.<br>
+              Contacta a tu administrador para que te asigne uno.
+            </p>
+          </div>
+        </div>
+      <% end %>
+
+    </div>
+  </div>
+
+</div>

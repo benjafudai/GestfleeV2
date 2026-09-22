@@ -1,0 +1,14 @@
+<div class="max-w-3xl mx-auto mt-8 px-4 sm:px-6 lg:px-8">
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-900">Editar Carga de Combustible</h1>
+    <% if @fuel_fill.vehicle %>
+      <p class="mt-2 text-sm text-gray-600">Patente: <strong><%= @fuel_fill.vehicle.plate %></strong></p>
+    <% end %>
+  </div>
+
+  <div class="bg-white shadow sm:rounded-lg">
+    <div class="px-4 py-5 sm:p-6">
+      <%= render "form", fuel_fill: @fuel_fill %>
+    </div>
+  </div>
+</div>

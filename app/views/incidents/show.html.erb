@@ -1,0 +1,100 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3">Detalle del Incidente #<%= @incident.id %></h1>
+    <div>
+      <%= link_to "Volver a Incidentes", incidents_path, class: "btn btn-outline-secondary me-2" %>
+      <% if policy(@incident).edit? %>
+        <%= link_to "Editar", edit_incident_path(@incident), class: "btn btn-primary" %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-white fw-bold">
+          Información del Incidente
+        </div>
+        <div class="card-body">
+          <p><strong>Vehículo:</strong> <%= link_to @incident.vehicle.plate, vehicle_path(@incident.vehicle) %></p>
+          <p><strong>Reportado por:</strong> <%= @incident.reporter&.email %></p>
+          <p><strong>Fecha y Hora:</strong> <%= @incident.created_at.strftime("%d/%m/%Y %H:%M") %></p>
+          
+          <p>
+            <strong>Severidad:</strong>
+            <% severity_class = case @incident.severity
+               when 'low' then 'text-bg-info'
+               when 'medium' then 'text-bg-warning'
+               when 'high' then 'text-bg-danger'
+               when 'critical' then 'text-bg-dark'
+               else 'text-bg-light'
+               end %>
+            <span class="badge <%= severity_class %>"><%= @incident.severity&.humanize || 'No especificada' %></span>
+          </p>
+          
+          <p>
+            <strong>Estado:</strong>
+            <% status_class = case @incident.status
+               when 'pending' then 'text-bg-secondary'
+               when 'in_review' then 'text-bg-primary'
+               when 'resolved' then 'text-bg-success'
+               else 'text-bg-light'
+               end %>
+            <span class="badge <%= status_class %>"><%= @incident.status&.humanize || 'Pendiente' %></span>
+          </p>
+
+          <hr>
+          
+          <p><strong>Descripción:</strong></p>
+          <div class="p-3 bg-light rounded mb-4">
+            <%= simple_format(@incident.description) %>
+          </div>
+
+          <% if @incident.latitude.present? && @incident.longitude.present? %>
+            <hr>
+            <p><strong>Ubicación del Incidente:</strong> <span class="text-muted ms-2 small">(Lat: <%= @incident.latitude.round(4) rescue @incident.latitude %>, Lng: <%= @incident.longitude.round(4) rescue @incident.longitude %>)</span></p>
+            
+            <div style="width: 100%; height: 300px; border-radius: 8px; overflow: hidden; border: 1px solid #dee2e6;">
+              <iframe 
+                width="100%" 
+                height="100%" 
+                frameborder="0" 
+                style="border:0;" 
+                allowfullscreen="" 
+                aria-hidden="false" 
+                tabindex="0"
+                src="https://maps.google.com/maps?q=<%= @incident.latitude %>,<%= @incident.longitude %>&z=15&output=embed">
+              </iframe>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-4">
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-white fw-bold">
+          Evidencias Fotográficas
+        </div>
+        <div class="card-body p-0">
+          <% if @incident.photos.attached? %>
+            <div class="list-group list-group-flush">
+              <% @incident.photos.each do |photo| %>
+                <div class="list-group-item text-center p-3">
+                  <%= image_tag photo, class: "img-fluid border rounded rounded-3 mb-2", style: "max-width: 100%; max-height: 400px; object-fit: contain;" %>
+                  <br>
+                  <%= link_to "Descargar Imagen", rails_blob_path(photo, disposition: "attachment"), class: "btn btn-sm btn-outline-secondary mt-2" %>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <div class="p-4 text-center text-muted">
+              <i class="bi bi-image" style="font-size: 2rem;"></i>
+              <p class="mt-2 mb-0">No se adjuntaron fotos.</p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

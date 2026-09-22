@@ -1,0 +1,27 @@
+<div class="d-flex align-items-center justify-content-center min-vh-100 bg-light" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
+  <div class="card shadow-lg border-0 rounded-4" style="width: 100%; max-width: 400px;">
+    <div class="card-body p-5">
+      <div class="text-center mb-4">
+        <h2 class="fw-bold text-primary mb-1">Recuperar Contraseña</h2>
+        <p class="text-muted small">Te enviaremos las instrucciones a tu administrador</p>
+      </div>
+
+      <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
+        <%= render "devise/shared/error_messages", resource: resource %>
+
+        <div class="form-floating mb-4">
+          <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control", id: "floatingEmail", placeholder: "nombre@empresa.com" %>
+          <%= f.label :email, "Correo Electrónico", for: "floatingEmail" %>
+        </div>
+
+        <div class="d-grid mb-3">
+          <%= f.submit "Solicitar Recuperación", class: "btn btn-primary btn-lg rounded-pill fw-semibold shadow-sm" %>
+        </div>
+      <% end %>
+
+      <div class="text-center mt-4">
+        <%= link_to "Volver al inicio de sesión", new_session_path(resource_name), class: "text-decoration-none text-secondary small" %>
+      </div>
+    </div>
+  </div>
+</div>
