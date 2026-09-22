@@ -4,7 +4,7 @@ Auditoría "ultra detallista" de funcionalidad, rol por rol, iniciada 2026-09-22
 Foco exclusivo en funcionalidad (bugs reales) — lo visual/diseño queda para una
 pasada aparte, después de terminar los 5 roles.
 
-**Estado:** Chofer ✅ · Mecánico ✅ · Analista ⬜ · Admin ⬜ · Superadmin ⬜
+**Estado:** Chofer ✅ · Mecánico ✅ · Analista ✅ · Admin ⬜ · Superadmin ⬜
 
 ## Metodología
 
@@ -112,11 +112,53 @@ de datos real) antes de hacer commit.
 
 ---
 
+## Rol: Analista — commit [`e4afe0a`](https://github.com/benjafudai/GestfleeV2/commit/e4afe0a)
+
+### Corregido
+- **`FuelFillPolicy` excluía a analista de `index?`/`show?` por completo**
+  — el menú le mostraba el link a Combustible pero al entrar le negaba el
+  permiso. Además, aunque se arreglara el rol, el `Scope#resolve` caía en
+  la rama pensada solo para chofer (`where(user_id: user.id)`, "mis
+  propios registros"), que para analista habría quedado siempre vacía.
+- **`ExpensePolicy` nunca mencionaba a superadmin** (ni en `index?`, ni en
+  `show?`, ni en `Scope#resolve`) — el único rol pensado para ver todo no
+  podía ver Costos en ninguna empresa.
+- Mismo patrón repetido 3 veces esta semana (mecánico/`MaintenancePlan`,
+  analista/`FuelFill`, superadmin/`Expense`): un rol simplemente olvidado
+  en una policy. Se agregaron helpers compartidos `same_company?` y
+  `Scope#company_scoped` a `ApplicationPolicy` y se migraron
+  `FuelFillPolicy`, `SupplyRequestPolicy` y `ExpensePolicy` para usarlos,
+  eliminando el `same_company?` duplicado que cada policy reinventaba por
+  su cuenta.
+- La categoría de un gasto se mostraba en español en el listado pero en
+  inglés crudo (`.humanize`) en el detalle — se agregó
+  `Expense.human_category`, mismo patrón que `SupplyRequest.human_status`
+  de la ronda anterior.
+- `Expense.documents` no validaba el tipo de archivo adjunto (todos los
+  demás modelos con adjuntos del sistema sí lo hacen) — ahora solo acepta
+  imágenes o PDF.
+- La fecha en el detalle de un gasto mostraba el mes en inglés (el
+  proyecto no tiene `config/locales/es.yml`) — se agregó un helper
+  (`long_spanish_date`) para ese caso puntual. El mismo problema existe en
+  ~10 vistas más del sistema; queda para la pasada de diseño/i18n en vez
+  de parchearlo vista por vista ahora.
+- N+1 en `expenses#index` (faltaba `.includes(:vehicle)`) y cálculo de
+  totales duplicado (4 consultas donde bastaban 2) en la vista de listado.
+
+### Verificado
+- Scripts contra la base real: analista ahora ve y lista `FuelFill` con
+  datos reales; superadmin ahora ve y lista `Expense` con datos reales;
+  analista sigue sin poder crear/editar nada en ningún lado (se mantiene
+  su acceso de solo lectura); `human_category` da las etiquetas correctas;
+  adjuntar un `.exe` se rechaza, un `.pdf` se acepta.
+- Navegador en vivo (cruzado con logs del servidor): `FuelFillsController
+  #index` responde `200 OK` para el usuario analista, sin
+  `Pundit::NotAuthorizedError`.
+
+---
+
 ## Próximos roles
 
-- **Analista** — solo lectura (Costos, Inventario, Suministros,
-  Combustible); revisar que efectivamente no pueda escribir nada, y que
-  las vistas no le muestren datos de otras empresas.
 - **Admin** — el rol más grande (casi todo el sistema); buen momento para
   revisar el bug pendiente de `Company#destroy`.
 - **Superadmin** — gestión de empresas/usuarios entre tenants; revisar con
