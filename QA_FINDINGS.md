@@ -4,7 +4,12 @@ Auditoría "ultra detallista" de funcionalidad, rol por rol, iniciada 2026-09-22
 Foco exclusivo en funcionalidad (bugs reales) — lo visual/diseño queda para una
 pasada aparte, después de terminar los 5 roles.
 
-**Estado:** Chofer ✅ · Mecánico ✅ · Analista ✅ · Admin ✅ · Superadmin ⬜
+**Estado:** Chofer ✅ · Mecánico ✅ · Analista ✅ · Admin ✅ · Superadmin ✅
+
+Los 5 roles quedaron cubiertos por esta auditoría. Queda pendiente la pasada
+de diseño/visual (deliberadamente fuera de esta ronda) y el gap arquitectónico
+documentado al final de la sección de Superadmin (superadmin no puede crear
+recursos de una empresa específica sin tener una empresa "activa").
 
 ## Metodología
 
@@ -284,8 +289,134 @@ anteriores, 4 módulos más esta vez)
   `UserDocument`) no traen link de acción, a diferencia de las de
   `PasswordResetRequest`.
 
-## Próximos roles
+---
 
-- **Superadmin** — gestión de empresas/usuarios entre tenants; revisar con
-  cuidado que el aislamiento entre empresas siga la regla "ve todo", no
-  "ve nada" (el bug que se repitió en varios modelos esta ronda también).
+## Rol: Superadmin — commit [`0273998`](https://github.com/benjafudai/GestfleeV2/commit/0273998)
+
+Última ronda. Metodología igual a las anteriores: 6 revisores en paralelo +
+verificación manual propia (incluye confirmar empíricamente con SQL directo
+un hallazgo que sonaba poco creíble, ver el gap documentado al final).
+
+### Hallazgo más grande: superadmin casi no podía navegar el sistema
+El menú de navegación solo tenía links a "Empresas" y "Usuarios" — ninguna
+otra sección (Vehículos, Checklists, Incidentes, OTs, Mantenimiento,
+Inventario, Suministros, Costos, Combustible, Claves) tenía un link, pese a
+que las policies ya le daban acceso de lectura a casi todas (corregidas en
+rondas anteriores). Un superadmin no tenía forma de descubrir esas secciones
+sin escribir la URL a mano — probablemente por eso los dos bugs siguientes
+nunca se habían detectado. Agregados todos los links faltantes.
+
+### Corregido — crashes reproducibles
+- Abrir "Nuevo Incidente" o "Nueva Orden de Trabajo" como superadmin
+  reventaba con `NoMethodError` (`Current.company.vehicles`/`.users` sobre
+  `nil`, ya que `Current.company` siempre es `nil` para superadmin).
+  Corregido con consultas nil-safe.
+- `SupplyRequestPolicy#create?` no incluía a superadmin (el resto de
+  acciones de la misma policy sí) — mismo patrón de "rol olvidado" visto
+  varias veces en rondas anteriores.
+
+### Corregido — `Company#destroy` y borrado en cascada (siguiente capítulo
+del bug que quedó pendiente desde Mecánico y se creía cerrado en Admin)
+- **`Part` no declaraba `has_many :stock_movements`/`:work_order_part_usages`/
+  `:supply_request_lines`** pese a que esas foreign keys existen sin
+  cascada — borrar un repuesto con historial de movimientos o uso en una
+  OT/solicitud reventaba con `ActiveRecord::InvalidForeignKey`.
+- **`Company` no declaraba `has_many :parts`** — los repuestos de una
+  empresa eliminada quedaban huérfanos en la base. Agregado, más
+  `has_many` explícito para `:checklist_submissions`/`:part_fitments`/
+  `:roadside_assistance_events` (ya cubiertos indirectamente vía `Vehicle`,
+  ahora explícitos para no depender de un detalle de otro modelo).
+- `Notification` quedaba huérfana al borrar un `FuelFill` o un
+  `PasswordResetRequest` con notificaciones asociadas (sin FK real por ser
+  polimórfica, mismo problema de fondo). Agregado `has_many :notifications,
+  as: :notifiable, dependent: :destroy` en ambos modelos.
+- Verificado con un script que crea un registro de CADA tipo (usuarios de
+  cada rol, vehículo, asignación, checklist+ítem+envío, incidente,
+  combustible, plan+OT, repuesto+movimiento+compatibilidad+uso, solicitud+
+  línea, gasto, documentos, solicitud de clave) que `Company#destroy` ya no
+  revienta con ningún error de foreign key.
+
+### Corregido — seguridad e integridad de datos
+- El rol del usuario administrador inicial al crear una empresa solo se
+  forzaba en un hidden field del HTML — un POST directo con
+  `company[users_attributes][0][role]=<cualquier rol>` creaba la empresa
+  con ese rol en vez de admin. Ahora se fuerza server-side.
+- `CompaniesController#update` permitía `users_attributes` en el mismo
+  params que "Configurar" — un vector oculto para dar de alta usuarios de
+  cualquier rol como efecto colateral de guardar los toggles de módulos.
+  Separados los params permitidos de `create`/`update`.
+- Editar un usuario a rol "Super Administrador" no limpiaba su
+  `company_id` (a diferencia de crear, que sí lo hacía) — podía quedar un
+  superadmin atado a una empresa real.
+- `Company` no validaba unicidad de RUT — dos empresas con el mismo RUT
+  (identificador tributario único en Chile) podían coexistir sin aviso.
+- Nada impedía borrar (o reasignar el rol de) el único admin de una
+  empresa, dejándola sin nadie que la administre. Agregado un resguardo en
+  `UsersController#destroy`/`#update`.
+- `CompaniesController#update` guardaba los toggles de módulos y después,
+  por separado, borraba mecánicos/analistas sin una transacción atómica
+  que cubriera ambos pasos. Envuelto en una transacción.
+- Una empresa podía crearse sin ningún usuario si la request omitía por
+  completo `users_attributes` (no alcanzable desde la UI normal, sí con un
+  POST armado a mano). Agregada validación de presencia `on: :create`.
+
+### Limpieza
+- Código de debug (`Rails.logger.debug`, un `console.log` marcado
+  literalmente "eliminar después" en el JS de confirmación de borrado) y
+  una línea duplicada (`.order(:name)` repetido) en `companies_controller.rb`.
+- Eliminada la vista de scaffold sin usar `companies/update.html.erb`.
+- `same_company?` duplicado en `IncidentPolicy`/`ChecklistSubmissionPolicy`
+  (ya heredado de `ApplicationPolicy`) removido.
+- Vestigios del toggle `require_fuel_ticket` (ya removido del producto en
+  la ronda de Chofer) limpiados de `Company` y `CompaniesController`.
+- `Company` ahora tiene `has_paper_trail` — los cambios a nombre/RUT/
+  módulos de una empresa no dejaban ningún rastro de auditoría, pese a ser
+  decisiones sensibles que toma justamente el rol dueño del producto.
+- Dashboard de superadmin, antes dos tarjetas de navegación sin un solo
+  dato, ahora muestra conteo de empresas, usuarios, y alerta si alguna
+  empresa quedó sin administrador.
+- Buscador de empresas ahora también indexa por RUT (antes solo nombre).
+
+### Verificado
+- Scripts contra la base real: cascada completa de `Company#destroy`,
+  unicidad de RUT, detección de empresa sin admin, guard del último admin,
+  rollback transaccional en `CompaniesController#update`.
+- En vivo en el navegador (cruzado con logs del servidor): nav de
+  superadmin con todos los links nuevos, `/incidents/new` y
+  `/work_orders/new` ya no crashean (antes `NoMethodError` garantizado),
+  dashboard con métricas reales.
+
+### Gap arquitectónico documentado, NO corregido esta ronda (requiere una
+decisión de producto, no es un fix contenido)
+Superadmin no tiene forma de elegir "para qué empresa" está creando un
+recurso. El patrón `CompanyScoped#assign_company` (`self.company ||=
+Current.company`) funciona para todos los demás roles porque `Current.company`
+siempre es su propia empresa — pero para superadmin es siempre `nil`. Esto
+significa que **crear** (no solo ver) un `Vehicle`, `ChecklistTemplate`,
+`Expense`, `MaintenancePlan`, `Part` o `WorkOrder` como superadmin falla la
+validación "La empresa debe existir" — ya corregí que los formularios no
+revienten al abrirlos (ver arriba), pero el guardado final seguiría
+fallando con un error de validación confuso, salvo en los 3 modelos que ya
+derivan la empresa de otra relación (`SupplyRequest`/`PartFitment` del
+vehículo, `ChecklistSubmission` también). Opciones para resolverlo de
+verdad: (a) agregar un selector de empresa explícito en esos formularios
+cuando el usuario es superadmin, o (b) decidir que superadmin no debería
+poder crear estos recursos operativos directamente (solo administrar
+empresas/usuarios y supervisar en modo lectura), dejando la operación del
+día a día a los roles de cada empresa. Es una decisión de producto, no un
+bug con una respuesta obvia — queda para cuando el dueño del producto
+decida cuál de las dos direcciones tomar.
+
+### Gap técnico documentado, NO corregido esta ronda (requeriría migrar
+datos existentes)
+`Company#configuration` (columna `jsonb`) usa `store ..., coder: JSON`, que
+termina guardando un **string JSON escapado dentro de la columna** en vez
+de un objeto real — confirmado directamente con SQL (`jsonb_typeof`
+devuelve `'string'`, no `'object'`, apenas se graba cualquier valor
+distinto del default `{}`). No rompe nada hoy porque el mismo código
+Ruby escribe y lee (el doble-encode/decode se cancela), pero cualquier
+query SQL/jsonb directa contra esa columna en el futuro fallaría. Arreglo
+correcto: sacar `coder: JSON` y usar `store_accessor` (pensado para
+columnas jsonb nativas) en vez de `store` — pero require una migración de
+datos para las filas que ya quedaron mal guardadas, fuera de alcance de
+esta ronda por el riesgo de romper configuración ya existente sin ese paso.
