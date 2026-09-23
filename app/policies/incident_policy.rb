@@ -26,10 +26,4 @@ class IncidentPolicy < ApplicationPolicy
       end
     end
   end
-
-  private
-
-  def same_company?
-    user.superadmin? || record.company_id == user.company_id
-  end
 end

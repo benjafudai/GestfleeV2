@@ -22,7 +22,7 @@ class PartPolicy < ApplicationPolicy
   class Scope < ApplicationPolicy::Scope
     def resolve
       allowed = user.superadmin? || user.admin? || user.mecanico? || user.analista?
-      allowed ? scope.all : scope.none
+      allowed ? company_scoped : scope.none
     end
   end
 end

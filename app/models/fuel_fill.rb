@@ -8,6 +8,7 @@ class FuelFill < ApplicationRecord
 
   has_one_attached :ticket
   has_one :expense, as: :source, dependent: :destroy
+  has_many :notifications, as: :notifiable, dependent: :destroy
 
   validates :liters, presence: true, numericality: { greater_than: 0 }
   validates :cost, presence: true, numericality: { greater_than_or_equal_to: 0 }

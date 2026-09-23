@@ -22,7 +22,7 @@
         <%= form.hidden_field :vehicle_id, value: "" %>
       <% end %>
     <% else %>
-      <%= form.collection_select :vehicle_id, Current.company.vehicles.active, :id, :plate, { prompt: "Seleccione un vehículo" }, { class: "form-select", required: true } %>
+      <%= form.collection_select :vehicle_id, Vehicle.active, :id, :plate, { prompt: "Seleccione un vehículo" }, { class: "form-select", required: true } %>
     <% end %>
   </div>
 

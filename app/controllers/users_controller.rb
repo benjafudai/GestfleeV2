@@ -3,14 +3,7 @@ class UsersController < ApplicationController
   before_action :ensure_admin_or_superadmin!
 
   def index
-    # Scope users based on role
-    if current_user.superadmin?
-      # SuperAdmin sees all users
-      @users = User.includes(:company).order(:role, :email)
-    else
-      # Admin sees only users from their company
-      @users = current_user.company.users.includes(:company).order(:role, :email)
-    end
+    @users = scoped_users.includes(:company).order(:role, :email)
 
     # Filter by Company Name (only for SuperAdmin)
     if current_user.superadmin? && params[:company_name].present?
@@ -78,7 +71,21 @@ class UsersController < ApplicationController
       return
     end
 
-    if @user.update(edit_user_params)
+    was_last_admin = last_admin_of_company?(@user)
+
+    @user.assign_attributes(edit_user_params)
+    # Un superadmin es global: si se cambia el rol a superadmin, no debe
+    # quedar atado a la empresa que tenía antes (mismo resguardo que create).
+    @user.company_id = nil if @user.role == "superadmin"
+
+    if was_last_admin && @user.role != "admin"
+      @user.errors.add(:role, "no se puede cambiar: es el único administrador de su empresa")
+      @available_roles = available_roles_for_current_user
+      render :edit, status: :unprocessable_entity
+      return
+    end
+
+    if @user.save
       redirect_to @user, notice: "Usuario actualizado correctamente."
     else
       @available_roles = available_roles_for_current_user
@@ -90,6 +97,8 @@ class UsersController < ApplicationController
     @user = find_scoped_user
     if @user == current_user
       redirect_to users_path, alert: "No puedes eliminarte a ti mismo."
+    elsif last_admin_of_company?(@user)
+      redirect_to users_path, alert: "No puedes eliminar al único administrador de #{@user.company.name}. Crea otro admin antes de eliminar este."
     else
       @user.destroy
       redirect_to users_path, notice: "Usuario eliminado."
@@ -98,12 +107,16 @@ class UsersController < ApplicationController
 
   private
 
+  def scoped_users
+    current_user.superadmin? ? User.all : current_user.company.users
+  end
+
   def find_scoped_user
-    if current_user.superadmin?
-      User.find(params[:id])
-    else
-      current_user.company.users.find(params[:id])
-    end
+    scoped_users.find(params[:id])
+  end
+
+  def last_admin_of_company?(user)
+    user.admin? && user.company.present? && user.company.users.where(role: :admin).count <= 1
   end
 
   def ensure_admin_or_superadmin!

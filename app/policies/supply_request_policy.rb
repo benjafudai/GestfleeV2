@@ -8,7 +8,7 @@ class SupplyRequestPolicy < ApplicationPolicy
   end
 
   def create?
-    user.mecanico? || user.admin?
+    user.mecanico? || user.admin? || user.superadmin?
   end
 
   def update?

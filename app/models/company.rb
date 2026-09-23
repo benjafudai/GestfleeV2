@@ -1,4 +1,6 @@
 class Company < ApplicationRecord
+  has_paper_trail
+
   has_many :users, dependent: :destroy
   has_many :expenses, dependent: :destroy
   accepts_nested_attributes_for :users
@@ -9,19 +11,20 @@ class Company < ApplicationRecord
   has_many :work_orders, through: :vehicles
   has_many :maintenance_plans, dependent: :destroy
   has_many :supply_requests, dependent: :destroy
+  has_many :parts, dependent: :destroy
+  has_many :checklist_submissions, dependent: :destroy
+  has_many :part_fitments, dependent: :destroy
+  has_many :roadside_assistance_events, dependent: :destroy
 
   validates :name, presence: true
-  validates :rut, presence: true
+  validates :rut, presence: true, uniqueness: true
+  validates :users, presence: { message: "debe incluir al menos un administrador" }, on: :create
 
-  # Store configuration: { has_mechanic: ..., fuel_anomaly_threshold: 20, require_fuel_ticket: false }
-  store :configuration, accessors: [ :has_mechanic, :has_analyst, :fuel_anomaly_threshold, :require_fuel_ticket ], coder: JSON
+  # Store configuration: { has_mechanic: ..., fuel_anomaly_threshold: 20 }
+  store :configuration, accessors: [ :has_mechanic, :has_analyst, :fuel_anomaly_threshold ], coder: JSON
 
   def anomaly_threshold
     (fuel_anomaly_threshold.presence || 20).to_i
-  end
-
-  def require_ticket?
-    require_fuel_ticket == true || require_fuel_ticket == "true" || require_fuel_ticket == "1" || require_fuel_ticket == 1
   end
 
   def has_mechanic?

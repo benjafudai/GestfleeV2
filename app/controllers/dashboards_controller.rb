@@ -18,7 +18,11 @@ class DashboardsController < ApplicationController
       render :chofer
     when "mecanico"   then render :mecanico
     when "analista"   then render :analista
-    when "superadmin" then render :superadmin
+    when "superadmin"
+      @companies_count = Company.count
+      @users_count = User.count
+      @companies_without_admin = Company.where.not(id: User.where(role: :admin).select(:company_id))
+      render :superadmin
     else
       redirect_to root_path, alert: "Rol no definido."
     end

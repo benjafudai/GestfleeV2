@@ -1,15 +1,14 @@
 class CompaniesController < ApplicationController
   before_action :authenticate_user!
   before_action :ensure_superadmin!
-  before_action :set_company, only: [:edit, :update]
+  before_action :set_company, only: [:edit, :update, :destroy]
 
   def index
     if params[:query].present?
-      @companies = Company.where("name ILIKE ?", "%#{params[:query]}%")
+      @companies = Company.where("name ILIKE :q OR rut ILIKE :q", q: "%#{params[:query]}%")
     else
       @companies = Company.all
     end
-    @companies = @companies.order(:name)
     @companies = @companies.order(:name)
   end
 
@@ -20,11 +19,12 @@ class CompaniesController < ApplicationController
   end
 
   def create
-    @company = Company.new(company_params)
-    
-    # Force the role of the first user to be admin if it wasn't set (though we permit it conditionally)
-    # The form will send role: 'admin' ideally, but let's enforce it for safety if needed or rely on param.
-    
+    @company = Company.new(company_create_params)
+    # El admin inicial siempre se crea con rol admin, sin importar qué role
+    # haya llegado en el parámetro (el campo del formulario es un hidden field
+    # manipulable por el cliente).
+    @company.users.each { |user| user.role = :admin }
+
     if @company.save
       redirect_to companies_path, notice: "Empresa creada exitosamente junto con su Administrador."
     else
@@ -39,47 +39,23 @@ class CompaniesController < ApplicationController
     # Capture the PREVIOUS state BEFORE modifying the object
     was_mechanic_enabled = @company.has_mechanic?
     was_analyst_enabled = @company.has_analyst?
-    
-    Rails.logger.debug "=== UPDATE DEBUG ==="
-    Rails.logger.debug "BEFORE: mechanic=#{was_mechanic_enabled}, analyst=#{was_analyst_enabled}"
-    
-    @company.assign_attributes(company_params)
-    
+
+    @company.assign_attributes(company_update_params)
+
     # Detect if modules are being DISABLED
-    is_mechanic_enabled_now = @company.has_mechanic?
-    is_analyst_enabled_now = @company.has_analyst?
-    
-    Rails.logger.debug "AFTER: mechanic=#{is_mechanic_enabled_now}, analyst=#{is_analyst_enabled_now}"
-    
-    mechanic_module_disabled = was_mechanic_enabled && !is_mechanic_enabled_now
-    analyst_module_disabled = was_analyst_enabled && !is_analyst_enabled_now
-    
-    Rails.logger.debug "DISABLED: mechanic=#{mechanic_module_disabled}, analyst=#{analyst_module_disabled}"
+    mechanic_module_disabled = was_mechanic_enabled && !@company.has_mechanic?
+    analyst_module_disabled = was_analyst_enabled && !@company.has_analyst?
 
-    if @company.save
-      message = "Empresa actualizada correctamente."
-      deleted_count = 0
-      
-      if mechanic_module_disabled
-        # Delete all mechanics from this company
-        mechanics = @company.users.where(role: :mecanico)
-        count = mechanics.count
-        Rails.logger.debug "Found #{count} mechanics to delete"
-        mechanics.destroy_all
-        deleted_count += count
-        message += " Se eliminaron #{count} mecánicos." if count > 0
-      end
-      
-      if analyst_module_disabled
-        # Delete all analysts from this company
-        analysts = @company.users.where(role: :analista)
-        count = analysts.count
-        Rails.logger.debug "Found #{count} analysts to delete"
-        analysts.destroy_all
-        deleted_count += count
-        message += " Se eliminaron #{count} analistas." if count > 0
-      end
+    message = "Empresa actualizada correctamente."
+    saved = ActiveRecord::Base.transaction do
+      next false unless @company.save
 
+      message += disable_role_module(:mecanico, "mecánicos") if mechanic_module_disabled
+      message += disable_role_module(:analista, "analistas") if analyst_module_disabled
+      true
+    end
+
+    if saved
       redirect_to companies_path, notice: message
     else
       render :edit, status: :unprocessable_entity
@@ -87,9 +63,11 @@ class CompaniesController < ApplicationController
   end
 
   def destroy
-    @company = Company.find(params[:id])
-    @company.destroy
-    redirect_to companies_path, notice: "Empresa y todos sus datos asociados fueron eliminados correctamente."
+    if @company.destroy
+      redirect_to companies_path, notice: "Empresa y todos sus datos asociados fueron eliminados correctamente."
+    else
+      redirect_to companies_path, alert: "No se pudo eliminar la empresa."
+    end
   end
 
   private
@@ -98,11 +76,23 @@ class CompaniesController < ApplicationController
     @company = Company.find(params[:id])
   end
 
+  def disable_role_module(role, label)
+    destroyed = @company.users.where(role: role).destroy_all
+    destroyed.any? ? " Se eliminaron #{destroyed.size} #{label}." : ""
+  end
+
   def ensure_superadmin!
     redirect_to root_path, alert: "Acceso denegado" unless current_user&.superadmin?
   end
 
-  def company_params
-    params.require(:company).permit(:name, :rut, :has_mechanic, :has_analyst, :fuel_anomaly_threshold, :require_fuel_ticket, users_attributes: [:email, :password, :password_confirmation, :role])
+  # Solo al crear una empresa se admite el usuario administrador anidado -
+  # "Configurar" (update) no debe poder dar de alta usuarios como efecto
+  # colateral de guardar los toggles de módulos.
+  def company_create_params
+    params.require(:company).permit(:name, :rut, :has_mechanic, :has_analyst, :fuel_anomaly_threshold, users_attributes: [:email, :password, :password_confirmation, :role])
+  end
+
+  def company_update_params
+    params.require(:company).permit(:name, :rut, :has_mechanic, :has_analyst, :fuel_anomaly_threshold)
   end
 end

@@ -26,13 +26,7 @@ export default class extends Controller {
 
     checkInput() {
         const value = this.inputTarget.value.trim().toLowerCase()
-        console.log("Input detectado:", value) // Debuglog (eliminar despues)
-        if (value === "eliminar") {
-            console.log("Palabra clave correcta. Habilitando botón.")
-            this.buttonTarget.disabled = false
-        } else {
-            this.buttonTarget.disabled = true
-        }
+        this.buttonTarget.disabled = value !== "eliminar"
     }
 
     handleEnter(event) {

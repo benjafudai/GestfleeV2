@@ -150,6 +150,36 @@
         <%= link_to users_path, class: "gf-tab #{request.path.start_with?('/users') ? 'active' : ''}" do %>
           <i class="fa-solid fa-users"></i> Usuarios
         <% end %>
+        <%= link_to vehicles_path, class: "gf-tab #{request.path.start_with?('/vehicles') ? 'active' : ''}" do %>
+          <i class="fa-solid fa-truck-front"></i> Vehículos
+        <% end %>
+        <%= link_to checklist_templates_path, class: "gf-tab #{request.path.start_with?('/checklist') ? 'active' : ''}" do %>
+          <i class="fa-solid fa-list-check"></i> Checklists
+        <% end %>
+        <%= link_to incidents_path, class: "gf-tab #{request.path.start_with?('/incidents') ? 'active' : ''}" do %>
+          <i class="fa-solid fa-triangle-exclamation"></i> Incidentes
+        <% end %>
+        <%= link_to work_orders_path, class: "gf-tab #{request.path.start_with?('/work_orders') ? 'active' : ''}" do %>
+          <i class="fa-solid fa-screwdriver-wrench"></i> Órdenes OT
+        <% end %>
+        <%= link_to maintenance_plans_path, class: "gf-tab #{request.path.start_with?('/maintenance_plans') ? 'active' : ''}" do %>
+          <i class="fa-solid fa-clipboard-check"></i> Mantenimiento
+        <% end %>
+        <%= link_to parts_path, class: "gf-tab #{request.path.start_with?('/parts') ? 'active' : ''}" do %>
+          <i class="fa-solid fa-boxes-stacked"></i> Inventario
+        <% end %>
+        <%= link_to supply_requests_path, class: "gf-tab #{request.path.start_with?('/supply_requests') ? 'active' : ''}" do %>
+          <i class="fa-solid fa-cart-plus"></i> Suministros
+        <% end %>
+        <%= link_to expenses_path, class: "gf-tab #{request.path.start_with?('/expenses') ? 'active' : ''}" do %>
+          <i class="fa-solid fa-coins"></i> Costos
+        <% end %>
+        <%= link_to fuel_fills_path, class: "gf-tab #{request.path.start_with?('/fuel_fills') ? 'active' : ''}" do %>
+          <i class="fa-solid fa-gas-pump"></i> Combustible
+        <% end %>
+        <%= link_to password_reset_requests_path, class: "gf-tab #{request.path.start_with?('/password_reset_requests') ? 'active' : ''}" do %>
+          <i class="fa-solid fa-key"></i> Claves
+        <% end %>
 
       <%# --- ADMIN --- %>
       <% elsif current_user.admin? %>

@@ -10,6 +10,40 @@
 </div>
 
 <div class="row">
+  <div class="col-md-4 mb-4">
+    <div class="card h-100 text-center">
+      <div class="card-body">
+        <h6 class="text-muted text-uppercase small">Empresas</h6>
+        <p class="display-6 mb-0"><%= @companies_count %></p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4 mb-4">
+    <div class="card h-100 text-center">
+      <div class="card-body">
+        <h6 class="text-muted text-uppercase small">Usuarios</h6>
+        <p class="display-6 mb-0"><%= @users_count %></p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4 mb-4">
+    <div class="card h-100 text-center <%= 'border-danger' if @companies_without_admin.any? %>">
+      <div class="card-body">
+        <h6 class="text-muted text-uppercase small">Sin Administrador</h6>
+        <p class="display-6 mb-0 <%= 'text-danger' if @companies_without_admin.any? %>"><%= @companies_without_admin.size %></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% if @companies_without_admin.any? %>
+  <div class="alert alert-danger">
+    <strong>Empresas sin ningún administrador:</strong>
+    <%= @companies_without_admin.map(&:name).join(", ") %>
+  </div>
+<% end %>
+
+<div class="row">
   <div class="col-md-6 mb-4">
     <div class="card h-100">
       <div class="card-body">
