@@ -2,7 +2,7 @@ class Users::SessionsController < Devise::SessionsController
   def create
     self.resource = warden.authenticate!(auth_options)
 
-    if device_trusted?(resource)
+    if !two_factor_enabled? || device_trusted?(resource)
       finish_sign_in(resource)
     else
       challenge_with_otp(resource)
@@ -10,6 +10,11 @@ class Users::SessionsController < Devise::SessionsController
   end
 
   private
+
+  # Desactivado por defecto; se activa con TWO_FACTOR_ENABLED=true en el .env
+  def two_factor_enabled?
+    ENV["TWO_FACTOR_ENABLED"] == "true"
+  end
 
   def device_trusted?(user)
     token = cookies.encrypted[:"otp_remember_#{user.id}"]
