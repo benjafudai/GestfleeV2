@@ -4,7 +4,7 @@ Auditoría "ultra detallista" de funcionalidad, rol por rol, iniciada 2026-09-22
 Foco exclusivo en funcionalidad (bugs reales) — lo visual/diseño queda para una
 pasada aparte, después de terminar los 5 roles.
 
-**Estado:** Chofer ✅ · Mecánico ✅ · Analista ✅ · Admin ⬜ · Superadmin ⬜
+**Estado:** Chofer ✅ · Mecánico ✅ · Analista ✅ · Admin ✅ · Superadmin ⬜
 
 ## Metodología
 
@@ -157,10 +157,135 @@ de datos real) antes de hacer commit.
 
 ---
 
+## Rol: Admin — commit [`bf7f8de`](https://github.com/benjafudai/GestfleeV2/commit/bf7f8de)
+
+Ronda más grande hasta ahora (Admin administra casi todo el sistema dentro de
+su empresa). Metodología: 6 revisores en paralelo + verificación manual
+propia de cada hallazgo contra el código real antes de aceptarlo.
+
+### Corregido — seguridad / aislamiento entre empresas
+- **`UsersController#destroy` no filtraba por empresa** — cualquier admin
+  podía borrar usuarios de OTRA empresa (incluso otro admin o el
+  superadmin) con solo pasar un ID por `DELETE`, aunque la UI nunca
+  mostrara ese botón para usuarios ajenos. Extraído a `find_scoped_user`,
+  reutilizado en `show`/`destroy`.
+- **`VehicleAssignment` no validaba que el chofer fuera de la misma
+  empresa que el vehículo** — un admin podía asignar (vía POST directo,
+  sin pasar por el selector de la UI) un chofer de otra empresa a uno de
+  sus vehículos, cruzando datos entre tenants.
+- **`Vehicle` y `ChecklistTemplate` seguían con el `default_scope` viejo
+  no nil-safe** (`where(company: Current.company)`) en vez del concern
+  `CompanyScoped` — lista vacía para superadmin en Flota y en Checklists.
+
+### Corregido — un módulo entero estaba roto
+- **`MaintenancePlan` no podía crearse ni editarse, nunca.** Le faltaba
+  `accepts_nested_attributes_for :maintenance_task_templates`, aunque el
+  controlador lo permitía y el formulario siempre enviaba ese hash (aunque
+  el admin no tocara las tareas). Cualquier intento de guardar un plan
+  tiraba `ActiveModel::UnknownAttributeError` (500), el 100% de las veces.
+  Todo el módulo de Planes de Mantenimiento estaba inutilizable desde que
+  se creó.
+
+### Corregido — rol "olvidado" en policies (mismo patrón de rondas
+anteriores, 4 módulos más esta vez)
+- `VehiclePolicy`, `VehicleDocumentPolicy` y `VehicleAssignmentPolicy`
+  nunca mencionaban `superadmin?` — bloqueado de Flota, sus documentos y
+  las asignaciones de chofer en cualquier empresa.
+- `ChecklistTemplatePolicy` nunca mencionaba `superadmin?`.
+- `SupplyRequestPolicy` dejaba a superadmin **ver** una solicitud pero no
+  aprobarla/eliminarla/cambiarle el estado.
+- `PasswordResetRequestsController` autorizaba a superadmin pero sus 3
+  consultas filtraban por `current_user.company_id` (`nil` para
+  superadmin) — la bandeja de "Claves" le salía siempre vacía, sin forma
+  de ayudar a ningún usuario de ninguna empresa a recuperar su contraseña.
+
+### Corregido — crashes reproducibles (500 en vez de manejo de error)
+- Terminar una asignación de vehículo **el mismo día que empezó** (corregir
+  un error al toque, caso común) tiraba 500 — `update!` sin manejo de
+  error + validación con `<=` en vez de `<`.
+- Desactivar el módulo "Mecánico" de una empresa podía tirar
+  `PG::ForeignKeyViolation` a mitad del borrado en lote si algún mecánico
+  tenía OTs o solicitudes de suministro asignadas, dejando la empresa en
+  estado inconsistente (algunos mecánicos borrados, otros no). `User` no
+  declaraba `has_many :work_orders`/`:supply_requests`.
+- **`Company#destroy` seguía roto** (pendiente desde la ronda de
+  Mecánico): `has_many :notifications, dependent: :destroy` apuntaba a
+  una columna `company_id` que no existe en `notifications`. Era además
+  redundante — las notificaciones ya se borran en cascada vía
+  `user.notifications` al borrar los usuarios de la empresa. Se eliminó
+  la asociación.
+- `Vehicle` no declaraba `has_many :work_orders`/`:supply_requests`/
+  `:part_fitments` pese a que esas foreign keys existen sin cascada —
+  borrar un vehículo con historial de OTs, solicitudes o compatibilidades
+  reventaba con `ActiveRecord::InvalidForeignKey`.
+- `User` no declaraba `has_many :fuel_fills` ni
+  `:resolved_password_reset_requests` (`admin_id`) — borrar un chofer con
+  cargas de combustible, o un admin que resolvió alguna solicitud de
+  clave, tiraba la misma `InvalidForeignKey`.
+- Un valor de enum inválido (rol, estado, etc.) lanza `ArgumentError` al
+  asignarse, antes de correr ninguna validación — 500 crudo confirmado en
+  5 controladores distintos. Se agregó `rescue_from ArgumentError`
+  centralizado en `ApplicationController` (mismo patrón que el
+  `rescue_from` de Pundit ya existente), más `rescue_from
+  ActiveRecord::RecordNotFound` para que un ID inválido o de otra empresa
+  redirija con un mensaje en vez de mostrar la página de error de Rails.
+- `MaintenancePlansController#edit` y `WorkOrdersController#edit` no
+  llamaban `authorize` — cualquier usuario autenticado (ej. un chofer)
+  podía ver el formulario de edición completo por URL directa, aunque no
+  pudiera guardar cambios.
+
+### Corregido — gaps de funcionalidad
+- **`UsersController` no tenía `edit`/`update`** (las rutas existían, la
+  acción no) — la única forma de corregir un typo o cambiar el rol de
+  alguien era borrar y recrear el usuario, perdiendo su historial de
+  auditoría (PaperTrail). Se agregaron ambas acciones (sin tocar
+  contraseña, que sigue siendo exclusiva del flujo de recuperación) más
+  el link "Editar" en el listado.
+- `UserDocument` no validaba el tipo de archivo adjunto (único modelo de
+  adjuntos de la app sin esa validación) — se sirve luego "inline", riesgo
+  de XSS almacenado con un `.html`/`.svg` o simplemente malware.
+  Restringido a imagen o PDF, mismo patrón que `Expense`/`VehicleDocument`.
+- `VehicleAssignmentsController#new`/`create` usaba
+  `current_user.company.users` para listar choferes disponibles —
+  `NoMethodError` para superadmin (`company` es `nil`). Cambiado a
+  `@vehicle.company.users` (correcto para ambos roles).
+- N+1 en el dashboard de Cumplimiento (`AlertsController`): `.joins` sin
+  `.includes` en documentos de vehículo/personal.
+
+### Limpieza
+- Eliminadas 2 vistas de scaffold nunca usadas (`users/create.html.erb`,
+  `users/destroy.html.erb`) y las rutas muertas de `checklist_items` (sin
+  controlador — los ítems se gestionan vía nested attributes del
+  formulario de plantilla).
+- `MaintenancePlanPolicy`/`WorkOrderPolicy` simplificados para usar el
+  helper `company_scoped` compartido en vez de reinventar la misma línea.
+
+### Verificado
+- Scripts contra la base real: aislamiento entre empresas (asignación de
+  vehículo, borrado en cascada de mecánico/vehículo/chofer con historial),
+  validación de tipo de archivo en `UserDocument`, plan de mantenimiento
+  con tareas anidadas creándose sin error.
+- En vivo en el navegador (cruzado con logs del servidor): login como
+  admin y como superadmin, edición de usuario con cambio de rol,
+  creación de un plan de mantenimiento con tareas desde el formulario real
+  (antes 500 garantizado), acceso de superadmin a `/vehicles` (antes
+  bloqueado por completo con "No autorizado").
+
+### Gaps documentados, no implementados en esta ronda (fuera de alcance de
+"bug", son funcionalidad nueva)
+- `PasswordResetRequest` tiene estados `approved`/`rejected` en el enum
+  pero el flujo solo usa `pending`→`completed` — no hay forma de
+  "rechazar" una solicitud sospechosa, y pedir un reset dos veces crea
+  solicitudes `pending` duplicadas sin límite.
+- La revisión de un checklist (aprobar/rechazar) y la resolución de un
+  incidente no notifican al chofer/reportante — se enteran solo si
+  vuelven a mirar el registro manualmente.
+- Las notificaciones de vencimiento de documentos (`VehicleDocument`/
+  `UserDocument`) no traen link de acción, a diferencia de las de
+  `PasswordResetRequest`.
+
 ## Próximos roles
 
-- **Admin** — el rol más grande (casi todo el sistema); buen momento para
-  revisar el bug pendiente de `Company#destroy`.
 - **Superadmin** — gestión de empresas/usuarios entre tenants; revisar con
   cuidado que el aislamiento entre empresas siga la regla "ve todo", no
-  "ve nada" (el bug que se repitió en varios modelos esta semana).
+  "ve nada" (el bug que se repitió en varios modelos esta ronda también).
