@@ -39,18 +39,20 @@ Para levantar el servidor: `ruby bin/rails server` (o `bin/dev` si tienes
 `sh` disponible, ej. Git Bash, para correr también los watchers de JS/CSS).
 
 **Nota:** el envío real de correos (SMTP) todavía no está configurado —
-el código de verificación de 2 pasos y la recuperación de contraseña se
-arman bien pero no le llegan a nadie fuera de este computador. Pendiente.
+la recuperación de contraseña se arma bien pero no le llega a nadie fuera
+de este computador. Pendiente.
 
 ## Usuarios demo (después de `db:seed`)
 
-| Rol | Correo | Clave |
-|---|---|---|
-| Superadmin | `superadmin@demo.cl` | `password` |
-| Admin | `admin@demo.cl` | `password` |
-| Chofer | `chofer@demo.cl` | `Password123!` |
-| Mecánico | `mecanico@demo.cl` | `Password123!` |
-| Analista | `analista@demo.cl` | `Password123!` |
+Todos usan la clave `Password.123456`.
+
+| Rol | Correo |
+|---|---|
+| Superadmin | `superadmin@demo.cl` |
+| Admin | `admin@demo.cl` |
+| Chofer | `chofer@demo.cl` |
+| Mecánico | `mecanico@demo.cl` |
+| Analista | `analista@demo.cl` |
 
 ## Flujo de trabajo (somos 2 personas, en varios computadores)
 

@@ -8,39 +8,23 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 # Crear usuarios de prueba
+# Todos los usuarios demo usan la misma clave. Se reasigna en cada db:seed,
+# así queda igual en todos los computadores aunque el usuario ya exista.
+DEMO_PASSWORD = "Password.123456"
+
 company = Company.find_or_create_by!(rut: '77.777.777-7') do |c|
   c.name = 'Empresa Principal'
   c.configuration = {has_mechanic: true, has_analyst: false}
+  # Company exige al menos un usuario al crearse
+  c.users.build(email: "admin@demo.cl", role: :admin, password: DEMO_PASSWORD)
 end
 
-User.find_or_create_by!(email: "superadmin@demo.cl") do |u|
-  u.password = "password"
-  u.role = :superadmin
-  # No company for superadmin
-end
-
-User.find_or_create_by!(email: "admin@demo.cl") do |u|
-  u.password = "password"
-  u.role = :admin
-  u.company = company
-end
-
-User.find_or_create_by!(email: "chofer@demo.cl") do |u|
-  u.password = "Password123!"
-  u.role = :chofer
-  u.company = company
-end
-
-User.find_or_create_by!(email: "mecanico@demo.cl") do |u|
-  u.password = "Password123!"
-  u.role = :mecanico
-  u.company = company
-end
-
-User.find_or_create_by!(email: "analista@demo.cl") do |u|
-  u.password = "Password123!"
-  u.role = :analista
-  u.company = company
+%i[superadmin admin chofer mecanico analista].each do |role|
+  user = User.find_or_initialize_by(email: "#{role}@demo.cl")
+  user.role = role
+  user.company = company unless role == :superadmin # No company for superadmin
+  user.password = DEMO_PASSWORD
+  user.save!
 end
 
 # Sprint 2: Checklist template demo

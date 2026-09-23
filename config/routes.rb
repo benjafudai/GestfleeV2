@@ -17,13 +17,8 @@ Rails.application.routes.draw do
   end
   resources :parts
   devise_for :users, skip: [:registrations], controllers: {
-    passwords: 'users/passwords',
-    sessions: 'users/sessions'
+    passwords: 'users/passwords'
   }
-
-  get  "verificacion",          to: "two_factor#new",    as: :new_two_factor
-  post "verificacion",          to: "two_factor#create", as: :two_factor
-  post "verificacion/reenviar", to: "two_factor#resend", as: :resend_two_factor
 
   resources :password_reset_requests, only: [:index, :show, :update]
   resources :companies, only: [:index, :new, :create, :edit, :update, :destroy]
