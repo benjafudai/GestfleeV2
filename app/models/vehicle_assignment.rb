@@ -12,6 +12,7 @@ class VehicleAssignment < ApplicationRecord
   # Validations
   validates :started_on, presence: true
   validate :user_must_be_chofer
+  validate :user_must_belong_to_same_company
   validate :vehicle_has_no_active_assignment, on: :create
   validate :chofer_has_no_active_assignment, on: :create
   validate :ended_on_after_started_on, if: -> { ended_on.present? }
@@ -21,6 +22,11 @@ class VehicleAssignment < ApplicationRecord
   def user_must_be_chofer
     return unless user
     errors.add(:user, "debe tener rol de chofer") unless user.chofer?
+  end
+
+  def user_must_belong_to_same_company
+    return unless user && vehicle
+    errors.add(:user, "debe pertenecer a la misma empresa que el vehículo") if user.company_id != vehicle.company_id
   end
 
   def vehicle_has_no_active_assignment
@@ -38,8 +44,8 @@ class VehicleAssignment < ApplicationRecord
   end
 
   def ended_on_after_started_on
-    if ended_on <= started_on
-      errors.add(:ended_on, "debe ser posterior a la fecha de inicio")
+    if ended_on < started_on
+      errors.add(:ended_on, "no puede ser anterior a la fecha de inicio")
     end
   end
 end

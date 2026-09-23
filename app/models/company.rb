@@ -9,7 +9,6 @@ class Company < ApplicationRecord
   has_many :work_orders, through: :vehicles
   has_many :maintenance_plans, dependent: :destroy
   has_many :supply_requests, dependent: :destroy
-  has_many :notifications, dependent: :destroy
 
   validates :name, presence: true
   validates :rut, presence: true

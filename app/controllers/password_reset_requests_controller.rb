@@ -3,23 +3,16 @@ class PasswordResetRequestsController < ApplicationController
   before_action :authorize_admin!
 
   def index
-    @pending_requests = PasswordResetRequest.joins(:user)
-                                            .where(users: { company_id: current_user.company_id })
-                                            .where(status: :pending)
-                                            .order(created_at: :desc)
+    @pending_requests = scoped_requests.where(status: :pending).order(created_at: :desc)
   end
 
   def show
-    @password_reset_request = PasswordResetRequest.joins(:user)
-                                                  .where(users: { company_id: current_user.company_id })
-                                                  .find(params[:id])
+    @password_reset_request = scoped_requests.find(params[:id])
   end
 
   def update
-    @password_reset_request = PasswordResetRequest.joins(:user)
-                                                  .where(users: { company_id: current_user.company_id })
-                                                  .find(params[:id])
-    
+    @password_reset_request = scoped_requests.find(params[:id])
+
     user = @password_reset_request.user
     
     if user.update(password: params[:password], password_confirmation: params[:password_confirmation], force_password_change: true)
@@ -36,5 +29,10 @@ class PasswordResetRequestsController < ApplicationController
     unless current_user.admin? || current_user.superadmin?
       redirect_to root_path, alert: "No tienes permisos para acceder a esta página."
     end
+  end
+
+  def scoped_requests
+    base = PasswordResetRequest.joins(:user)
+    current_user.superadmin? ? base : base.where(users: { company_id: current_user.company_id })
   end
 end

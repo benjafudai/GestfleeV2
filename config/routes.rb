@@ -59,9 +59,7 @@ Rails.application.routes.draw do
   resources :fuel_fills, only: %i[index show edit update destroy]
 
   # Sprint 2: Checklists pre-operativos + Auditoría de inspecciones
-  resources :checklist_templates do
-    resources :checklist_items, only: %i[new create edit update destroy]
-  end
+  resources :checklist_templates
 
   resources :checklist_submissions, only: %i[index new create show] do
     member do

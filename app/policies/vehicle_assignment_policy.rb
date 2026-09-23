@@ -4,18 +4,18 @@ class VehicleAssignmentPolicy < ApplicationPolicy
   end
 
   def create?
-    user.admin?
+    user.admin? || user.superadmin?
   end
 
   def destroy?
-    user.admin?
+    user.admin? || user.superadmin?
   end
 
   def index?
-    user.admin? || user.analista?
+    user.admin? || user.analista? || user.superadmin?
   end
 
   def show?
-    user.admin? || user.analista?
+    user.admin? || user.analista? || user.superadmin?
   end
 end

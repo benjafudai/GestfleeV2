@@ -1,18 +1,6 @@
 class Vehicle < ApplicationRecord
-  belongs_to :company
-  
-  default_scope { where(company: Current.company) }
-  
-  before_validation :assign_company
+  include CompanyScoped
 
-  private
-
-  def assign_company
-    self.company ||= Current.company
-  end
-
-  public
-  
   has_paper_trail
 
   has_many :vehicle_documents, dependent: :destroy
@@ -23,6 +11,9 @@ class Vehicle < ApplicationRecord
   has_many :incidents, dependent: :destroy
   has_many :roadside_assistance_events, dependent: :destroy
   has_many :fuel_fills, dependent: :destroy
+  has_many :work_orders, dependent: :destroy
+  has_many :supply_requests, dependent: :destroy
+  has_many :part_fitments, dependent: :destroy
 
   enum status: { active: 0, maintenance: 1, inactive: 2 }
 

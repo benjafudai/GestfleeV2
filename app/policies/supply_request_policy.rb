@@ -12,15 +12,15 @@ class SupplyRequestPolicy < ApplicationPolicy
   end
 
   def update?
-    same_company? && user.admin?
+    same_company? && (user.admin? || user.superadmin?)
   end
 
   def destroy?
-    same_company? && user.admin?
+    same_company? && (user.admin? || user.superadmin?)
   end
 
   def change_status?
-    same_company? && user.admin?
+    same_company? && (user.admin? || user.superadmin?)
   end
 
   class Scope < ApplicationPolicy::Scope

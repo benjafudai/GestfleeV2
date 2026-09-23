@@ -5,4 +5,8 @@ class MaintenancePlan < ApplicationRecord
   has_many :work_orders, dependent: :nullify
 
   validates :name, presence: true
+
+  accepts_nested_attributes_for :maintenance_task_templates,
+    allow_destroy: true,
+    reject_if: :all_blank
 end

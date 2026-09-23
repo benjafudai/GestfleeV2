@@ -1,0 +1,53 @@
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card shadow">
+        <div class="card-header bg-white d-flex align-items-center gap-2">
+          <%= link_to user_path(@user), class: "text-muted text-decoration-none" do %>
+            <i class="bi bi-arrow-left"></i>
+          <% end %>
+          <h1 class="h4 mb-0">Editar Usuario</h1>
+        </div>
+        <div class="card-body">
+          <%= form_with(model: @user, local: true, data: { turbo: false }) do |f| %>
+            <% if @user.errors.any? %>
+              <div class="alert alert-danger">
+                <ul class="mb-0">
+                  <% @user.errors.full_messages.each do |msg| %>
+                    <li><%= msg %></li>
+                  <% end %>
+                </ul>
+              </div>
+            <% end %>
+
+            <div class="mb-3">
+              <%= f.label :email, "Correo Electrónico", class: "form-label fw-semibold" %>
+              <%= f.email_field :email, class: "form-control", autofocus: true, required: true, placeholder: "usuario@empresa.cl" %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :role, "Rol", class: "form-label fw-semibold" %>
+              <%= f.select :role, @available_roles.map { |r| [role_label(r), r] }, {}, class: "form-select" %>
+            </div>
+
+            <% if current_user.superadmin? %>
+              <div class="mb-3">
+                <%= f.label :company_id, "Empresa", class: "form-label fw-semibold" %>
+                <%= f.collection_select :company_id, Company.order(:name), :id, :name, { prompt: "Sin empresa (Superadmin global)" }, class: "form-select" %>
+              </div>
+            <% end %>
+
+            <div class="form-text text-muted mb-4">
+              La contraseña no se puede cambiar desde aquí. Si el usuario la olvidó, debe usar "¿Olvidaste tu contraseña?" en el login.
+            </div>
+
+            <div class="d-flex justify-content-end gap-2">
+              <%= link_to "Cancelar", user_path(@user), class: "btn btn-light" %>
+              <%= f.submit "Guardar Cambios", class: "btn btn-primary" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

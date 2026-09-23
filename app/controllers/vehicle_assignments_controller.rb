@@ -6,7 +6,7 @@ class VehicleAssignmentsController < ApplicationController
   def new
     @assignment = @vehicle.vehicle_assignments.build(started_on: Date.today)
     authorize @assignment
-    @available_drivers = current_user.company.users.where(role: :chofer).order(:email)
+    @available_drivers = available_drivers
   end
 
   def create
@@ -15,15 +15,18 @@ class VehicleAssignmentsController < ApplicationController
     if @assignment.save
       redirect_to @vehicle, notice: "Chofer asignado correctamente."
     else
-      @available_drivers = current_user.company.users.where(role: :chofer).order(:email)
+      @available_drivers = available_drivers
       render :new, status: :unprocessable_entity
     end
   end
 
   def destroy
     authorize @assignment
-    @assignment.update!(ended_on: Date.today)
-    redirect_to @vehicle, notice: "Asignación terminada correctamente."
+    if @assignment.update(ended_on: Date.today)
+      redirect_to @vehicle, notice: "Asignación terminada correctamente."
+    else
+      redirect_to @vehicle, alert: @assignment.errors.full_messages.to_sentence.presence || "No se pudo terminar la asignación."
+    end
   end
 
   private
@@ -34,6 +37,10 @@ class VehicleAssignmentsController < ApplicationController
 
   def set_assignment
     @assignment = @vehicle.vehicle_assignments.find(params[:id])
+  end
+
+  def available_drivers
+    @vehicle.company.users.where(role: :chofer).order(:email)
   end
 
   def assignment_params

@@ -24,11 +24,7 @@ class UsersController < ApplicationController
   end
 
   def show
-    if current_user.superadmin?
-      @user = User.find(params[:id])
-    else
-      @user = current_user.company.users.find(params[:id])
-    end
+    @user = find_scoped_user
   end
 
   def new
@@ -67,8 +63,31 @@ class UsersController < ApplicationController
     end
   end
 
+  def edit
+    @user = find_scoped_user
+    @available_roles = available_roles_for_current_user
+  end
+
+  def update
+    @user = find_scoped_user
+
+    unless role_allowed_for_current_user?(edit_user_params[:role] || @user.role)
+      @user.errors.add(:role, "no está permitido para tu nivel de acceso")
+      @available_roles = available_roles_for_current_user
+      render :edit, status: :unprocessable_entity
+      return
+    end
+
+    if @user.update(edit_user_params)
+      redirect_to @user, notice: "Usuario actualizado correctamente."
+    else
+      @available_roles = available_roles_for_current_user
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
   def destroy
-    @user = User.find(params[:id])
+    @user = find_scoped_user
     if @user == current_user
       redirect_to users_path, alert: "No puedes eliminarte a ti mismo."
     else
@@ -78,6 +97,14 @@ class UsersController < ApplicationController
   end
 
   private
+
+  def find_scoped_user
+    if current_user.superadmin?
+      User.find(params[:id])
+    else
+      current_user.company.users.find(params[:id])
+    end
+  end
 
   def ensure_admin_or_superadmin!
     unless current_user&.superadmin? || current_user&.admin?
@@ -101,5 +128,13 @@ class UsersController < ApplicationController
 
   def user_params
     params.require(:user).permit(:email, :password, :password_confirmation, :role, :company_id)
+  end
+
+  def edit_user_params
+    if current_user.superadmin?
+      params.require(:user).permit(:email, :role, :company_id)
+    else
+      params.require(:user).permit(:email, :role)
+    end
   end
 end

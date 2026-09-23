@@ -21,6 +21,7 @@ class MaintenancePlansController < ApplicationController
 
   # GET /maintenance_plans/1/edit
   def edit
+    authorize @maintenance_plan
   end
 
   # POST /maintenance_plans or /maintenance_plans.json

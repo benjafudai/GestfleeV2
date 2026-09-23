@@ -21,6 +21,7 @@ class WorkOrdersController < ApplicationController
 
   # GET /work_orders/1/edit
   def edit
+    authorize @work_order
   end
 
   # POST /work_orders or /work_orders.json
