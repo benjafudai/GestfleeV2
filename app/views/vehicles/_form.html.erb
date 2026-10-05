@@ -13,7 +13,8 @@
   <div class="row g-3">
     <div class="col-md-6">
       <%= form.label :plate, "Patente", class: "form-label" %>
-      <%= form.text_field :plate, class: "form-control", placeholder: "ABCD-12", required: true %>
+      <%= form.text_field :plate, class: "form-control", placeholder: "ABCD-12", required: true,
+          data: { controller: "mask", action: "input->mask#mask", mask_format: "####-99" } %>
     </div>
 
     <div class="col-md-6">

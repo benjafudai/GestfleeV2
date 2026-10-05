@@ -4,8 +4,9 @@ class ChecklistSubmissionsController < ApplicationController
 
   def index
     authorize ChecklistSubmission
-    @submissions = policy_scope(ChecklistSubmission).recent
-                                                    .includes(:checklist_template, :vehicle, :user)
+    scope = policy_scope(ChecklistSubmission).recent
+                                              .includes(:checklist_template, :vehicle, :user)
+    @pagy, @submissions = pagy(scope)
   end
 
   def show

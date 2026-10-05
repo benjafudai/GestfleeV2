@@ -14,12 +14,12 @@
           <%= form_with url: password_reset_request_path(@password_reset_request), method: :patch, local: true do |f| %>
             <div class="mb-3">
               <%= f.label :password, "Nueva Contraseña Temporal", class: "form-label fw-bold" %>
-              <%= f.password_field :password, class: "form-control", required: true, minlength: 6 %>
+              <%= f.password_field :password, class: "form-control", required: true, minlength: 10 %>
             </div>
 
             <div class="mb-4">
               <%= f.label :password_confirmation, "Confirmar Contraseña", class: "form-label fw-bold" %>
-              <%= f.password_field :password_confirmation, class: "form-control", required: true, minlength: 6 %>
+              <%= f.password_field :password_confirmation, class: "form-control", required: true, minlength: 10 %>
             </div>
 
             <div class="d-flex justify-content-between">

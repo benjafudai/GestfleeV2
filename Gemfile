@@ -79,3 +79,9 @@ gem "paper_trail"
 # opcional pero útil en sprint 0
 gem "rspec-rails", group: [:development, :test]
 gem "webpush"
+gem "rack-attack", "~> 6.8"
+gem "pwned", "~> 2.4"
+
+gem "pagy", "~> 43.6"
+
+gem "pundit-matchers", "~> 4.0", :groups => [:development, :test]

@@ -14,6 +14,8 @@ class UsersController < ApplicationController
     if params[:role].present?
       @users = @users.where(role: params[:role])
     end
+
+    @pagy, @users = pagy(@users)
   end
 
   def show

@@ -14,8 +14,8 @@
         <div class="card-body">
           <h6 class="text-uppercase fw-semibold mb-1 opacity-75" style="letter-spacing: 0.5px; font-size: 0.8rem;">Gasto Total (Unificado)</h6>
           <%
-            clp_sum = @expenses.where(currency: 'CLP').sum(:amount)
-            usd_sum = @expenses.where(currency: 'USD').sum(:amount)
+            clp_sum = @expenses_scope.where(currency: 'CLP').sum(:amount)
+            usd_sum = @expenses_scope.where(currency: 'USD').sum(:amount)
             total_clp = clp_sum + converted_to_clp(usd_sum, 'USD')
             total_usd = usd_sum + converted_to_usd(clp_sum, 'CLP')
           %>
@@ -121,4 +121,5 @@
       </div>
     </div>
   </div>
+  <%= render "shared/pagination", pagy: @pagy %>
 </div>

@@ -24,7 +24,8 @@
 
             <div class="mb-3">
               <%= f.label :rut, "RUT", class: "form-label" %>
-              <%= f.text_field :rut, class: "form-control" %>
+              <%= f.text_field :rut, class: "form-control", placeholder: "77.777.777-7",
+                  data: { controller: "mask", action: "input->mask#mask", mask_format: "99.999.999-#" } %>
             </div>
 
             <hr class="my-4">

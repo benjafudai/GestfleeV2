@@ -12,3 +12,9 @@ application.register("hello", HelloController)
 
 import FuelChartController from "./fuel_chart_controller"
 application.register("fuel-chart", FuelChartController)
+
+import FailuresChartController from "./failures_chart_controller"
+application.register("failures-chart", FailuresChartController)
+
+import { MaskController } from "stimulus-mask"
+application.register("mask", MaskController)

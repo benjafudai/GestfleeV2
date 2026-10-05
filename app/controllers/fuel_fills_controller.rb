@@ -15,6 +15,7 @@ class FuelFillsController < ApplicationController
     authorize @fuel_fills
     build_vehicle_options
     build_fuel_stats
+    @pagy, @fuel_fills = pagy(@fuel_fills)
   end
 
   def show

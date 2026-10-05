@@ -4,7 +4,7 @@ class WorkOrdersController < ApplicationController
 
   # GET /work_orders or /work_orders.json
   def index
-    @work_orders = policy_scope(WorkOrder).includes(:vehicle, :maintenance_plan, :mechanic)
+    @pagy, @work_orders = pagy(policy_scope(WorkOrder).includes(:vehicle, :maintenance_plan, :mechanic).order(created_at: :desc))
     authorize WorkOrder
   end
 

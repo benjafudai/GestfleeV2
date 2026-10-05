@@ -277,6 +277,9 @@
         <%= link_to fuel_fills_path, class: "gf-tab #{request.path.start_with?('/fuel_fills') ? 'active' : ''}" do %>
           <i class="fa-solid fa-gas-pump"></i> Combustible
         <% end %>
+        <%= link_to failure_analytics_path, class: "gf-tab #{request.path.start_with?('/failure_analytics') ? 'active' : ''}" do %>
+          <i class="fa-solid fa-chart-line"></i> Fallas
+        <% end %>
         <%= link_to alerts_path, class: "gf-tab #{request.path.start_with?('/alerts') ? 'active' : ''}" do %>
           <i class="fa-solid fa-triangle-exclamation" style="color: var(--danger);"></i> Alertas
         <% end %>
@@ -372,7 +375,7 @@
     </script>
 
     <%# ── FLASH MESSAGES ── %>
-    <% if notice || alert %>
+    <% if (notice || alert) && !devise_controller? %>
       <div class="gf-flash">
         <% if notice %>
           <div class="gf-flash-notice">

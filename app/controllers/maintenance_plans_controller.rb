@@ -4,7 +4,7 @@ class MaintenancePlansController < ApplicationController
 
   # GET /maintenance_plans or /maintenance_plans.json
   def index
-    @maintenance_plans = policy_scope(MaintenancePlan)
+    @pagy, @maintenance_plans = pagy(policy_scope(MaintenancePlan).order(:name))
     authorize MaintenancePlan
   end
 

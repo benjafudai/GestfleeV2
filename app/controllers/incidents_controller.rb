@@ -3,7 +3,7 @@ class IncidentsController < ApplicationController
   before_action :set_incident, only: %i[ show edit update ]
 
   def index
-    @incidents = policy_scope(Incident).includes(:vehicle, :reporter).order(created_at: :desc)
+    @pagy, @incidents = pagy(policy_scope(Incident).includes(:vehicle, :reporter).order(created_at: :desc))
   end
 
   def show

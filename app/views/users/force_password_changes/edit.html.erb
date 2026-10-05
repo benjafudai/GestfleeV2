@@ -19,12 +19,12 @@
         <% end %>
 
         <div class="form-floating mb-3">
-          <%= f.password_field :password, autocomplete: "new-password", class: "form-control", id: "floatingPassword", placeholder: "Nueva Contraseña", required: true, minlength: 6 %>
+          <%= f.password_field :password, autocomplete: "new-password", class: "form-control", id: "floatingPassword", placeholder: "Nueva Contraseña", required: true, minlength: 10 %>
           <%= f.label :password, "Nueva Contraseña", for: "floatingPassword" %>
         </div>
 
         <div class="form-floating mb-4">
-          <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "form-control", id: "floatingPasswordConfirmation", placeholder: "Confirmar Contraseña", required: true, minlength: 6 %>
+          <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "form-control", id: "floatingPasswordConfirmation", placeholder: "Confirmar Contraseña", required: true, minlength: 10 %>
           <%= f.label :password_confirmation, "Confirmar Contraseña", for: "floatingPasswordConfirmation" %>
         </div>
 

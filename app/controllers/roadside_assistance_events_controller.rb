@@ -5,6 +5,7 @@ class RoadsideAssistanceEventsController < ApplicationController
   def index
     @events = policy_scope(RoadsideAssistanceEvent).order(created_at: :desc)
     authorize @events
+    @pagy, @events = pagy(@events)
   end
 
   def show

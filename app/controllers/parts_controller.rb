@@ -4,7 +4,7 @@ class PartsController < ApplicationController
 
   def index
     authorize Part
-    @parts = policy_scope(Part).order(:name)
+    @pagy, @parts = pagy(policy_scope(Part).order(:name))
   end
 
   def show
