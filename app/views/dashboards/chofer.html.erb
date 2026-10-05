@@ -1,19 +1,7 @@
 <div class="container mt-4">
 
   <%# ── Bienvenida ── %>
-  <div class="row mb-4">
-    <div class="col-12">
-      <div class="card border-0 bg-warning-subtle shadow-sm">
-        <div class="card-body d-flex align-items-center gap-3 py-3">
-          <i class="bi bi-truck fs-2 text-warning"></i>
-          <div>
-            <h4 class="mb-0 fw-semibold">Bienvenido, <%= current_user.email %></h4>
-            <span class="badge bg-warning text-dark">Chofer</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <%= render "dashboards/welcome", icon: "bi-truck", title: "Bienvenido, #{current_user.email}", tag: "Chofer" %>
 
   <%# ── Vehículo asignado ── %>
   <div class="row">

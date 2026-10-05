@@ -10,7 +10,7 @@
     <link rel="manifest" href="/manifest.json">
     <link rel="icon" type="image/png" href="/icon-192.png">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-    <meta name="theme-color" content="#0c1b3a">
+    <meta name="theme-color" content="#0e2240">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -19,386 +19,86 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
-    <style>
-      /* ── NAV WRAPPER ── */
-      .gf-nav-wrapper {
-        background: var(--surface-2);
-        border-bottom: 1px solid var(--border);
-        position: sticky;
-        top: 64px;
-        z-index: 100;
-        display: flex;
-        justify-content: center;   /* CENTRADO */
-        align-items: stretch;
-      }
-
-      /* Contenedor interno que limita el ancho visible */
-      .gf-nav-inner {
-        display: flex;
-        align-items: center;
-        width: 100%;
-        max-width: 1400px;         /* ~9 tabs visibles */
-      }
-
-      .gf-nav-arrow {
-        flex-shrink: 0;
-        width: 36px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: var(--surface-2);
-        border: none;
-        cursor: pointer;
-        color: var(--muted);
-        font-size: 0.9rem;
-        transition: background var(--ease), color var(--ease);
-        border-right: 1px solid var(--border);
-        padding: 0;
-        align-self: stretch;
-      }
-      .gf-nav-arrow:last-child {
-        border-right: none;
-        border-left: 1px solid var(--border);
-      }
-      .gf-nav-arrow:hover {
-        background: var(--blue-pale);
-        color: var(--blue);
-      }
-      .gf-nav-arrow[disabled] {
-        opacity: 0.28;
-        cursor: default;
-        pointer-events: none;
-      }
-
-      .gf-tabs {
-        display: flex;
-        gap: 5px;
-        padding: 8px 8px;
-        overflow-x: auto;
-        flex: 1;
-        scroll-behavior: smooth;
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-      }
-      .gf-tabs::-webkit-scrollbar { display: none; }
-    </style>
 
     <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', function() {
-          navigator.serviceWorker.register('/service_worker.js');
+      /* Sidebar: collapsed state persists per browser; drawer on small screens.
+         Runs once (head scripts aren't re-run on Turbo visits), so listeners are
+         delegated on document and survive page changes. */
+      (function () {
+        var root = document.documentElement;
+        try { if (localStorage.getItem("gfSidebar") === "collapsed") root.classList.add("gf-collapsed"); } catch (e) {}
+
+        var isMobile = function () { return window.matchMedia("(max-width: 991.98px)").matches; };
+
+        var syncCollapseButton = function () {
+          var button = document.querySelector(".gf-sidebar-collapse");
+          if (!button) return;
+          var text = root.classList.contains("gf-collapsed") ? "Expandir menú" : "Contraer menú";
+          button.title = text;
+          button.setAttribute("aria-label", text);
+          button.querySelector(".gf-nav-label").textContent = text;
+        };
+
+        document.addEventListener("click", function (event) {
+          if (event.target.closest("[data-gf-sidebar-toggle]")) {
+            if (isMobile()) {
+              root.classList.toggle("gf-drawer-open");
+            } else {
+              var collapsed = root.classList.toggle("gf-collapsed");
+              try { localStorage.setItem("gfSidebar", collapsed ? "collapsed" : "expanded"); } catch (e) {}
+              syncCollapseButton();
+            }
+          } else if (event.target.closest("[data-gf-sidebar-close]")) {
+            root.classList.remove("gf-drawer-open");
+          }
+        });
+
+        document.addEventListener("turbo:load", syncCollapseButton);
+        document.addEventListener("turbo:visit", function () { root.classList.remove("gf-drawer-open"); });
+      })();
+
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", function () {
+          navigator.serviceWorker.register("/service_worker.js");
         });
       }
     </script>
   </head>
 
-  <body>
+  <% app_shell = user_signed_in? && !content_for?(:auth_page) %>
+  <body class="<%= app_shell ? 'gf-app' : 'gf-public' %>">
+    <% if app_shell %>
+      <%= render "layouts/sidebar" %>
+      <div class="gf-backdrop" data-gf-sidebar-close></div>
 
-    <%# ── HEADER STICKY ── %>
-    <% if user_signed_in? %>
-    <header class="app-header">
-      <%# Brand %>
-      <%= link_to dashboard_path, class: "app-header-brand" do %>
-        <div class="app-header-brand-icon">
-          <i class="fa-solid fa-truck-fast"></i>
-        </div>
-        <span>GestFlee</span>
-      <% end %>
+      <div class="gf-main">
+        <%= render "layouts/topbar" %>
 
-      <%# Right side %>
-      <div class="app-header-right">
-        <%# Campana de notificaciones %>
-        <%= link_to notifications_path, class: "app-header-bell" do %>
-          <i class="fa-solid fa-bell"></i>
-          <% if current_user.notifications.unread.any? %>
-            <span class="bell-badge"><%= current_user.notifications.unread.count %></span>
-          <% end %>
-        <% end %>
-
-        <%# Badge de rol %>
-        <% role_class = current_user.role.to_s %>
-        <span class="role-badge <%= role_class %>">
-          <% role_icons = { "admin" => "fa-user-gear", "chofer" => "fa-truck", "mecanico" => "fa-wrench", "analista" => "fa-chart-column", "superadmin" => "fa-shield", "bodeguero" => "fa-boxes-stacked" } %>
-          <i class="fa-solid <%= role_icons[role_class] || 'fa-user' %>"></i>
-          <%= role_label(current_user.role) %>
-        </span>
-
-        <%# Email del usuario %>
-        <span class="app-header-user"><%= current_user.email %></span>
-
-        <%# Botón salir %>
-        <div data-controller="logout">
-          <%= button_to destroy_user_session_path, method: :delete,
-              data: { action: "click->logout#clearStorage" },
-              class: "logout-btn" do %>
-            <i class="fa-solid fa-arrow-right-from-bracket"></i> Salir
-          <% end %>
-        </div>
-      </div>
-    </header>
-
-    <%# ── TABS DE NAVEGACIÓN POR ROL ── %>
-    <div class="gf-nav-wrapper" id="gfNavWrapper">
-      <div class="gf-nav-inner">
-        <button class="gf-nav-arrow" id="gfNavPrev" onclick="gfNavScroll(-1)" aria-label="Anterior" disabled>
-          <i class="fa-solid fa-chevron-left"></i>
-        </button>
-        <nav class="gf-tabs" id="gfTabs">
-      <%# --- SUPERADMIN --- %>
-      <% if current_user.superadmin? %>
-        <%= link_to companies_path, class: "gf-tab #{request.path.start_with?('/companies') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-building"></i> Empresas
-        <% end %>
-        <%= link_to users_path, class: "gf-tab #{request.path.start_with?('/users') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-users"></i> Usuarios
-        <% end %>
-        <%= link_to vehicles_path, class: "gf-tab #{request.path.start_with?('/vehicles') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-truck-front"></i> Vehículos
-        <% end %>
-        <%= link_to checklist_templates_path, class: "gf-tab #{request.path.start_with?('/checklist') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-list-check"></i> Checklists
-        <% end %>
-        <%= link_to incidents_path, class: "gf-tab #{request.path.start_with?('/incidents') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-triangle-exclamation"></i> Incidentes
-        <% end %>
-        <%= link_to work_orders_path, class: "gf-tab #{request.path.start_with?('/work_orders') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-screwdriver-wrench"></i> Órdenes OT
-        <% end %>
-        <%= link_to maintenance_plans_path, class: "gf-tab #{request.path.start_with?('/maintenance_plans') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-clipboard-check"></i> Mantenimiento
-        <% end %>
-        <%= link_to parts_path, class: "gf-tab #{request.path.start_with?('/parts') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-boxes-stacked"></i> Inventario
-        <% end %>
-        <%= link_to supply_requests_path, class: "gf-tab #{request.path.start_with?('/supply_requests') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-cart-plus"></i> Suministros
-        <% end %>
-        <%= link_to expenses_path, class: "gf-tab #{request.path.start_with?('/expenses') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-coins"></i> Costos
-        <% end %>
-        <%= link_to fuel_fills_path, class: "gf-tab #{request.path.start_with?('/fuel_fills') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-gas-pump"></i> Combustible
-        <% end %>
-        <%= link_to password_reset_requests_path, class: "gf-tab #{request.path.start_with?('/password_reset_requests') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-key"></i> Claves
-        <% end %>
-
-      <%# --- ADMIN --- %>
-      <% elsif current_user.admin? %>
-        <%= link_to dashboard_path, class: "gf-tab #{request.path == '/dashboard' ? 'active' : ''}" do %>
-          <i class="fa-solid fa-gauge"></i> Dashboard
-        <% end %>
-        <%= link_to vehicles_path, class: "gf-tab #{request.path.start_with?('/vehicles') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-truck-front"></i> Vehículos
-        <% end %>
-        <%= link_to checklist_templates_path, class: "gf-tab #{request.path.start_with?('/checklist') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-list-check"></i> Checklists
-        <% end %>
-        <%= link_to incidents_path, class: "gf-tab #{request.path.start_with?('/incidents') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-triangle-exclamation"></i> Incidentes
-        <% end %>
-        <%= link_to work_orders_path, class: "gf-tab #{request.path.start_with?('/work_orders') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-screwdriver-wrench"></i> Órdenes OT
-        <% end %>
-        <%= link_to maintenance_plans_path, class: "gf-tab #{request.path.start_with?('/maintenance_plans') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-clipboard-check"></i> Mantenimiento
-        <% end %>
-        <%= link_to parts_path, class: "gf-tab #{request.path.start_with?('/parts') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-boxes-stacked"></i> Inventario
-        <% end %>
-        <%= link_to supply_requests_path, class: "gf-tab #{request.path.start_with?('/supply_requests') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-cart-plus"></i> Suministros
-        <% end %>
-        <%= link_to expenses_path, class: "gf-tab #{request.path.start_with?('/expenses') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-coins"></i> Costos
-        <% end %>
-        <%= link_to fuel_fills_path, class: "gf-tab #{request.path.start_with?('/fuel_fills') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-gas-pump"></i> Combustible
-        <% end %>
-        <%= link_to users_path, class: "gf-tab #{request.path.start_with?('/users') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-users"></i> Usuarios
-        <% end %>
-        <%= link_to password_reset_requests_path, class: "gf-tab #{request.path.start_with?('/password_reset_requests') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-key"></i> Claves
-        <% end %>
-        <%= link_to alerts_path, class: "gf-tab #{request.path.start_with?('/alerts') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-triangle-exclamation" style="color: var(--danger);"></i> Alertas
-        <% end %>
-
-      <%# --- CHOFER --- %>
-      <% elsif current_user.chofer? %>
-        <%= link_to dashboard_path, class: "gf-tab #{request.path == '/dashboard' ? 'active' : ''}" do %>
-          <i class="fa-solid fa-gauge"></i> Mi Unidad
-        <% end %>
-        <%= link_to checklist_submissions_path, class: "gf-tab #{request.path.start_with?('/checklist_submissions') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-clipboard-check"></i> Check del Día
-        <% end %>
-        <%= link_to incidents_path, class: "gf-tab #{request.path.start_with?('/incidents') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-triangle-exclamation"></i> Incidentes
-        <% end %>
-        <%= link_to fuel_fills_path, class: "gf-tab #{request.path.start_with?('/fuel_fills') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-gas-pump"></i> Combustible
-        <% end %>
-
-      <%# --- MECÁNICO --- %>
-      <% elsif current_user.mecanico? %>
-        <%= link_to dashboard_path, class: "gf-tab #{request.path == '/dashboard' ? 'active' : ''}" do %>
-          <i class="fa-solid fa-gauge"></i> Dashboard
-        <% end %>
-        <%= link_to work_orders_path, class: "gf-tab #{request.path.start_with?('/work_orders') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-screwdriver-wrench"></i> Órdenes OT
-        <% end %>
-        <%= link_to maintenance_plans_path, class: "gf-tab #{request.path.start_with?('/maintenance_plans') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-clipboard-check"></i> Mantenimiento
-        <% end %>
-        <%= link_to parts_path, class: "gf-tab #{request.path.start_with?('/parts') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-boxes-stacked"></i> Inventario
-        <% end %>
-        <%= link_to supply_requests_path, class: "gf-tab #{request.path.start_with?('/supply_requests') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-cart-plus"></i> Repuestos
-        <% end %>
-        <%= link_to incidents_path, class: "gf-tab #{request.path.start_with?('/incidents') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-triangle-exclamation"></i> Incidentes
-        <% end %>
-
-      <%# --- ANALISTA --- %>
-      <% elsif current_user.analista? %>
-        <%= link_to dashboard_path, class: "gf-tab #{request.path == '/dashboard' ? 'active' : ''}" do %>
-          <i class="fa-solid fa-gauge"></i> Dashboard
-        <% end %>
-        <%= link_to expenses_path, class: "gf-tab #{request.path.start_with?('/expenses') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-coins"></i> Costos
-        <% end %>
-        <%= link_to parts_path, class: "gf-tab #{request.path.start_with?('/parts') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-boxes-stacked"></i> Inventario
-        <% end %>
-        <%= link_to supply_requests_path, class: "gf-tab #{request.path.start_with?('/supply_requests') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-cart-plus"></i> Suministros
-        <% end %>
-        <%= link_to fuel_fills_path, class: "gf-tab #{request.path.start_with?('/fuel_fills') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-gas-pump"></i> Combustible
-        <% end %>
-        <%= link_to failure_analytics_path, class: "gf-tab #{request.path.start_with?('/failure_analytics') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-chart-line"></i> Fallas
-        <% end %>
-        <%= link_to alerts_path, class: "gf-tab #{request.path.start_with?('/alerts') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-triangle-exclamation" style="color: var(--danger);"></i> Alertas
-        <% end %>
-
-      <%# --- BODEGUERO --- %>
-      <% elsif current_user.bodeguero? %>
-        <%= link_to dashboard_path, class: "gf-tab #{request.path == '/dashboard' ? 'active' : ''}" do %>
-          <i class="fa-solid fa-gauge"></i> Dashboard
-        <% end %>
-        <%= link_to parts_path, class: "gf-tab #{request.path.start_with?('/parts') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-boxes-stacked"></i> Inventario
-        <% end %>
-        <%= link_to supply_requests_path, class: "gf-tab #{request.path.start_with?('/supply_requests') ? 'active' : ''}" do %>
-          <i class="fa-solid fa-cart-plus"></i> Suministros
-        <% end %>
-      <% end %>
-        </nav>
-        <button class="gf-nav-arrow" id="gfNavNext" onclick="gfNavScroll(1)" aria-label="Siguiente">
-          <i class="fa-solid fa-chevron-right"></i>
-        </button>
-      </div>
-    </div>
-    <% end %>
-
-    <script>
-      (function() {
-        var SCROLL_KEY = 'gfNavScroll';
-
-        function getNav()  { return document.getElementById('gfTabs'); }
-        function getPrev() { return document.getElementById('gfNavPrev'); }
-        function getNext() { return document.getElementById('gfNavNext'); }
-
-        function updateArrows() {
-          var nav = getNav();
-          if (!nav) return;
-          var atStart = nav.scrollLeft <= 4;
-          var atEnd   = nav.scrollLeft + nav.clientWidth >= nav.scrollWidth - 4;
-          var prev = getPrev(), next = getNext();
-          var hasOverflow = nav.scrollWidth > nav.clientWidth + 8;
-          if (prev) { prev.disabled = atStart;  prev.style.display = hasOverflow ? 'flex' : 'none'; }
-          if (next) { next.disabled = atEnd;    next.style.display = hasOverflow ? 'flex' : 'none'; }
-        }
-
-        window.gfNavScroll = function(dir) {
-          var nav = getNav();
-          if (!nav) return;
-          var firstTab = nav.querySelector('.gf-tab');
-          var step = firstTab ? (firstTab.offsetWidth + 5) * 3 : 400;
-          nav.scrollLeft += dir * step;
-          setTimeout(updateArrows, 350);
-        };
-
-        /* Guardar posición ANTES de cada navegación Turbo */
-        document.addEventListener('turbo:before-visit', function() {
-          var nav = getNav();
-          if (nav) sessionStorage.setItem(SCROLL_KEY, nav.scrollLeft);
-        });
-
-        function initNav() {
-          var nav = getNav();
-          if (!nav) return;
-
-          /* 1. Restaurar posición previa (si existe) */
-          var saved = parseFloat(sessionStorage.getItem(SCROLL_KEY) || '0');
-          nav.scrollLeft = saved;
-
-          /* 2. Solo ajustar si el tab activo quedó fuera del área visible */
-          var active = nav.querySelector('.gf-tab.active');
-          if (active) {
-            var navLeft  = nav.scrollLeft;
-            var navRight = navLeft + nav.clientWidth;
-            var tabLeft  = active.offsetLeft;
-            var tabRight = tabLeft + active.offsetWidth;
-
-            if (tabLeft < navLeft) {
-              /* Oculto por la izquierda → traerlo al borde izquierdo */
-              nav.scrollLeft = tabLeft - 8;
-            } else if (tabRight > navRight) {
-              /* Oculto por la derecha → traerlo al borde derecho */
-              nav.scrollLeft = tabRight - nav.clientWidth + 8;
-            }
-            /* Ya visible → no mover */
-          }
-
-          nav.removeEventListener('scroll', updateArrows);
-          nav.addEventListener('scroll', updateArrows);
-          updateArrows();
-        }
-
-        document.addEventListener('DOMContentLoaded', initNav);
-        document.addEventListener('turbo:load', initNav);
-      })();
-    </script>
-
-    <%# ── FLASH MESSAGES ── %>
-    <% if (notice || alert) && !devise_controller? %>
-      <div class="gf-flash">
-        <% if notice %>
-          <div class="gf-flash-notice">
-            <i class="fa-solid fa-circle-check"></i> <%= notice %>
+        <% if notice || alert %>
+          <div class="gf-flash">
+            <% if notice %>
+              <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fa-solid fa-circle-check"></i>
+                <span><%= notice %></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+              </div>
+            <% end %>
+            <% if alert %>
+              <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <span><%= alert %></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+              </div>
+            <% end %>
           </div>
         <% end %>
-        <% if alert %>
-          <div class="gf-flash-alert">
-            <i class="fa-solid fa-circle-exclamation"></i> <%= alert %>
-          </div>
-        <% end %>
-      </div>
-    <% end %>
 
-    <%# ── CONTENIDO ── %>
-    <% if user_signed_in? %>
-      <main class="gf-content">
-        <%= yield %>
-      </main>
+        <main class="gf-content">
+          <%= yield %>
+        </main>
+      </div>
     <% else %>
       <%= yield %>
     <% end %>
-
   </body>
 </html>

@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import { applyChartTheme, chartColors } from "../lib/chart_theme"
 
 // Renders a combined bar (liters) + line (cost) chart for fuel history.
 export default class extends Controller {
@@ -6,6 +7,7 @@ export default class extends Controller {
 
   connect() {
     if (typeof Chart === "undefined") return
+    applyChartTheme()
 
     this.chart = new Chart(this.element.getContext("2d"), {
       data: {
@@ -15,7 +17,7 @@ export default class extends Controller {
             type: "bar",
             label: "Litros",
             data: this.litersValue,
-            backgroundColor: "rgba(13, 110, 253, 0.55)",
+            backgroundColor: chartColors.primary,
             borderRadius: 4,
             yAxisID: "y",
           },
@@ -23,8 +25,8 @@ export default class extends Controller {
             type: "line",
             label: "Costo ($)",
             data: this.costsValue,
-            borderColor: "#fd7e14",
-            backgroundColor: "rgba(253, 126, 20, 0.15)",
+            borderColor: chartColors.navy,
+            backgroundColor: chartColors.primaryLight,
             tension: 0.3,
             yAxisID: "y1",
           },

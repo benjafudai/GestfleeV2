@@ -1,17 +1,5 @@
 <div class="container mt-4">
-  <div class="row mb-4">
-    <div class="col-12">
-      <div class="card border-0 bg-info-subtle shadow-sm">
-        <div class="card-body d-flex align-items-center gap-3 py-3">
-          <i class="bi bi-graph-up-arrow fs-2 text-info"></i>
-          <div>
-            <h4 class="mb-0 fw-semibold">Bienvenido, <%= current_user.email %></h4>
-            <span class="badge bg-info text-dark">Analista</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <%= render "dashboards/welcome", icon: "bi-graph-up-arrow", title: "Bienvenido, #{current_user.email}", tag: "Analista" %>
 
   <div class="row g-3 mb-4">
     <div class="col-6 col-lg-3">
@@ -50,11 +38,11 @@
 
   <div class="row g-4 mb-4">
     <div class="col-md-3">
-      <div class="card shadow-sm h-100 border-start border-4 border-warning">
+      <div class="card shadow-sm h-100 border-start border-4 border-primary">
         <div class="card-body">
           <h5 class="card-title"><i class="bi bi-coins me-2"></i> Costos</h5>
           <p class="card-text text-muted small">Analiza los gastos registrados por unidad y período.</p>
-          <%= link_to "Ver Costos", expenses_path, class: "btn btn-outline-warning btn-sm" %>
+          <%= link_to "Ver Costos", expenses_path, class: "btn btn-outline-primary btn-sm" %>
         </div>
       </div>
     </div>
@@ -68,11 +56,11 @@
       </div>
     </div>
     <div class="col-md-3">
-      <div class="card shadow-sm h-100 border-start border-4 border-info">
+      <div class="card shadow-sm h-100 border-start border-4 border-primary">
         <div class="card-body">
           <h5 class="card-title"><i class="bi bi-boxes me-2"></i> Inventario</h5>
           <p class="card-text text-muted small">Stock y valorización de repuestos.</p>
-          <%= link_to "Ver Inventario", parts_path, class: "btn btn-outline-info btn-sm" %>
+          <%= link_to "Ver Inventario", parts_path, class: "btn btn-outline-primary btn-sm" %>
         </div>
       </div>
     </div>
@@ -86,11 +74,11 @@
       </div>
     </div>
     <div class="col-md-3">
-      <div class="card shadow-sm h-100 border-start border-4 border-dark">
+      <div class="card shadow-sm h-100 border-start border-4 border-primary">
         <div class="card-body">
           <h5 class="card-title"><i class="bi bi-clipboard2-pulse me-2"></i> Fallas y Mantención</h5>
           <p class="card-text text-muted small">Fallas, costo de repuestos y tiempo fuera de servicio.</p>
-          <%= link_to "Ver Análisis", failure_analytics_path, class: "btn btn-outline-dark btn-sm" %>
+          <%= link_to "Ver Análisis", failure_analytics_path, class: "btn btn-outline-primary btn-sm" %>
         </div>
       </div>
     </div>

@@ -1,0 +1,62 @@
+<% nav = current_nav_item %>
+<% unread_count = current_user.notifications.unread.count %>
+<header class="gf-topbar">
+  <button type="button" class="gf-icon-btn gf-menu-btn" data-gf-sidebar-toggle aria-label="Menú">
+    <i class="fa-solid fa-bars"></i>
+  </button>
+
+  <div class="gf-topbar-title">
+    <% if nav %>
+      <i class="fa-solid <%= nav[:icon] %>"></i>
+      <span><%= nav[:label] %></span>
+    <% end %>
+  </div>
+
+  <div class="gf-topbar-right">
+    <span class="gf-org-chip" title="Empresa">
+      <i class="fa-solid fa-building"></i>
+      <span><%= current_user.company&.name || "Panel global" %></span>
+    </span>
+
+    <%= link_to notifications_path, class: "gf-icon-btn gf-bell", title: "Notificaciones", "aria-label": "Notificaciones" do %>
+      <i class="fa-regular fa-bell"></i>
+      <% if unread_count.positive? %>
+        <span class="gf-bell-count"><%= unread_count > 99 ? "99+" : unread_count %></span>
+      <% end %>
+    <% end %>
+
+    <div class="dropdown">
+      <button type="button" class="gf-user-btn" data-bs-toggle="dropdown" aria-expanded="false">
+        <span class="gf-avatar"><%= user_initials(current_user) %></span>
+        <span class="gf-user-meta">
+          <span class="gf-user-email"><%= current_user.email %></span>
+          <span class="gf-user-role"><%= role_label(current_user.role) %></span>
+        </span>
+        <i class="fa-solid fa-chevron-down gf-user-caret"></i>
+      </button>
+
+      <div class="dropdown-menu dropdown-menu-end gf-user-menu">
+        <div class="gf-user-menu-head">
+          <span class="gf-avatar gf-avatar-lg"><%= user_initials(current_user) %></span>
+          <div class="min-w-0">
+            <div class="gf-user-email"><%= current_user.email %></div>
+            <span class="badge bg-primary"><%= role_label(current_user.role) %></span>
+          </div>
+        </div>
+        <div class="dropdown-divider"></div>
+        <%= link_to notifications_path, class: "dropdown-item" do %>
+          <i class="fa-regular fa-bell fa-fw"></i> Notificaciones
+          <% if unread_count.positive? %><span class="badge bg-danger ms-auto"><%= unread_count %></span><% end %>
+        <% end %>
+        <div class="dropdown-divider"></div>
+        <div data-controller="logout">
+          <%= button_to destroy_user_session_path, method: :delete,
+                data: { action: "click->logout#clearStorage" },
+                class: "dropdown-item gf-logout" do %>
+            <i class="fa-solid fa-arrow-right-from-bracket fa-fw"></i> Cerrar sesión
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>

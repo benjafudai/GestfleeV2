@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import { applyChartTheme, chartColors } from "../lib/chart_theme"
 
 // Renders a bar chart of reported failures (incidents) per month.
 export default class extends Controller {
@@ -6,6 +7,7 @@ export default class extends Controller {
 
   connect() {
     if (typeof Chart === "undefined") return
+    applyChartTheme()
 
     this.chart = new Chart(this.element.getContext("2d"), {
       type: "bar",
@@ -15,7 +17,7 @@ export default class extends Controller {
           {
             label: "Fallas reportadas",
             data: this.countsValue,
-            backgroundColor: "rgba(220, 53, 69, 0.55)",
+            backgroundColor: chartColors.primary,
             borderRadius: 4,
           },
         ],

@@ -1,27 +1,45 @@
-<div class="d-flex align-items-center justify-content-center min-vh-100 bg-light" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
-  <div class="card shadow-lg border-0 rounded-4" style="width: 100%; max-width: 400px;">
-    <div class="card-body p-5">
-      <div class="text-center mb-4">
-        <h2 class="fw-bold text-primary mb-1">Recuperar Contraseña</h2>
-        <p class="text-muted small">Te enviaremos las instrucciones a tu administrador</p>
+<% content_for :title, "Recuperar contraseña | GestFlee" %>
+
+<div class="gf-auth">
+  <div class="gf-auth-card is-narrow">
+    <section class="gf-auth-form">
+      <div class="gf-auth-brand">
+        <span class="gf-brand-mark"><i class="fa-solid fa-truck-fast"></i></span>
+        <span>
+          <span class="gf-brand-name">GestFlee</span>
+          <span class="gf-brand-sub">Gestión de Flota</span>
+        </span>
       </div>
+
+      <h1 class="gf-auth-title">Recuperar contraseña</h1>
+      <p class="gf-auth-sub">Ingresa tu correo y avisaremos a tu administrador para que restablezca tu acceso.</p>
+
+      <% if flash[:alert] %>
+        <div class="alert alert-danger d-flex align-items-center gap-2" role="alert">
+          <i class="fa-solid fa-circle-exclamation"></i> <span><%= flash[:alert] %></span>
+        </div>
+      <% end %>
 
       <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
         <%= render "devise/shared/error_messages", resource: resource %>
 
-        <div class="form-floating mb-4">
-          <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control", id: "floatingEmail", placeholder: "nombre@empresa.com" %>
-          <%= f.label :email, "Correo Electrónico", for: "floatingEmail" %>
+        <div class="mb-4">
+          <%= f.label :email, "Correo electrónico", class: "form-label" %>
+          <div class="gf-input-icon">
+            <i class="fa-regular fa-envelope"></i>
+            <%= f.email_field :email, autofocus: true, autocomplete: "email",
+                  placeholder: "nombre@empresa.cl", class: "form-control" %>
+          </div>
         </div>
 
-        <div class="d-grid mb-3">
-          <%= f.submit "Solicitar Recuperación", class: "btn btn-primary btn-lg rounded-pill fw-semibold shadow-sm" %>
-        </div>
+        <%= f.submit "Solicitar recuperación", class: "btn btn-primary w-100 gf-auth-submit" %>
       <% end %>
 
-      <div class="text-center mt-4">
-        <%= link_to "Volver al inicio de sesión", new_session_path(resource_name), class: "text-decoration-none text-secondary small" %>
-      </div>
-    </div>
+      <p class="gf-auth-foot">
+        <%= link_to new_session_path(resource_name), class: "gf-auth-link" do %>
+          <i class="fa-solid fa-arrow-left"></i> Volver al inicio de sesión
+        <% end %>
+      </p>
+    </section>
   </div>
 </div>
