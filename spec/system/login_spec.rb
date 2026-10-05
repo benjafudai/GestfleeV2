@@ -1,7 +1,13 @@
 require "rails_helper"
 
 RSpec.describe "Login", type: :system do
-  let(:company) { Company.create!(name: "Test Co", rut: "11.111.111-1") }
+  # Company requires at least one admin on create.
+  let(:company) do
+    Company.new(name: "Test Co", rut: "11.111.111-1").tap do |c|
+      c.users.build(email: "admin@test.com", role: :admin, password: password)
+      c.save!
+    end
+  end
   let(:password) { "Test-GestFlee-Spec-2026!" }
 
   def create_user(role:, **attrs)

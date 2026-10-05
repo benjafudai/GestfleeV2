@@ -2,7 +2,13 @@ require "rails_helper"
 
 RSpec.describe "Incident reporting", type: :system do
   let(:password) { "Test-GestFlee-Spec-2026!" }
-  let(:company) { Company.create!(name: "Test Co", rut: "22.222.222-2") }
+  # Company requires at least one admin on create.
+  let(:company) do
+    Company.new(name: "Test Co", rut: "22.222.222-2").tap do |c|
+      c.users.build(email: "admin@test.com", role: :admin, password: password)
+      c.save!
+    end
+  end
   let(:vehicle) { Vehicle.create!(company: company, plate: "ZZ9999") }
   let(:chofer) { User.create!(email: "chofer@test.com", password: password, role: :chofer, company: company) }
 
