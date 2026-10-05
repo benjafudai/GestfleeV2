@@ -130,8 +130,8 @@ class UsersController < ApplicationController
       # SuperAdmin can assign any role
       User.roles.keys
     else
-      # Admin can only assign: chofer, mecanico, analista
-      ['chofer', 'mecanico', 'analista']
+      # Admin can only assign: chofer, mecanico, analista, bodeguero
+      ['chofer', 'mecanico', 'analista', 'bodeguero']
     end
   end
   

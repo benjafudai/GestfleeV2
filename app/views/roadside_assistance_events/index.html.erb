@@ -1,51 +1,56 @@
-<div class="max-w-7xl mx-auto mt-6">
-  <div class="flex items-center justify-between mb-4">
-    <h1 class="text-2xl font-bold dark:text-white">Auxilio en Ruta</h1>
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 fw-bold mb-0"><i class="bi bi-truck-front-fill me-2 text-danger"></i>Auxilio en Ruta</h1>
     <% if policy(RoadsideAssistanceEvent).create? %>
-      <%= link_to "Reportar Emergencia", new_roadside_assistance_event_path, class: "bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" %>
+      <%= link_to new_roadside_assistance_event_path, class: "btn btn-danger fw-semibold" do %>
+        <i class="bi bi-exclamation-triangle-fill me-1"></i> Reportar Emergencia
+      <% end %>
     <% end %>
   </div>
 
-  <div class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
-    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-      <thead class="bg-gray-50 dark:bg-gray-700">
-        <tr>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Fecha</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Vehículo</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Chofer</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Estado</th>
-          <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Acciones</th>
-        </tr>
-      </thead>
-      <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-        <% @events.each do |event| %>
-          <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100"><%= event.created_at.strftime("%d/%m/%Y %H:%M") %></td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 dark:text-gray-100"><%= event.vehicle.plate %></td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300"><%= event.user.name || event.user.email %></td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <% badge_color = case event.status 
-                             when 'solicitado' then 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-                             when 'en_camino' then 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-                             when 'resuelto' then 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                             end %>
-              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <%= badge_color %>">
-                <%= event.status.humanize %>
-              </span>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-              <%= link_to "Ver detalle", event, class: "text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300 mr-2" %>
-            </td>
-          </tr>
-        <% end %>
-        <% if @events.empty? %>
-          <tr>
-            <td colspan="5" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
-              No hay eventos reportados.
-            </td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
+  <div class="card shadow-sm">
+    <div class="card-body p-0">
+      <% if @events.any? %>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Fecha</th>
+                <th>Vehículo</th>
+                <th>Chofer</th>
+                <th>Estado</th>
+                <th class="text-end">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @events.each do |event| %>
+                <tr>
+                  <td class="small"><%= event.created_at.strftime("%d/%m/%Y %H:%M") %></td>
+                  <td class="small fw-medium"><%= event.vehicle.plate %></td>
+                  <td class="small text-muted"><%= event.user.name || event.user.email %></td>
+                  <td>
+                    <% badge_class = case event.status
+                         when 'solicitado' then 'text-bg-danger'
+                         when 'en_camino'  then 'text-bg-warning'
+                         when 'resuelto'   then 'text-bg-success'
+                         else 'text-bg-secondary'
+                         end %>
+                    <span class="badge <%= badge_class %> rounded-pill"><%= event.status.humanize %></span>
+                  </td>
+                  <td class="text-end">
+                    <%= link_to "Ver detalle", event, class: "btn btn-sm btn-outline-primary" %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <div class="text-center py-5 text-muted">
+          <i class="bi bi-truck-front d-block mb-2 fs-3 opacity-50"></i>
+          No hay eventos reportados.
+        </div>
+      <% end %>
+    </div>
   </div>
 </div>

@@ -46,7 +46,7 @@
 
             <div class="col-md-6">
               <%= form.label :status, "Estado de la Orden", class: "form-label fw-medium" %>
-              <%= form.select :status, WorkOrder.statuses.keys.map { |s| [s.humanize, s] }, {}, { class: "form-select" } %>
+              <%= form.select :status, WorkOrder.statuses.keys.map { |s| [work_order_status_label(s), s] }, {}, { class: "form-select" } %>
             </div>
 
             <div class="col-12">

@@ -1,10 +1,10 @@
 class SupplyRequestPolicy < ApplicationPolicy
   def index?
-    user.superadmin? || user.admin? || user.mecanico? || user.analista?
+    user.superadmin? || user.admin? || user.mecanico? || user.analista? || user.bodeguero?
   end
 
   def show?
-    same_company? && (user.superadmin? || user.admin? || user.mecanico? || user.analista?)
+    same_company? && (user.superadmin? || user.admin? || user.mecanico? || user.analista? || user.bodeguero?)
   end
 
   def create?
@@ -12,7 +12,7 @@ class SupplyRequestPolicy < ApplicationPolicy
   end
 
   def update?
-    same_company? && (user.admin? || user.superadmin?)
+    same_company? && (user.admin? || user.superadmin? || user.bodeguero?)
   end
 
   def destroy?
@@ -20,12 +20,12 @@ class SupplyRequestPolicy < ApplicationPolicy
   end
 
   def change_status?
-    same_company? && (user.admin? || user.superadmin?)
+    same_company? && (user.admin? || user.superadmin? || user.bodeguero?)
   end
 
   class Scope < ApplicationPolicy::Scope
     def resolve
-      if user.superadmin? || user.admin? || user.analista?
+      if user.superadmin? || user.admin? || user.analista? || user.bodeguero?
         company_scoped
       elsif user.mecanico?
         company_scoped.where(user: user)

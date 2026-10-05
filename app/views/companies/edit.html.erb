@@ -37,10 +37,16 @@
               <div class="form-text">Permite asignar roles de mecánico y gestionar mantenimientos.</div>
             </div>
 
-            <div class="form-check mb-4">
+            <div class="form-check mb-2">
               <%= f.check_box :has_analyst, class: "form-check-input" %>
               <%= f.label :has_analyst, "Habilitar Módulo de Analista", class: "form-check-label" %>
               <div class="form-text">Permite asignar roles de analista y ver reportes avanzados.</div>
+            </div>
+
+            <div class="form-check mb-4">
+              <%= f.check_box :has_bodeguero, class: "form-check-input" %>
+              <%= f.label :has_bodeguero, "Habilitar Módulo de Bodeguero", class: "form-check-label" %>
+              <div class="form-text">Permite asignar roles de bodeguero para gestionar inventario y solicitudes de suministros.</div>
             </div>
 
             <h5 class="mb-3">Combustible y Eficiencia</h5>

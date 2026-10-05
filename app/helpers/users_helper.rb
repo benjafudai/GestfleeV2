@@ -4,7 +4,8 @@ module UsersHelper
     'chofer'     => 'Chofer',
     'mecanico'   => 'Mecánico',
     'analista'   => 'Analista',
-    'superadmin' => 'Super Administrador'
+    'superadmin' => 'Super Administrador',
+    'bodeguero'  => 'Bodeguero'
   }.freeze
 
   def role_label(role)

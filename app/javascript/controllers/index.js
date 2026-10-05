@@ -9,3 +9,6 @@ application.register("delete-confirmation", DeleteConfirmationController)
 
 import HelloController from "./hello_controller"
 application.register("hello", HelloController)
+
+import FuelChartController from "./fuel_chart_controller"
+application.register("fuel-chart", FuelChartController)

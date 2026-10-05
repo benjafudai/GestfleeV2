@@ -22,9 +22,7 @@
         <div class="col-md-6">
           <%= f.label :doc_type, "Tipo de Documento", class: "form-label fw-medium" %>
           <%= f.select :doc_type,
-                VehicleDocument.doc_types.keys.map { |k|
-                  [k.humanize.tr("_", " ").capitalize, k]
-                },
+                VehicleDocument.doc_types.keys.map { |k| [vehicle_doc_type_label(k), k] },
                 { prompt: "Selecciona un tipo…" },
                 class: "form-select" %>
         </div>
@@ -37,7 +35,7 @@
         <div class="col-md-6">
           <%= f.label :status, "Estado", class: "form-label fw-medium" %>
           <%= f.select :status,
-                VehicleDocument.statuses.keys.map { |k| [k.humanize.capitalize, k] },
+                VehicleDocument.statuses.keys.map { |k| [document_status_label(k), k] },
                 { prompt: "Selecciona estado…" },
                 class: "form-select" %>
         </div>

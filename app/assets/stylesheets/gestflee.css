@@ -157,6 +157,7 @@ a { text-decoration: none; }
 .role-badge.mecanico { background: #dc2626;        border-color: transparent; }
 .role-badge.analista { background: #d97706;        border-color: transparent; }
 .role-badge.superadmin { background: #7c3aed;      border-color: transparent; }
+.role-badge.bodeguero { background: #0d9488;       border-color: transparent; }
 
 .logout-btn {
   background: rgba(255,255,255,0.10);

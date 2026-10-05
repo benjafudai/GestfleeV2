@@ -31,7 +31,7 @@ class MaintenancePlansController < ApplicationController
 
     respond_to do |format|
       if @maintenance_plan.save
-        format.html { redirect_to @maintenance_plan, notice: "Maintenance plan was successfully created." }
+        format.html { redirect_to @maintenance_plan, notice: "Plan de mantenimiento creado exitosamente." }
         format.json { render :show, status: :created, location: @maintenance_plan }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -45,7 +45,7 @@ class MaintenancePlansController < ApplicationController
     authorize @maintenance_plan
     respond_to do |format|
       if @maintenance_plan.update(maintenance_plan_params)
-        format.html { redirect_to @maintenance_plan, notice: "Maintenance plan was successfully updated.", status: :see_other }
+        format.html { redirect_to @maintenance_plan, notice: "Plan de mantenimiento actualizado exitosamente.", status: :see_other }
         format.json { render :show, status: :ok, location: @maintenance_plan }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -60,7 +60,7 @@ class MaintenancePlansController < ApplicationController
     @maintenance_plan.destroy!
 
     respond_to do |format|
-      format.html { redirect_to maintenance_plans_path, notice: "Maintenance plan was successfully destroyed.", status: :see_other }
+      format.html { redirect_to maintenance_plans_path, notice: "Plan de mantenimiento eliminado exitosamente.", status: :see_other }
       format.json { head :no_content }
     end
   end

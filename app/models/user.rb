@@ -10,7 +10,8 @@ class User < ApplicationRecord
     chofer: 1,
     mecanico: 2,
     analista: 3,
-    superadmin: 4
+    superadmin: 4,
+    bodeguero: 5
   }
   
   validates :role, presence: true

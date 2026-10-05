@@ -1,7 +1,7 @@
 <%= form_with(model: vehicle, class: "needs-validation") do |form| %>
   <% if vehicle.errors.any? %>
     <div class="alert alert-danger">
-      <h4 class="alert-heading"><%= pluralize(vehicle.errors.count, "error") %> impidieron guardar este vehículo:</h4>
+      <h4 class="alert-heading"><%= pluralize(vehicle.errors.count, "error", "errores") %> impidieron guardar este vehículo:</h4>
       <ul>
         <% vehicle.errors.each do |error| %>
           <li><%= error.full_message %></li>

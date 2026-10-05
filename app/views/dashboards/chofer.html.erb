@@ -38,7 +38,7 @@
                        else 'text-bg-light'
                        end %>
                   <span class="badge <%= badge_class %> rounded-pill">
-                    <%= @vehicle.status.humanize %>
+                    <%= vehicle_status_label(@vehicle.status) %>
                   </span>
                 </div>
 
@@ -99,7 +99,7 @@
                         <% @documents.each do |doc| %>
                           <tr>
                             <td class="small fw-medium">
-                              <%= doc.doc_type.humanize.tr('_',' ').capitalize %>
+                              <%= vehicle_doc_type_label(doc.doc_type) %>
                             </td>
                             <td class="small">
                               <% if doc.due_on %>
@@ -120,7 +120,7 @@
                                    when 'expired'  then 'text-bg-danger'
                                    else 'text-bg-secondary'
                                    end %>
-                              <span class="badge <%= sc %>"><%= doc.status.humanize %></span>
+                              <span class="badge <%= sc %>"><%= document_status_label(doc.status) %></span>
                             </td>
                             <td>
                               <% if doc.file.attached? %>

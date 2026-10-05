@@ -1,0 +1,124 @@
+<div class="container mt-4">
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card border-0 bg-teal-subtle shadow-sm" style="background-color: #ccfbf1;">
+        <div class="card-body d-flex align-items-center gap-3 py-3">
+          <i class="bi bi-boxes fs-2" style="color: #0d9488;"></i>
+          <div>
+            <h4 class="mb-0 fw-semibold">Bienvenido, <%= current_user.email %></h4>
+            <span class="badge text-white" style="background-color: #0d9488;">Bodeguero</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <div class="text-muted small text-uppercase fw-semibold mb-1">Repuestos en Catálogo</div>
+          <div class="h4 fw-bold mb-0"><%= @total_parts %></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="card shadow-sm h-100 <%= 'border-start border-4 border-warning' if @low_stock_parts.any? %>">
+        <div class="card-body">
+          <div class="text-muted small text-uppercase fw-semibold mb-1">Repuestos Stock Bajo</div>
+          <div class="h4 fw-bold mb-0"><%= @low_stock_parts.size %></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <div class="text-muted small text-uppercase fw-semibold mb-1">Valor Total del Stock</div>
+          <div class="h4 fw-bold mb-0"><%= number_to_currency(@total_stock_value, unit: "$", precision: 0) %></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <div class="text-muted small text-uppercase fw-semibold mb-1">Solicitudes Pendientes</div>
+          <div class="h4 fw-bold mb-0"><%= @pending_supply_requests.size %></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4 mb-4">
+    <div class="col-md-6">
+      <div class="card shadow-sm h-100 border-start border-4" style="border-color: #0d9488 !important;">
+        <div class="card-body">
+          <h5 class="card-title"><i class="bi bi-boxes me-2"></i> Inventario</h5>
+          <p class="card-text text-muted small">Gestiona el catálogo de repuestos, stock y costos.</p>
+          <%= link_to "Ver Inventario", parts_path, class: "btn btn-sm", style: "color: #0d9488; border: 1px solid #0d9488;" %>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card shadow-sm h-100 border-start border-4 border-warning">
+        <div class="card-body">
+          <h5 class="card-title"><i class="bi bi-cart-plus me-2"></i> Solicitudes de Suministros</h5>
+          <p class="card-text text-muted small">Aprueba y gestiona las solicitudes de repuestos de los mecánicos.</p>
+          <%= link_to "Ir a Suministros", supply_requests_path, class: "btn btn-outline-warning btn-sm" %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+          <h6 class="mb-0">Solicitudes Recientes</h6>
+          <%= link_to "Ver todas", supply_requests_path, class: "btn btn-sm btn-link text-decoration-none" %>
+        </div>
+        <div class="card-body p-0">
+          <% if @recent_supply_requests.any? %>
+            <div class="table-responsive">
+              <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>Folio</th>
+                    <th>Vehículo</th>
+                    <th>Solicitante</th>
+                    <th>Fecha</th>
+                    <th>Estado</th>
+                    <th class="text-end">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @recent_supply_requests.each do |req| %>
+                    <tr>
+                      <td class="fw-medium text-muted small">#<%= req.id %></td>
+                      <td class="small fw-bold"><%= req.vehicle.plate %></td>
+                      <td class="small text-muted"><%= req.user.email %></td>
+                      <td class="small"><%= l req.created_at.to_date, format: :short %></td>
+                      <td>
+                        <% badge_class = case req.status
+                             when 'requested' then 'text-bg-secondary'
+                             when 'received' then 'text-bg-warning'
+                             when 'purchasing' then 'text-bg-info'
+                             when 'delivered' then 'text-bg-success'
+                             end %>
+                        <span class="badge <%= badge_class %>"><%= SupplyRequest.human_status(req.status) %></span>
+                      </td>
+                      <td class="text-end">
+                        <%= link_to "Ver", req, class: "btn btn-sm btn-outline-primary" %>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          <% else %>
+            <div class="text-center py-4 text-muted">No hay solicitudes registradas.</div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

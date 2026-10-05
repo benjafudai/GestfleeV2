@@ -29,7 +29,7 @@
                when 'critical' then 'text-bg-dark'
                else 'text-bg-light'
                end %>
-            <span class="badge <%= severity_class %>"><%= @incident.severity&.humanize || 'No especificada' %></span>
+            <span class="badge <%= severity_class %>"><%= incident_severity_label(@incident.severity) %></span>
           </p>
           
           <p>
@@ -40,7 +40,7 @@
                when 'resolved' then 'text-bg-success'
                else 'text-bg-light'
                end %>
-            <span class="badge <%= status_class %>"><%= @incident.status&.humanize || 'Pendiente' %></span>
+            <span class="badge <%= status_class %>"><%= incident_status_label(@incident.status) %></span>
           </p>
 
           <hr>

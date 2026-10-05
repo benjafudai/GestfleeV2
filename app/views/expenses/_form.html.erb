@@ -25,7 +25,7 @@
 
             <div class="col-md-6">
               <%= form.label :category, "Categoría", class: "form-label fw-medium" %>
-              <%= form.select :category, Expense.categories.keys.map { |c| [c.humanize, c] }, {}, { class: "form-select", required: true } %>
+              <%= form.select :category, Expense.categories.keys.map { |c| [expense_category_label(c), c] }, {}, { class: "form-select", required: true } %>
             </div>
 
             <div class="col-md-6">

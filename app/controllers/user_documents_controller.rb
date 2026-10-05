@@ -1,4 +1,5 @@
 class UserDocumentsController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_user
   before_action :set_user_document, only: %i[ edit update destroy ]
 

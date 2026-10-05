@@ -11,7 +11,7 @@
   /* ── PANEL IZQUIERDO ── */
   .gf-login-hero {
     flex: 1.1;
-    background: #0c1b3a;
+    background: linear-gradient(160deg, #0c1b3a 0%, #101f45 55%, #0c1b3a 100%);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -40,9 +40,108 @@
     border-radius: 50%;
     background: radial-gradient(circle, rgba(37,99,235,0.18) 0%, transparent 70%);
     pointer-events: none;
+    animation: gfGlowPulse 5s ease-in-out infinite;
+  }
+
+  @keyframes gfGlowPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%      { opacity: 0.6; transform: scale(1.12); }
+  }
+
+  /* Puntos flotantes tipo "GPS tracking" */
+  .gf-map-dot {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #38bdf8;
+    box-shadow: 0 0 0 rgba(56,189,248,0.6);
+    animation: gfPing 2.6s ease-out infinite;
+  }
+  .gf-map-dot::after {
+    content: '';
+    position: absolute;
+    inset: -5px;
+    border-radius: 50%;
+    border: 1px solid rgba(56,189,248,0.5);
+    animation: gfPingRing 2.6s ease-out infinite;
+  }
+  .gf-map-dot.d1 { top: 22%; right: 22%; animation-delay: 0s; }
+  .gf-map-dot.d2 { top: 58%; right: 34%; background: #f97316; box-shadow: 0 0 0 rgba(249,115,22,0.6); animation-delay: 0.9s; }
+  .gf-map-dot.d2::after { border-color: rgba(249,115,22,0.5); }
+  .gf-map-dot.d3 { top: 40%; right: 10%; animation-delay: 1.7s; }
+
+  @keyframes gfPing {
+    0%, 100% { opacity: 0.9; }
+    50%      { opacity: 0.4; }
+  }
+  @keyframes gfPingRing {
+    0%   { transform: scale(0.6); opacity: 0.8; }
+    100% { transform: scale(2.2); opacity: 0; }
   }
 
   .gf-hero-top { position: relative; z-index: 1; }
+
+  /* ── Escena de ruta animada ── */
+  .gf-road-scene {
+    position: relative;
+    height: 46px;
+    margin: 8px 0 40px;
+    overflow: hidden;
+  }
+  .gf-road-line {
+    position: absolute;
+    bottom: 12px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    border-radius: 2px;
+    background-image: repeating-linear-gradient(90deg, rgba(255,255,255,0.28) 0 22px, transparent 22px 42px);
+    animation: gfRoadMove 0.9s linear infinite;
+  }
+  @keyframes gfRoadMove {
+    from { background-position: 0 0; }
+    to   { background-position: -64px 0; }
+  }
+  .gf-truck-anim {
+    position: absolute;
+    bottom: 13px;
+    left: -15%;
+    font-size: 1.55rem;
+    color: #f97316;
+    filter: drop-shadow(0 6px 8px rgba(0,0,0,0.35));
+    animation: gfDrive 5.5s linear infinite;
+  }
+  @keyframes gfDrive {
+    0%   { left: -15%; transform: scaleX(1); }
+    48%  { left: 100%; transform: scaleX(1); }
+    50%  { left: 100%; transform: scaleX(-1); }
+    98%  { left: -15%; transform: scaleX(-1); }
+    100% { left: -15%; transform: scaleX(1); }
+  }
+
+  .gf-live-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: rgba(134,239,172,0.9);
+    letter-spacing: 0.04em;
+    margin-top: 14px;
+  }
+  .gf-live-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #4ade80;
+    box-shadow: 0 0 8px rgba(74,222,128,0.9);
+    animation: gfLiveBlink 1.6s ease-in-out infinite;
+  }
+  @keyframes gfLiveBlink {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.35; }
+  }
 
   .gf-brand {
     display: flex;
@@ -87,6 +186,8 @@
     letter-spacing: -0.03em;
     margin-bottom: 16px;
     max-width: 360px;
+    opacity: 0;
+    animation: gfFadeUp 0.6s ease-out 0.1s both;
   }
 
   .gf-hero-heading span { color: #f97316; }
@@ -96,6 +197,13 @@
     color: rgba(255,255,255,0.48);
     max-width: 320px;
     line-height: 1.7;
+    opacity: 0;
+    animation: gfFadeUp 0.6s ease-out 0.22s both;
+  }
+
+  @keyframes gfFadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
 
   .gf-hero-roles { position: relative; z-index: 1; margin-top: 48px; }
@@ -122,6 +230,25 @@
     font-size: 0.8rem;
     color: rgba(255,255,255,0.55);
     font-weight: 500;
+    opacity: 0;
+    animation: gfChipIn 0.5s ease-out both;
+    transition: background 0.22s, border-color 0.22s, color 0.22s, transform 0.22s;
+  }
+  .gf-role-chip:hover {
+    background: rgba(37,99,235,0.16);
+    border-color: rgba(37,99,235,0.4);
+    color: #fff;
+    transform: translateY(-2px);
+  }
+  .gf-role-chip:nth-child(1) { animation-delay: 0.34s; }
+  .gf-role-chip:nth-child(2) { animation-delay: 0.40s; }
+  .gf-role-chip:nth-child(3) { animation-delay: 0.46s; }
+  .gf-role-chip:nth-child(4) { animation-delay: 0.52s; }
+  .gf-role-chip:nth-child(5) { animation-delay: 0.58s; }
+
+  @keyframes gfChipIn {
+    from { opacity: 0; transform: translateY(8px) scale(0.94); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
   }
 
   .gf-hero-footer {
@@ -287,6 +414,10 @@
 
   <!-- ── PANEL IZQUIERDO — MARCA ── -->
   <aside class="gf-login-hero">
+    <span class="gf-map-dot d1"></span>
+    <span class="gf-map-dot d2"></span>
+    <span class="gf-map-dot d3"></span>
+
     <div class="gf-hero-top">
 
       <div class="gf-brand">
@@ -306,6 +437,11 @@
         Checklists, mantenimiento, combustible, incidentes y gestión de flota integrados y en tiempo real.
       </p>
 
+      <div class="gf-road-scene" aria-hidden="true">
+        <div class="gf-road-line"></div>
+        <i class="fa-solid fa-truck-fast gf-truck-anim"></i>
+      </div>
+
       <div class="gf-hero-roles">
         <div class="gf-hero-roles-label">Roles del sistema</div>
         <div class="gf-roles-chips">
@@ -313,6 +449,10 @@
           <span class="gf-role-chip"><i class="fa-solid fa-truck"></i> Conductor</span>
           <span class="gf-role-chip"><i class="fa-solid fa-wrench"></i> Técnico Mecánico</span>
           <span class="gf-role-chip"><i class="fa-solid fa-chart-column"></i> Analista</span>
+          <span class="gf-role-chip"><i class="fa-solid fa-boxes-stacked"></i> Bodeguero</span>
+        </div>
+        <div class="gf-live-badge">
+          <span class="gf-live-dot"></span> Sistema en línea
         </div>
       </div>
     </div>

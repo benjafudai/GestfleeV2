@@ -82,7 +82,7 @@
 
           <% if policy(@supply_request).change_status? && @supply_request.status != 'delivered' %>
             <div class="mt-4 pt-3 border-top text-center">
-              <label class="form-label small text-muted text-uppercase fw-bold">Acción de Administrador</label>
+              <label class="form-label small text-muted text-uppercase fw-bold">Gestionar Estado</label>
               <% next_state = SupplyRequest.statuses.keys[current_idx] %>
               <%= button_to change_status_supply_request_path(@supply_request, status: next_state), 
                     method: :patch, 

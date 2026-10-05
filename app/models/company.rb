@@ -20,8 +20,8 @@ class Company < ApplicationRecord
   validates :rut, presence: true, uniqueness: true
   validates :users, presence: { message: "debe incluir al menos un administrador" }, on: :create
 
-  # Store configuration: { has_mechanic: ..., fuel_anomaly_threshold: 20 }
-  store :configuration, accessors: [ :has_mechanic, :has_analyst, :fuel_anomaly_threshold ], coder: JSON
+  # Store configuration: { has_mechanic: ..., has_bodeguero: ..., fuel_anomaly_threshold: 20 }
+  store :configuration, accessors: [ :has_mechanic, :has_analyst, :has_bodeguero, :fuel_anomaly_threshold ], coder: JSON
 
   def anomaly_threshold
     (fuel_anomaly_threshold.presence || 20).to_i
@@ -33,5 +33,9 @@ class Company < ApplicationRecord
 
   def has_analyst?
     has_analyst == true || has_analyst == "true" || has_analyst == "1" || has_analyst == 1
+  end
+
+  def has_bodeguero?
+    has_bodeguero == true || has_bodeguero == "true" || has_bodeguero == "1" || has_bodeguero == 1
   end
 end

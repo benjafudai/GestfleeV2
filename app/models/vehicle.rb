@@ -6,6 +6,7 @@ class Vehicle < ApplicationRecord
   has_many :vehicle_documents, dependent: :destroy
   has_many :vehicle_assignments, dependent: :destroy
   has_many :expenses, dependent: :destroy
+  has_many :fuel_fills, dependent: :destroy
   has_one  :active_assignment, -> { active }, class_name: 'VehicleAssignment'
   has_many :checklist_submissions, dependent: :destroy
   has_many :incidents, dependent: :destroy

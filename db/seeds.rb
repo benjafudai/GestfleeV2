@@ -14,12 +14,12 @@ DEMO_PASSWORD = "Password.123456"
 
 company = Company.find_or_create_by!(rut: '77.777.777-7') do |c|
   c.name = 'Empresa Principal'
-  c.configuration = {has_mechanic: true, has_analyst: false}
+  c.configuration = {has_mechanic: true, has_analyst: false, has_bodeguero: true}
   # Company exige al menos un usuario al crearse
   c.users.build(email: "admin@demo.cl", role: :admin, password: DEMO_PASSWORD)
 end
 
-%i[superadmin admin chofer mecanico analista].each do |role|
+%i[superadmin admin chofer mecanico analista bodeguero].each do |role|
   user = User.find_or_initialize_by(email: "#{role}@demo.cl")
   user.role = role
   user.company = company unless role == :superadmin # No company for superadmin

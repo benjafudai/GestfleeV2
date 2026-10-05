@@ -31,7 +31,7 @@ class WorkOrdersController < ApplicationController
 
     respond_to do |format|
       if @work_order.save
-        format.html { redirect_to @work_order, notice: "Work order was successfully created." }
+        format.html { redirect_to @work_order, notice: "Orden de trabajo creada exitosamente." }
         format.json { render :show, status: :created, location: @work_order }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -45,7 +45,7 @@ class WorkOrdersController < ApplicationController
     authorize @work_order
     respond_to do |format|
       if @work_order.update(work_order_params)
-        format.html { redirect_to @work_order, notice: "Work order was successfully updated.", status: :see_other }
+        format.html { redirect_to @work_order, notice: "Orden de trabajo actualizada exitosamente.", status: :see_other }
         format.json { render :show, status: :ok, location: @work_order }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -60,7 +60,7 @@ class WorkOrdersController < ApplicationController
     @work_order.destroy!
 
     respond_to do |format|
-      format.html { redirect_to work_orders_path, notice: "Work order was successfully destroyed.", status: :see_other }
+      format.html { redirect_to work_orders_path, notice: "Orden de trabajo eliminada exitosamente.", status: :see_other }
       format.json { head :no_content }
     end
   end
