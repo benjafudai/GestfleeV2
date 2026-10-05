@@ -1,6 +1,8 @@
 class User < ApplicationRecord
+  # No :registerable — users are created by an admin (UsersController), never
+  # through public sign-up.
   devise :database_authenticatable,
-         :registerable, :recoverable, :rememberable, :validatable,
+         :recoverable, :rememberable, :validatable,
          :lockable, :timeoutable
 
   belongs_to :company, optional: true

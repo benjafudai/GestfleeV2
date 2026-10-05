@@ -27,7 +27,7 @@
                 <tr>
                   <td class="small"><%= event.created_at.strftime("%d/%m/%Y %H:%M") %></td>
                   <td class="small fw-medium"><%= event.vehicle.plate %></td>
-                  <td class="small text-muted"><%= event.user.name || event.user.email %></td>
+                  <td class="small text-muted"><%= event.user.email %></td>
                   <td>
                     <% badge_class = case event.status
                          when 'solicitado' then 'text-bg-danger'

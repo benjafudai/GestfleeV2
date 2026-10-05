@@ -29,7 +29,7 @@ class RoadsideAssistanceEvent < ApplicationRecord
         user: admin,
         notifiable: self,
         title: "¡Emergencia Reportada!",
-        message: "El vehículo #{vehicle.plate} (Chofer: #{user.name}) ha reportado un evento de auxilio en ruta."
+        message: "El vehículo #{vehicle.plate} (Chofer: #{user.email}) ha reportado un evento de auxilio en ruta."
       )
       
       # Send Push Notification via WebPush

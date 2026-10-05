@@ -1,22 +1,18 @@
 Rails.application.routes.draw do
   resources :expenses
   resources :work_orders do
-    resources :work_order_tasks, only: [:create, :update, :destroy]
-    resources :work_order_part_usages, only: [:create, :update, :destroy]
     member do
       patch :change_status
     end
   end
-  resources :maintenance_plans do
-    resources :maintenance_task_templates, only: [:create, :update, :destroy]
-  end
+  resources :maintenance_plans
   resources :supply_requests do
     member do
       patch :change_status
     end
   end
   resources :parts
-  devise_for :users, skip: [:registrations], controllers: {
+  devise_for :users, controllers: {
     passwords: 'users/passwords'
   }
 
@@ -64,7 +60,7 @@ Rails.application.routes.draw do
   end
 
   # Sprint 3: Evidencias e Incidentes
-  resources :incidents
+  resources :incidents, except: :destroy
 
   # Auxilio en Ruta: deshabilitado por decisión de producto (con una llamada basta).
   # Código en app/controllers/roadside_assistance_events_controller.rb queda sin usar,

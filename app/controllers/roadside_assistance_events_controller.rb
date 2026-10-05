@@ -26,7 +26,7 @@ class RoadsideAssistanceEventsController < ApplicationController
   def create
     @event = RoadsideAssistanceEvent.new(event_params)
     @event.user = current_user
-    @event.company = current_company
+    @event.company = Current.company
     authorize @event
 
     if @event.save

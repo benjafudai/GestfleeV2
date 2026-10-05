@@ -14,7 +14,7 @@
       <div class="row g-4">
         <div class="col-md-6">
           <h6 class="fw-semibold mb-2">Información del Evento</h6>
-          <p class="mb-1"><strong>Chofer:</strong> <%= @event.user.name || @event.user.email %></p>
+          <p class="mb-1"><strong>Chofer:</strong> <%= @event.user.email %></p>
           <p class="mb-1"><strong>Fecha:</strong> <%= @event.created_at.strftime("%d/%m/%Y %H:%M") %></p>
           <p class="mb-3">
             <strong>Estado actual:</strong>

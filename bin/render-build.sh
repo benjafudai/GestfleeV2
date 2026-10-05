@@ -2,7 +2,6 @@
 # Exit on error
 set -o errexit
 
-npm install
 bundle install
 npm install
 bin/rails assets:precompile

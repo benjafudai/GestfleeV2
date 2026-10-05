@@ -45,7 +45,9 @@ class DashboardsController < ApplicationController
       @companies_without_admin = Company.where.not(id: User.where(role: :admin).select(:company_id))
       render :superadmin
     else
-      redirect_to root_path, alert: "Rol no definido."
+      # root_path is this same action, so redirecting there would loop forever
+      sign_out current_user
+      redirect_to new_user_session_path, alert: "Rol no definido."
     end
   end
 end

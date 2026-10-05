@@ -7,14 +7,17 @@ import { application } from "./application"
 import DeleteConfirmationController from "./delete_confirmation_controller"
 application.register("delete-confirmation", DeleteConfirmationController)
 
-import HelloController from "./hello_controller"
-application.register("hello", HelloController)
-
 import FuelChartController from "./fuel_chart_controller"
 application.register("fuel-chart", FuelChartController)
 
 import FailuresChartController from "./failures_chart_controller"
 application.register("failures-chart", FailuresChartController)
+
+import GeolocationController from "./geolocation_controller"
+application.register("geolocation", GeolocationController)
+
+import LogoutController from "./logout_controller"
+application.register("logout", LogoutController)
 
 import { MaskController } from "stimulus-mask"
 application.register("mask", MaskController)
