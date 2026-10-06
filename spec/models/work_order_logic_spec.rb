@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe WorkOrder, type: :model do
   describe 'stock deduction on completion' do
-    let(:company) { Company.create!(name: 'Test Co', rut: '11.111.111-1') }
+    let(:company) { create_company }
     let(:vehicle) { Vehicle.create!(company: company, plate: 'XX1234') }
     let(:part) { Part.create!(company: company, sku: 'P1', name: 'Part 1', unit_of_measure: 'unit', stock: 10, cost: 1.0) }
     let(:mechanic) { User.create!(company: company, email: 'mech@test.com', password: 'Test-GestFlee-Spec-2026!', role: :mecanico) }
