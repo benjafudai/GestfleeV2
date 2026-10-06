@@ -6,7 +6,7 @@ class SupplyRequest < ApplicationRecord
   has_many :supply_request_lines, dependent: :destroy
   accepts_nested_attributes_for :supply_request_lines, allow_destroy: true
 
-  enum status: { requested: 0, received: 1, purchasing: 2, delivered: 3 }
+  enum :status, { requested: 0, received: 1, purchasing: 2, delivered: 3 }
 
   STATUS_LABELS = {
     "requested" => "Solicitado",

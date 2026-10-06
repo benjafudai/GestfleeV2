@@ -9,8 +9,8 @@ class Incident < ApplicationRecord
   has_many_attached :photos
   has_paper_trail
 
-  enum status: { pending: 0, in_review: 1, resolved: 2 }
-  enum severity: { low: 0, medium: 1, high: 2, critical: 3 }
+  enum :status, { pending: 0, in_review: 1, resolved: 2 }
+  enum :severity, { low: 0, medium: 1, high: 2, critical: 3 }
 
   after_initialize :set_defaults, if: :new_record?
 

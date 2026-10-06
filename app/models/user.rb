@@ -8,7 +8,7 @@ class User < ApplicationRecord
   belongs_to :company, optional: true
   validates :company, presence: true, unless: :superadmin?
 
-  enum role: {
+  enum :role, {
     admin: 0,
     chofer: 1,
     mecanico: 2,
