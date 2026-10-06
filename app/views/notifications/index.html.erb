@@ -24,7 +24,7 @@
                     <% end %>
                   </div>
                   <p class="text-muted small mb-1 mt-1"><%= notification.message %></p>
-                  <% if notification.notifiable_type == 'PasswordResetRequest' %>
+                  <% if notification.notifiable_type == 'PasswordResetRequest' && current_user.superadmin? %>
                     <%= link_to "Ver solicitud", password_reset_request_path(notification.notifiable_id), class: "small" %>
                   <% end %>
                 </div>

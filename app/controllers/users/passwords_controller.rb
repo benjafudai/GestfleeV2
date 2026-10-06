@@ -6,20 +6,18 @@ class Users::PasswordsController < Devise::PasswordsController
       # Create the password reset request
       reset_request = resource.password_reset_requests.create!(status: :pending)
 
-      # Notify admins of the user's company
-      if resource.company.present?
-        admins = resource.company.users.where(role: [:admin, :superadmin])
-        admins.each do |admin|
-          Notification.create!(
-            user: admin,
-            notifiable: reset_request,
-            title: "Solicitud de Recuperación de Contraseña",
-            message: "El usuario #{resource.email} ha solicitado recuperar su contraseña."
-          )
-        end
+      # Notify the GestFlee team (superadmins), who handle these requests
+      company_name = resource.company&.name || "sin empresa"
+      User.superadmin.find_each do |superadmin|
+        Notification.create!(
+          user: superadmin,
+          notifiable: reset_request,
+          title: "Solicitud de Recuperación de Contraseña",
+          message: "El usuario #{resource.email} (#{company_name}) ha solicitado recuperar su contraseña."
+        )
       end
 
-      redirect_to new_user_session_path, notice: "Tu administrador ha sido notificado para restablecer tu contraseña. Recibirás indicaciones pronto."
+      redirect_to new_user_session_path, notice: "Recibimos tu solicitud. El equipo de GestFlee te contactará para restablecer tu contraseña."
     else
       # Behave standard if not found to show the error
       set_flash_message(:alert, :not_found, scope: 'devise.passwords')

@@ -11,6 +11,7 @@
             <thead class="table-light">
               <tr>
                 <th>Usuario</th>
+                <th>Empresa</th>
                 <th>Fecha de Solicitud</th>
                 <th>Estado</th>
                 <th>Acciones</th>
@@ -22,6 +23,7 @@
                   <td>
                     <div class="fw-bold"><%= request.user.email %></div>
                   </td>
+                  <td><%= request.user.company&.name || "—" %></td>
                   <td><%= request.created_at.strftime("%d/%m/%Y %H:%M") %></td>
                   <td>
                     <span class="badge bg-warning text-dark">Pendiente</span>

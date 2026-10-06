@@ -1,17 +1,19 @@
+# Password reset requests are handled only by the GestFlee team (superadmins),
+# not by each company's admin.
 class PasswordResetRequestsController < ApplicationController
   before_action :authenticate_user!
-  before_action :authorize_admin!
+  before_action :authorize_superadmin!
 
   def index
-    @pending_requests = scoped_requests.where(status: :pending).order(created_at: :desc)
+    @pending_requests = PasswordResetRequest.includes(user: :company).where(status: :pending).order(created_at: :desc)
   end
 
   def show
-    @password_reset_request = scoped_requests.find(params[:id])
+    @password_reset_request = PasswordResetRequest.find(params[:id])
   end
 
   def update
-    @password_reset_request = scoped_requests.find(params[:id])
+    @password_reset_request = PasswordResetRequest.find(params[:id])
 
     user = @password_reset_request.user
     
@@ -25,14 +27,9 @@ class PasswordResetRequestsController < ApplicationController
 
   private
 
-  def authorize_admin!
-    unless current_user.admin? || current_user.superadmin?
+  def authorize_superadmin!
+    unless current_user.superadmin?
       redirect_to root_path, alert: "No tienes permisos para acceder a esta página."
     end
-  end
-
-  def scoped_requests
-    base = PasswordResetRequest.joins(:user)
-    current_user.superadmin? ? base : base.where(users: { company_id: current_user.company_id })
   end
 end

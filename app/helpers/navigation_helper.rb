@@ -87,8 +87,7 @@ module NavigationHelper
           nav_item("Alertas", alerts_path, "fa-circle-exclamation", "/alerts", tone: :danger)
         ] },
         { title: "Administración", items: [
-          nav_item("Usuarios", users_path, "fa-users", "/users"),
-          nav_item("Solicitudes de clave", password_reset_requests_path, "fa-key", "/password_reset_requests")
+          nav_item("Usuarios", users_path, "fa-users", "/users")
         ] }
       ]
     when "chofer"

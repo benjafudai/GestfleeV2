@@ -7,7 +7,9 @@
         </div>
         <div class="card-body p-4">
           <p class="mb-4">
-            El usuario <strong><%= @password_reset_request.user.email %></strong> ha solicitado restablecer su contraseña.
+            El usuario <strong><%= @password_reset_request.user.email %></strong>
+            <% if @password_reset_request.user.company %>(<%= @password_reset_request.user.company.name %>)<% end %>
+            ha solicitado restablecer su contraseña.
             Por favor, asigna una contraseña temporal y comunícasela al usuario. El usuario podrá cambiarla posteriormente.
           </p>
 
