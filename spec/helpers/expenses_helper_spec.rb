@@ -1,15 +1,14 @@
-require 'rails_helper'
+require "rails_helper"
 
-# Specs in this file have access to a helper object that includes
-# the ExpensesHelper. For example:
-#
-# describe ExpensesHelper do
-#   describe "string concat" do
-#     it "concats two strings with spaces" do
-#       expect(helper.concat_strings("this","that")).to eq("this that")
-#     end
-#   end
-# end
 RSpec.describe ExpensesHelper, type: :helper do
-  pending "add some examples to (or delete) #{__FILE__}"
+  describe "#long_spanish_date" do
+    it "writes the month in Spanish" do
+      expect(helper.long_spanish_date(Date.new(2026, 10, 6))).to eq("6 de octubre, 2026")
+      expect(helper.long_spanish_date(Date.new(2027, 1, 31))).to eq("31 de enero, 2027")
+    end
+
+    it "is empty without a date" do
+      expect(helper.long_spanish_date(nil)).to eq("")
+    end
+  end
 end
