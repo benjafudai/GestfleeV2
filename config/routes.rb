@@ -19,6 +19,7 @@ Rails.application.routes.draw do
   resources :password_reset_requests, only: [:index, :show, :update]
   resources :companies, only: [:index, :new, :create, :edit, :update, :destroy]
   resources :users do
+    patch :unlock, on: :member
     resources :user_documents, only: %i[new create edit update destroy]
     resource :force_password_change, only: %i[edit update], module: :users
   end

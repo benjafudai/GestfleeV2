@@ -21,7 +21,7 @@
               <% @pending_requests.each do |request| %>
                 <tr>
                   <td>
-                    <div class="fw-bold"><%= request.user.email %></div>
+                    <div class="fw-bold"><%= request.user.email %> <%= account_locked_badge(request.user) %></div>
                   </td>
                   <td><%= request.user.company&.name || "—" %></td>
                   <td><%= request.created_at.strftime("%d/%m/%Y %H:%M") %></td>

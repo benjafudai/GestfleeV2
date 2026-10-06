@@ -58,9 +58,9 @@
                     <% end %>
                   </td>
                 <% end %>
-                <td><%= user.email %></td>
+                <td><%= user.email %> <%= account_locked_badge(user) %></td>
                 <td>
-                  <span class="badge bg-<%= 
+                  <span class="badge bg-<%=
                     case user.role 
                     when 'superadmin' then 'danger'
                     when 'admin' then 'dark'
@@ -78,6 +78,7 @@
                   <div class="btn-group" role="group">
                     <%= link_to "Ver Perfil / Documentos", user_path(user), class: "btn btn-sm btn-outline-primary" %>
                     <%= link_to "Editar", edit_user_path(user), class: "btn btn-sm btn-outline-secondary" %>
+                    <%= unlock_account_button(user) %>
                     <% unless user == current_user %>
                       <%= button_to "Eliminar", user_path(user), method: :delete, data: { turbo_confirm: "¿Estás seguro?" }, class: "btn btn-sm btn-outline-danger" %>
                     <% end %>

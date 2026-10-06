@@ -13,6 +13,17 @@
             Por favor, asigna una contraseña temporal y comunícasela al usuario. El usuario podrá cambiarla posteriormente.
           </p>
 
+          <% if @password_reset_request.user.access_locked? %>
+            <div class="alert alert-warning d-flex justify-content-between align-items-center gap-3">
+              <span>
+                <strong>La cuenta está bloqueada</strong> por intentos fallidos y se desbloquea sola el
+                <%= auto_unlock_time(@password_reset_request.user) %>. Si no la desbloqueas, no podrá entrar
+                con la contraseña temporal hasta esa hora.
+              </span>
+              <%= unlock_account_button(@password_reset_request.user, label: "Desbloquear cuenta") %>
+            </div>
+          <% end %>
+
           <%= form_with url: password_reset_request_path(@password_reset_request), method: :patch, local: true do |f| %>
             <div class="mb-3">
               <%= f.label :password, "Nueva Contraseña Temporal", class: "form-label fw-bold" %>
