@@ -9,7 +9,7 @@ Bundler.require(*Rails.groups)
 module TrucksProyect
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 7.1
+    config.load_defaults 8.1
 
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
@@ -25,6 +25,10 @@ module TrucksProyect
     config.i18n.default_locale = :es
     config.i18n.available_locales = [:es, :en]
     config.i18n.fallbacks = [:en]
+
+    # Los adjuntos (fotos, documentos) se guardan tal cual: no se generan
+    # variantes ni miniaturas, así que no hace falta image_processing/vips.
+    config.active_storage.variant_processor = :disabled
     # config.eager_load_paths << Rails.root.join("extras")
   end
 end
