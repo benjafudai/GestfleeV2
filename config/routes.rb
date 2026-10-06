@@ -16,7 +16,9 @@ Rails.application.routes.draw do
     passwords: 'users/passwords'
   }
 
-  resources :password_reset_requests, only: [:index, :show, :update]
+  resources :password_reset_requests, only: [:index, :show, :update] do
+    patch :reject, on: :member
+  end
   resources :companies, only: [:index, :new, :create, :edit, :update, :destroy]
   resources :users do
     patch :unlock, on: :member

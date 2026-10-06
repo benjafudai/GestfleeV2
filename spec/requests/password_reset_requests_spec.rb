@@ -127,6 +127,84 @@ RSpec.describe "Password reset requests", type: :request do
     end
   end
 
+  describe "rejecting a request" do
+    let(:reject!) { patch reject_password_reset_request_path(reset_request) }
+
+    context "as a superadmin" do
+      before { sign_in superadmin }
+
+      it "offers the reject button on the list and on the request" do
+        get password_reset_requests_path
+        expect(response.body).to include(reject_password_reset_request_path(reset_request))
+
+        get password_reset_request_path(reset_request)
+        expect(response.body).to include("Rechazar solicitud")
+      end
+
+      it "rejects it without touching the password and takes it off the list" do
+        reject!
+
+        expect(response).to redirect_to(password_reset_requests_path)
+        expect(flash[:notice]).to eq("La solicitud de chofer@uno.cl fue rechazada.")
+        expect(reset_request.reload).to be_rejected
+        expect(reset_request.admin).to eq(superadmin)
+        expect(chofer.reload.valid_password?(password)).to be true
+
+        follow_redirect!
+        expect(response.body).not_to include(password_reset_request_path(reset_request))
+      end
+
+      it "shows who rejected it, with no password form or reject button" do
+        reject!
+
+        get password_reset_request_path(reset_request)
+
+        expect(response.body).to include("Rechazada", "por super@gestflee.cl")
+        expect(response.body).not_to include("Nueva Contraseña Temporal", "Rechazar solicitud")
+      end
+
+      it "can't set a password on a rejected request" do
+        reject!
+
+        patch password_reset_request_path(reset_request),
+              params: { password: "Clave-Temporal-2026!", password_confirmation: "Clave-Temporal-2026!" }
+
+        expect(response).to redirect_to(password_reset_request_path(reset_request))
+        expect(flash[:alert]).to eq("Esta solicitud ya fue resuelta.")
+        expect(reset_request.reload).to be_rejected
+        expect(chofer.reload.valid_password?(password)).to be true
+      end
+
+      it "can't reject a request that was already completed" do
+        reset_request.update!(status: :completed, admin: superadmin)
+
+        reject!
+
+        expect(flash[:alert]).to eq("Esta solicitud ya fue resuelta.")
+        expect(reset_request.reload).to be_completed
+      end
+    end
+
+    it "lets the user ask again after a rejection" do
+      sign_in superadmin
+      reject!
+      sign_out superadmin
+
+      expect {
+        post user_password_path, params: { user: { email: chofer.email } }
+      }.to change(PasswordResetRequest.pending, :count).by(1)
+    end
+
+    it "can't be done by a company admin" do
+      sign_in admin
+
+      reject!
+
+      expect(response).to redirect_to(root_path)
+      expect(reset_request.reload).to be_pending
+    end
+  end
+
   describe "throttling" do
     # Rack::Attack counts in Rails.cache, which is a null store in test, and
     # safelists localhost: use a real store and an outside IP.
