@@ -12,3 +12,14 @@ Rails.application.config.assets.paths << Rails.root.join("node_modules/bootstrap
 # folder are already added.
 # Rails.application.config.assets.precompile += %w( admin.js admin.css )
 Rails.application.config.assets.precompile += %w( gestflee.css )
+
+# En Windows el caché en disco de Sprockets (tmp/cache/assets) falla cuando dos
+# peticiones compilan el mismo asset a la vez: Windows no deja renombrar un
+# archivo que otro proceso tiene abierto (Errno::EACCES en File.rename) y la
+# página responde 500. Ahí se usa un caché en memoria; en Linux (producción)
+# se mantiene el caché en disco.
+if Gem.win_platform?
+  Rails.application.config.assets.configure do |env|
+    env.cache = Sprockets::Cache::MemoryStore.new
+  end
+end
