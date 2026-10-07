@@ -6,7 +6,7 @@ class RoadsideAssistanceEvent < ApplicationRecord
   has_many_attached :photos
   has_paper_trail
 
-  enum status: { solicitado: 0, en_camino: 1, resuelto: 2 }
+  enum :status, { solicitado: 0, en_camino: 1, resuelto: 2 }
 
   default_scope { where(company: Current.company) }
   before_validation :assign_company

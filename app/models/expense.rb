@@ -6,7 +6,7 @@ class Expense < ApplicationRecord
 
   has_many_attached :documents
 
-  enum category: { maintenance: 0, fuel: 1, parts: 2, tolls: 3, insurance: 4, other: 5 }
+  enum :category, { maintenance: 0, fuel: 1, parts: 2, tolls: 3, insurance: 4, other: 5 }
 
   CATEGORY_LABELS = {
     "maintenance" => "Mantenimiento",
