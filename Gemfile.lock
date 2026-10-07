@@ -164,6 +164,8 @@ GEM
     nio4r (2.7.5)
     nokogiri (1.19.4-x64-mingw-ucrt)
       racc (~> 1.4)
+    nokogiri (1.19.4-x86_64-linux-gnu)
+      racc (~> 1.4)
     orm_adapter (0.5.0)
     pagy (43.7.0)
       json
@@ -173,6 +175,7 @@ GEM
       activerecord (>= 7.1)
       request_store (~> 1.4)
     pg (1.7.0-x64-mingw-ucrt)
+    pg (1.7.0-x86_64-linux)
     pp (0.6.4)
       prettyprint
     prettyprint (0.2.0)
@@ -315,6 +318,7 @@ GEM
 
 PLATFORMS
   x64-mingw-ucrt
+  x86_64-linux
 
 DEPENDENCIES
   bootsnap
