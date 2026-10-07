@@ -24,7 +24,7 @@ RSpec.describe 'Vehicle management', type: :request do
         post vehicles_path, params: { vehicle: { plate: '', year: 1900 } }
       }.not_to change(Vehicle.unscoped, :count)
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
     end
 
     it 'updates and deletes a vehicle' do

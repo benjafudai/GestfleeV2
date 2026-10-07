@@ -20,7 +20,7 @@ RSpec.describe 'Authentication', type: :request do
   it 'rejects a wrong password' do
     post user_session_path, params: { user: { email: admin_of(company).email, password: 'incorrecta' } }
 
-    expect(response).to have_http_status(:unprocessable_entity)
+    expect(response).to have_http_status(:unprocessable_content)
     get vehicles_path
     expect(response).to redirect_to(new_user_session_path)
   end
