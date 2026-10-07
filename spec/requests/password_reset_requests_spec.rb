@@ -83,7 +83,9 @@ RSpec.describe "Password reset requests", type: :request do
       }.to change(PasswordResetRequest, :count).by(1)
 
       recipients = Notification.where(notifiable: mecanico.password_reset_requests.last).map(&:user)
-      expect(recipients).to eq([superadmin])
+      # all(be_superadmin) instead of eq([superadmin]): a superadmin left in the test DB would also be notified.
+      expect(recipients).to include(superadmin)
+      expect(recipients).to all(be_superadmin)
       expect(Notification.last.message).to include("mecanico@uno.cl", "Transportes Uno")
       expect(response).to redirect_to(new_user_session_path)
       expect(flash[:notice]).to eq(same_answer)
@@ -124,6 +126,23 @@ RSpec.describe "Password reset requests", type: :request do
       expect {
         post user_password_path, params: { user: { email: chofer.email } }
       }.to change(PasswordResetRequest, :count).by(1)
+    end
+  end
+
+  describe "after the reset" do
+    it "makes the user change the temporary password before using the app" do
+      chofer.update!(force_password_change: true)
+      sign_in chofer
+
+      get dashboard_path
+      expect(response).to redirect_to(edit_user_force_password_change_path(chofer))
+
+      patch user_force_password_change_path(chofer),
+            params: { user: { password: "Mi-Clave-Nueva-2026!", password_confirmation: "Mi-Clave-Nueva-2026!" } }
+      expect(chofer.reload.force_password_change).to be false
+
+      get dashboard_path
+      expect(response).to have_http_status(:ok)
     end
   end
 

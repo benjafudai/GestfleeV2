@@ -44,8 +44,14 @@ class ExpensesController < ApplicationController
   # PATCH/PUT /expenses/1 or /expenses/1.json
   def update
     authorize @expense
+    # Los archivos nuevos se suman a los ya guardados: asignarlos con update
+    # reemplazaría (y borraría) las boletas que el gasto ya tenía.
+    new_documents = Array(expense_params[:documents]).compact_blank
+    @expense.assign_attributes(expense_params.except(:documents))
+    @expense.documents.attach(new_documents) if new_documents.any?
+
     respond_to do |format|
-      if @expense.update(expense_params)
+      if @expense.save
         format.html { redirect_to @expense, notice: "Gasto actualizado exitosamente.", status: :see_other }
         format.json { render :show, status: :ok, location: @expense }
       else
