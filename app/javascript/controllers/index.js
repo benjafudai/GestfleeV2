@@ -7,5 +7,5 @@ import { application } from "./application"
 import DeleteConfirmationController from "./delete_confirmation_controller"
 application.register("delete-confirmation", DeleteConfirmationController)
 
-import HelloController from "./hello_controller"
-application.register("hello", HelloController)
+import LogoutController from "./logout_controller"
+application.register("logout", LogoutController)

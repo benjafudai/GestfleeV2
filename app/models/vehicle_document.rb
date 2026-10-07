@@ -15,6 +15,10 @@ class VehicleDocument < ApplicationRecord
 
   enum :status, { ok: 0, expiring: 1, expired: 2 }
 
+  # El formulario permite dejar el estado sin elegir; sin esto queda en nil y la
+  # ficha del vehículo y el dashboard del chofer se caen al mostrarlo.
+  before_validation { self.status = :ok if status.blank? }
+
   validates :doc_type, presence: true
   validates :due_on, presence: true
   validates :file, presence: { message: "debe adjuntar un archivo PDF" }

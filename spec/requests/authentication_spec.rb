@@ -8,6 +8,18 @@ RSpec.describe 'Authentication', type: :request do
     expect(response).to redirect_to(new_user_session_path)
   end
 
+  %w[/notifications /alerts /users/1/user_documents/new].each do |path|
+    it "sends visitors from #{path} to the login page" do
+      get path
+      expect(response).to redirect_to(new_user_session_path)
+    end
+  end
+
+  it 'rejects push subscriptions from visitors' do
+    post push_subscriptions_path, params: { endpoint: 'https://push.example/x' }, as: :json
+    expect(response).to have_http_status(:unauthorized)
+  end
+
   it 'logs in with valid credentials' do
     admin = admin_of(company)
     post user_session_path, params: { user: { email: admin.email, password: TestData::PASSWORD } }

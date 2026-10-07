@@ -27,6 +27,18 @@ RSpec.describe 'Vehicle management', type: :request do
       expect(response).to have_http_status(:unprocessable_content)
     end
 
+    it 'uploads a document without choosing a status and still shows the vehicle' do
+      vehicle = create_vehicle(company: company)
+      pdf = Rack::Test::UploadedFile.new(StringIO.new("%PDF-1.4\n%%EOF\n"), 'application/pdf', original_filename: 'seguro.pdf')
+
+      post vehicle_vehicle_documents_path(vehicle),
+           params: { vehicle_document: { doc_type: 'seguro', due_on: Date.current + 60, status: '', file: pdf } }
+
+      expect(vehicle.vehicle_documents.last).to be_ok
+      follow_redirect!
+      expect(response).to have_http_status(:ok)
+    end
+
     it 'updates and deletes a vehicle' do
       vehicle = create_vehicle(company: company)
 

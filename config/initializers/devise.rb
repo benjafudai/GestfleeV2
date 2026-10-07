@@ -314,3 +314,12 @@ Devise.setup do |config|
   # changed. Defaults to true, so a user is signed in automatically after changing a password.
   # config.sign_in_after_change_password = true
 end
+
+# Rails 8 draws routes lazily (on the first request) when eager loading is off,
+# as in development and test. Devise registers its user mapping and login
+# strategy while the routes are drawn, so the first request after a boot could
+# not sign anyone in and showed "Invalid email or password". Drawing the routes
+# at boot avoids that. Production eager loads and was not affected.
+Rails.application.config.after_initialize do
+  Rails.application.reload_routes! unless Rails.application.config.eager_load
+end
