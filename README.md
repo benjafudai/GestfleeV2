@@ -6,7 +6,7 @@ diseño. Ver [roadmap.md](roadmap.md) para el detalle de qué está construido.
 
 ## Requisitos
 
-- Ruby 3.3.12 (ver `.ruby-version`)
+- Ruby 4.0.7 (ver `.ruby-version`)
 - PostgreSQL (local: servicio `postgresql-x64-17`, usuario `postgres`)
 - Node.js LTS + Yarn
 
