@@ -35,9 +35,12 @@ class ApplicationController < ActionController::Base
     end
 
     # Un valor inválido para un campo tipo enum (ej. rol, estado) lanza ArgumentError
-    # al asignarlo, antes de que corra ninguna validación del modelo.
+    # al asignarlo, antes de que corra ninguna validación del modelo. Cualquier otro
+    # ArgumentError es un error real y no se debe esconder.
     rescue_from ArgumentError do |exception|
-        redirect_back fallback_location: root_path, alert: "Datos inválidos: #{exception.message}"
+        raise exception unless exception.message.match?(/\A'.*' is not a valid \w+\z/)
+
+        redirect_back fallback_location: root_path, alert: "Datos inválidos: uno de los valores seleccionados no es válido."
     end
 
 end
