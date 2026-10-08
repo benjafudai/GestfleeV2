@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_08_170100) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_08_180000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -158,7 +158,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_08_170100) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "interval_hours"
+    t.bigint "vehicle_model_id"
     t.index ["company_id"], name: "index_maintenance_plans_on_company_id"
+    t.index ["vehicle_model_id"], name: "index_maintenance_plans_on_vehicle_model_id"
   end
 
   create_table "maintenance_task_steps", force: :cascade do |t|
@@ -178,7 +180,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_08_170100) do
     t.integer "position"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "maintenance_task_id"
     t.index ["maintenance_plan_id"], name: "index_maintenance_task_templates_on_maintenance_plan_id"
+    t.index ["maintenance_task_id"], name: "index_maintenance_task_templates_on_maintenance_task_id"
   end
 
   create_table "maintenance_tasks", force: :cascade do |t|
@@ -505,8 +509,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_08_170100) do
   add_foreign_key "incidents", "users", column: "reporter_id"
   add_foreign_key "incidents", "vehicles"
   add_foreign_key "maintenance_plans", "companies"
+  add_foreign_key "maintenance_plans", "vehicle_models"
   add_foreign_key "maintenance_task_steps", "maintenance_tasks"
   add_foreign_key "maintenance_task_templates", "maintenance_plans"
+  add_foreign_key "maintenance_task_templates", "maintenance_tasks"
   add_foreign_key "notifications", "users"
   add_foreign_key "part_fitments", "companies"
   add_foreign_key "part_fitments", "parts"

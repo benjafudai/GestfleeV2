@@ -1,6 +1,6 @@
 class VehiclesController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_vehicle, only: %i[show edit update destroy]
+  before_action :set_vehicle, only: %i[show edit update destroy generate_plan]
 
   def index
     authorize Vehicle
@@ -44,6 +44,18 @@ class VehiclesController < ApplicationController
     authorize @vehicle
     @vehicle.destroy
     redirect_to vehicles_path, notice: "Vehículo eliminado."
+  end
+
+  # Crea los planes de mantención y repuestos del modelo de la biblioteca.
+  def generate_plan
+    authorize @vehicle
+    unless @vehicle.vehicle_model
+      return redirect_to @vehicle, alert: "Primero elige el modelo de la biblioteca en Editar Vehículo."
+    end
+
+    result = VehiclePlanGenerator.new(@vehicle).call
+    redirect_to @vehicle, notice: "Listo: #{result.plans_created} planes nuevos, #{result.parts_created} repuestos nuevos " \
+                                  "y #{result.fitments_created} repuestos marcados como compatibles."
   end
 
   private

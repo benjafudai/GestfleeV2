@@ -52,6 +52,7 @@ Rails.application.routes.draw do
     resources :vehicle_documents, only: %i[new create edit update destroy]
     resources :vehicle_assignments, only: %i[new create destroy]
     resources :fuel_fills, only: %i[new create index]
+    post :generate_plan, on: :member
   end
 
   resources :fuel_fills, only: %i[index show edit update destroy]

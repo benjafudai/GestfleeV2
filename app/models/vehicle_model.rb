@@ -6,6 +6,7 @@ class VehicleModel < ApplicationRecord
   has_many :vehicles, dependent: :restrict_with_error
   has_many :plan_items, class_name: "VehicleModelPlanItem", dependent: :destroy
   has_many :parts, class_name: "VehicleModelPart", dependent: :destroy
+  has_many :maintenance_plans, dependent: :restrict_with_error
 
   validates :code, presence: true, uniqueness: true
   validates :brand, :model, presence: true

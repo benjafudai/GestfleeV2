@@ -53,6 +53,12 @@
             <% if policy(@vehicle).edit? %>
               <%= link_to "Editar Vehículo", edit_vehicle_path(@vehicle), class: "btn btn-primary" %>
             <% end %>
+            <% if @vehicle.vehicle_model && policy(@vehicle).generate_plan? %>
+              <%= button_to generate_plan_vehicle_path(@vehicle), class: "btn btn-outline-primary w-100",
+                    form: { data: { turbo_confirm: "Se crearán los planes de mantención y los repuestos de #{@vehicle.vehicle_model.name}. Lo que ya exista no se toca. ¿Continuar?" } } do %>
+                <i class="bi bi-magic me-1"></i> Crear plan desde la biblioteca
+              <% end %>
+            <% end %>
             <%= link_to "Volver al listado", vehicles_path, class: "btn btn-outline-secondary" %>
           </div>
         </div>

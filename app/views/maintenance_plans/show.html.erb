@@ -78,6 +78,9 @@
                     <i class="bi bi-wrench-adjustable-circle fs-4 text-secondary me-3"></i>
                     <div>
                       <h6 class="mb-0 fw-semibold"><%= task.description %></h6>
+                      <% if task.maintenance_task %>
+                        <%= render "maintenance_plans/task_guide", template: task, vehicle_model: @maintenance_plan.vehicle_model %>
+                      <% end %>
                     </div>
                   </div>
                   <% if task.expected_duration_minutes.present? %>
