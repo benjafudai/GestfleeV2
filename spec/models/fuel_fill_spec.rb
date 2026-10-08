@@ -20,6 +20,14 @@ RSpec.describe FuelFill, type: :model do
 
       expect(fill!(odometer: 10_500, liters: 50).km_per_liter).to eq(10)
     end
+
+    it "ignores the fills of other vehicles" do
+      other_vehicle = Vehicle.create!(company: company, plate: "CD5678")
+      FuelFill.create!(company: company, vehicle: other_vehicle, user: admin, odometer: 9_000, liters: 40,
+                       cost: 52_000, date: Date.current, ticket: png_file("boleta.png"))
+
+      expect(fill!(odometer: 10_000).km_per_liter).to be_nil
+    end
   end
 
   it "records the fill as a fuel expense" do
