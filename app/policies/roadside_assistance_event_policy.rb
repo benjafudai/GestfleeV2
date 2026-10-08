@@ -7,8 +7,9 @@ class RoadsideAssistanceEventPolicy < ApplicationPolicy
     record.company_id == user.company_id && (user.admin? || user.mecanico? || user.superadmin? || record.user_id == user.id)
   end
 
+  # Superadmin has no company, so it has no vehicles to report for.
   def create?
-    user.chofer? || user.admin? || user.superadmin?
+    user.chofer? || user.admin?
   end
 
   def update?

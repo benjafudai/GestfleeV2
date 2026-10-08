@@ -300,9 +300,13 @@ ActiveRecord::Schema[7.1].define(version: 2026_09_23_233000) do
     t.integer "role"
     t.bigint "company_id"
     t.boolean "force_password_change", default: false
+    t.integer "failed_attempts", default: 0, null: false
+    t.string "unlock_token"
+    t.datetime "locked_at"
     t.index ["company_id"], name: "index_users_on_company_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
   end
 
   create_table "vehicle_assignments", force: :cascade do |t|

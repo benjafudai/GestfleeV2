@@ -1,7 +1,7 @@
 <%= form_with(model: vehicle, class: "needs-validation") do |form| %>
   <% if vehicle.errors.any? %>
     <div class="alert alert-danger">
-      <h4 class="alert-heading"><%= pluralize(vehicle.errors.count, "error") %> impidieron guardar este vehículo:</h4>
+      <h4 class="alert-heading"><%= pluralize(vehicle.errors.count, "error", "errores") %> impidieron guardar este vehículo:</h4>
       <ul>
         <% vehicle.errors.each do |error| %>
           <li><%= error.full_message %></li>
@@ -13,7 +13,8 @@
   <div class="row g-3">
     <div class="col-md-6">
       <%= form.label :plate, "Patente", class: "form-label" %>
-      <%= form.text_field :plate, class: "form-control", placeholder: "ABCD-12", required: true %>
+      <%= form.text_field :plate, class: "form-control", placeholder: "ABCD-12", required: true,
+          data: { controller: "mask", action: "input->mask#mask", mask_format: "####-99" } %>
     </div>
 
     <div class="col-md-6">

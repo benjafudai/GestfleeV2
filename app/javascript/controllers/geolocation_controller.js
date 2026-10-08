@@ -16,11 +16,11 @@ export default class extends Controller {
         this.latitudeTarget.value = position.coords.latitude;
         this.longitudeTarget.value = position.coords.longitude;
         this.statusMsgTarget.textContent = "¡Ubicación capturada con éxito!";
-        this.statusMsgTarget.classList.add("text-green-600");
+        this.statusMsgTarget.classList.add("text-success");
       },
       (error) => {
         this.statusMsgTarget.textContent = "Error al capturar ubicación: " + error.message;
-        this.statusMsgTarget.classList.add("text-red-600");
+        this.statusMsgTarget.classList.add("text-danger");
       }
     );
   }

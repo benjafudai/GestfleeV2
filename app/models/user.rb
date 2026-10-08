@@ -1,19 +1,33 @@
 class User < ApplicationRecord
-  devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable
+  # No :registerable — users are created by an admin (UsersController), never
+  # through public sign-up.
+  devise :database_authenticatable,
+         :recoverable, :rememberable, :validatable,
+         :lockable, :timeoutable
 
   belongs_to :company, optional: true
   validates :company, presence: true, unless: :superadmin?
 
-  enum role: {
+  enum :role, {
     admin: 0,
     chofer: 1,
     mecanico: 2,
     analista: 3,
-    superadmin: 4
+    superadmin: 4,
+    bodeguero: 5
   }
   
   validates :role, presence: true
+
+  # Fails open (record stays valid) if HaveIBeenPwned is unreachable — this app
+  # sometimes runs offline (thesis defense), so a network hiccup must never
+  # block login/user creation. Skipped in test so the suite doesn't depend on
+  # a real network call for every User created.
+  validates :password, not_pwned: {
+    message: "apareció %{count} veces en filtraciones de datos públicas conocidas; por seguridad, elige una contraseña diferente",
+    request_options: { open_timeout: 3, read_timeout: 3 },
+    on_error: ->(record, error) { Rails.logger.warn("No se pudo verificar la contraseña contra HaveIBeenPwned: #{error.message}") }
+  }, unless: -> { Rails.env.test? }
 
   has_paper_trail
   has_many :vehicle_assignments, foreign_key: :user_id, dependent: :destroy

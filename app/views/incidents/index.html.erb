@@ -43,7 +43,7 @@
                      else 'text-bg-light'
                      end %>
                   <span class="badge <%= severity_class %> rounded-pill">
-                    <%= incident.severity&.humanize || 'No especificada' %>
+                    <%= incident_severity_label(incident.severity) %>
                   </span>
                 </td>
                 <td>
@@ -54,7 +54,7 @@
                      else 'text-bg-light'
                      end %>
                   <span class="badge <%= status_class %> rounded-pill">
-                    <%= incident.status&.humanize || 'Pendiente' %>
+                    <%= incident_status_label(incident.status) %>
                   </span>
                 </td>
                 <td class="text-end">
@@ -79,4 +79,5 @@
       </div>
     </div>
   </div>
+  <%= render "shared/pagination", pagy: @pagy %>
 </div>

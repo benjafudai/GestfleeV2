@@ -1,7 +1,7 @@
 <%= form_with(model: incident, local: true, class: "needs-validation") do |form| %>
   <% if incident.errors.any? %>
     <div class="alert alert-danger">
-      <h4 class="alert-heading h5"><%= pluralize(incident.errors.count, "error") %> impidieron guardar el incidente:</h4>
+      <h4 class="alert-heading h5"><%= pluralize(incident.errors.count, "error", "errores") %> impidieron guardar el incidente:</h4>
       <ul class="mb-0">
         <% incident.errors.each do |error| %>
           <li><%= error.full_message %></li>
@@ -28,13 +28,13 @@
 
   <div class="mb-3">
     <%= form.label :severity, "Severidad", class: "form-label fw-bold" %>
-    <%= form.select :severity, Incident.severities.keys.map { |k| [k.humanize, k] }, {}, { class: "form-select" } %>
+    <%= form.select :severity, Incident.severities.keys.map { |k| [incident_severity_label(k), k] }, {}, { class: "form-select" } %>
   </div>
 
   <% if policy(incident).update? && incident.persisted? %>
     <div class="mb-3">
       <%= form.label :status, "Estado", class: "form-label fw-bold" %>
-      <%= form.select :status, Incident.statuses.keys.map { |k| [k.humanize, k] }, {}, { class: "form-select" } %>
+      <%= form.select :status, Incident.statuses.keys.map { |k| [incident_status_label(k), k] }, {}, { class: "form-select" } %>
     </div>
   <% end %>
 

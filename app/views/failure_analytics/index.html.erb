@@ -1,0 +1,174 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="h3 fw-bold mb-1">
+        <i class="bi bi-clipboard2-pulse me-2 text-danger"></i>
+        Análisis de Fallas y Mantención
+      </h1>
+      <p class="text-muted mb-0">Fallas reportadas, costo de repuestos y tiempo fuera de servicio por unidad.</p>
+    </div>
+  </div>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-body d-flex align-items-center gap-3 flex-wrap">
+      <label for="vehicle_selector" class="form-label fw-semibold mb-0 text-nowrap">
+        <i class="bi bi-truck-front me-1"></i> Ver análisis por vehículo
+      </label>
+      <select id="vehicle_selector" class="form-select" style="max-width: 320px;"
+              onchange="if (this.value) { window.location.href = this.value }">
+        <option value="<%= failure_analytics_path %>" <%= "selected" if @vehicle.nil? %>>Toda la flota</option>
+        <% @vehicles.each do |v| %>
+          <option value="<%= failure_analytics_path(vehicle_id: v.id) %>" <%= "selected" if @vehicle == v %>>
+            <%= v.plate %> — <%= v.brand %> <%= v.model %>
+          </option>
+        <% end %>
+      </select>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3">
+      <div class="card shadow-sm h-100 border-start border-4 border-danger">
+        <div class="card-body">
+          <div class="text-muted small text-uppercase fw-semibold mb-1">Fallas Reportadas</div>
+          <div class="h4 fw-bold mb-1"><%= @total_incidents %></div>
+          <% if @incidents_by_severity.any? %>
+            <div class="d-flex gap-1 flex-wrap">
+              <% @incidents_by_severity.each do |severity, count| %>
+                <% severity_class = case severity
+                   when 'low' then 'text-bg-info'
+                   when 'medium' then 'text-bg-warning'
+                   when 'high' then 'text-bg-danger'
+                   when 'critical' then 'text-bg-dark'
+                   else 'text-bg-light'
+                   end %>
+                <span class="badge <%= severity_class %> rounded-pill"><%= incident_severity_label(severity) %>: <%= count %></span>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="card shadow-sm h-100 border-start border-4 border-warning">
+        <div class="card-body">
+          <div class="text-muted small text-uppercase fw-semibold mb-1">OTs Correctivas</div>
+          <div class="h4 fw-bold mb-0"><%= @total_corrective %> <span class="fs-6 text-muted fw-normal">(<%= @corrective_rate %>% del total)</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="card shadow-sm h-100 border-start border-4 border-info">
+        <div class="card-body">
+          <div class="text-muted small text-uppercase fw-semibold mb-1">Valor Repuestos Usados</div>
+          <div class="h4 fw-bold mb-0"><%= number_to_currency(@total_parts_value, unit: "$", precision: 0) %></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="card shadow-sm h-100 border-start border-4 border-primary">
+        <div class="card-body">
+          <div class="text-muted small text-uppercase fw-semibold mb-1">Tiempo Promedio en Taller</div>
+          <div class="h4 fw-bold mb-0">
+            <%= @avg_downtime_hours ? "#{@avg_downtime_hours} h" : "--" %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <div class="text-muted small text-uppercase fw-semibold mb-1">Vehículo con Más Fallas</div>
+          <% if @worst_vehicle_by_failures && (@worst_vehicle_by_failures[:incidents] + @worst_vehicle_by_failures[:corrective]) > 0 %>
+            <div class="h5 fw-bold mb-0">
+              <%= @worst_vehicle_by_failures[:vehicle].plate %>
+              <span class="text-muted fw-normal fs-6">
+                (<%= @worst_vehicle_by_failures[:incidents] %> fallas, <%= @worst_vehicle_by_failures[:corrective] %> OTs correctivas)
+              </span>
+            </div>
+          <% else %>
+            <div class="h5 fw-bold mb-0 text-muted">--</div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <div class="text-muted small text-uppercase fw-semibold mb-1">Vehículo con Más Tiempo Fuera de Servicio</div>
+          <% if @worst_vehicle_by_downtime && @worst_vehicle_by_downtime[:total_downtime] > 0 %>
+            <div class="h5 fw-bold mb-0">
+              <%= @worst_vehicle_by_downtime[:vehicle].plate %>
+              <span class="text-muted fw-normal fs-6">(<%= @worst_vehicle_by_downtime[:total_downtime] %> h acumuladas)</span>
+            </div>
+          <% else %>
+            <div class="h5 fw-bold mb-0 text-muted">--</div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-white">
+      <h6 class="mb-0">Fallas Reportadas por Mes (últimos 6 meses)</h6>
+    </div>
+    <div class="card-body">
+      <div style="height: 260px;">
+        <canvas data-controller="failures-chart"
+                data-failures-chart-labels-value="<%= @chart_labels.to_json %>"
+                data-failures-chart-counts-value="<%= @chart_incident_counts.to_json %>"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-header bg-white">
+      <h6 class="mb-0">Detalle por Vehículo</h6>
+    </div>
+    <div class="card-body p-0">
+      <% if @per_vehicle.any? %>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Vehículo</th>
+                <th class="text-center">Fallas</th>
+                <th class="text-center">OTs Correctivas</th>
+                <th class="text-end">Valor Repuestos</th>
+                <th class="text-end">Tiempo Prom. en Taller</th>
+                <th class="text-end">Tiempo Total Fuera de Servicio</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @per_vehicle.each do |row| %>
+                <tr>
+                  <td class="fw-bold"><%= row[:vehicle].plate %> <span class="text-muted fw-normal small"><%= row[:vehicle].brand %> <%= row[:vehicle].model %></span></td>
+                  <td class="text-center">
+                    <% if row[:incidents] > 0 %>
+                      <span class="badge text-bg-danger rounded-pill"><%= row[:incidents] %></span>
+                    <% else %>
+                      <span class="text-muted">0</span>
+                    <% end %>
+                  </td>
+                  <td class="text-center"><%= row[:corrective] %></td>
+                  <td class="text-end"><%= number_to_currency(row[:parts_value], unit: "$", precision: 0) %></td>
+                  <td class="text-end"><%= row[:avg_downtime] ? "#{row[:avg_downtime]} h" : "--" %></td>
+                  <td class="text-end"><%= row[:total_downtime] > 0 ? "#{row[:total_downtime]} h" : "--" %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <div class="text-center py-5 text-muted">
+          <i class="bi bi-clipboard2-check d-block mb-2 fs-3 opacity-50"></i>
+          No hay vehículos registrados aún.
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

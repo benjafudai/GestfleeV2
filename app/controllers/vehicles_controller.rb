@@ -4,7 +4,7 @@ class VehiclesController < ApplicationController
 
   def index
     authorize Vehicle
-    @vehicles = Vehicle.all.order(:plate)
+    @pagy, @vehicles = pagy(Vehicle.all.order(:plate))
   end
 
   def show

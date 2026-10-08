@@ -6,7 +6,7 @@ class RoadsideAssistanceEvent < ApplicationRecord
   has_many_attached :photos
   has_paper_trail
 
-  enum status: { solicitado: 0, en_camino: 1, resuelto: 2 }
+  enum :status, { solicitado: 0, en_camino: 1, resuelto: 2 }
 
   default_scope { where(company: Current.company) }
   before_validation :assign_company
@@ -29,7 +29,7 @@ class RoadsideAssistanceEvent < ApplicationRecord
         user: admin,
         notifiable: self,
         title: "¡Emergencia Reportada!",
-        message: "El vehículo #{vehicle.plate} (Chofer: #{user.name}) ha reportado un evento de auxilio en ruta."
+        message: "El vehículo #{vehicle.plate} (Chofer: #{user.email}) ha reportado un evento de auxilio en ruta."
       )
       
       # Send Push Notification via WebPush

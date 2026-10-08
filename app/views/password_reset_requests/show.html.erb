@@ -1,3 +1,4 @@
+<% user = @password_reset_request.user %>
 <div class="container mt-5">
   <div class="row justify-content-center">
     <div class="col-md-6">
@@ -6,26 +7,66 @@
           <h4 class="mb-0">Validar Solicitud de Contraseña</h4>
         </div>
         <div class="card-body p-4">
-          <p class="mb-4">
-            El usuario <strong><%= @password_reset_request.user.email %></strong> ha solicitado restablecer su contraseña.
-            Por favor, asigna una contraseña temporal y comunícasela al usuario. El usuario podrá cambiarla posteriormente.
-          </p>
+          <% if @password_reset_request.pending? %>
+            <p class="mb-4">
+              El usuario <strong><%= user.email %></strong>
+              <% if user.company %>(<%= user.company.name %>)<% end %>
+              ha solicitado restablecer su contraseña.
+              Por favor, asigna una contraseña temporal y comunícasela al usuario. El usuario podrá cambiarla posteriormente.
+            </p>
 
-          <%= form_with url: password_reset_request_path(@password_reset_request), method: :patch, local: true do |f| %>
-            <div class="mb-3">
-              <%= f.label :password, "Nueva Contraseña Temporal", class: "form-label fw-bold" %>
-              <%= f.password_field :password, class: "form-control", required: true, minlength: 6 %>
+            <% if user.access_locked? %>
+              <div class="alert alert-warning d-flex justify-content-between align-items-center gap-3">
+                <span>
+                  <strong>La cuenta está bloqueada</strong> por intentos fallidos y se desbloquea sola el
+                  <%= auto_unlock_time(user) %>. Si no la desbloqueas, no podrá entrar
+                  con la contraseña temporal hasta esa hora.
+                </span>
+                <%= unlock_account_button(user, label: "Desbloquear cuenta") %>
+              </div>
+            <% end %>
+
+            <%= form_with url: password_reset_request_path(@password_reset_request), method: :patch, local: true do |f| %>
+              <div class="mb-3">
+                <%= f.label :password, "Nueva Contraseña Temporal", class: "form-label fw-bold" %>
+                <%= f.password_field :password, class: "form-control", required: true, minlength: 10 %>
+              </div>
+
+              <div class="mb-4">
+                <%= f.label :password_confirmation, "Confirmar Contraseña", class: "form-label fw-bold" %>
+                <%= f.password_field :password_confirmation, class: "form-control", required: true, minlength: 10 %>
+              </div>
+
+              <div class="d-flex justify-content-between">
+                <%= link_to "Cancelar", password_reset_requests_path, class: "btn btn-outline-secondary" %>
+                <%= f.submit "Validar y Guardar Contraseña", class: "btn btn-primary" %>
+              </div>
+            <% end %>
+
+            <hr class="my-4">
+            <div class="d-flex justify-content-between align-items-center gap-3">
+              <small class="text-muted">
+                ¿No corresponde atender esta solicitud? Recházala: la contraseña no cambia y el usuario puede volver a pedirla.
+              </small>
+              <%= button_to "Rechazar solicitud", reject_password_reset_request_path(@password_reset_request), method: :patch,
+                    data: { turbo_confirm: "¿Rechazar la solicitud de #{user.email}?" },
+                    class: "btn btn-sm btn-outline-danger text-nowrap" %>
+            </div>
+          <% else %>
+            <p class="mb-3">
+              Solicitud de <strong><%= user.email %></strong>
+              <% if user.company %>(<%= user.company.name %>)<% end %>
+              del <%= @password_reset_request.created_at.strftime("%d/%m/%Y %H:%M") %>.
+            </p>
+
+            <div class="alert <%= @password_reset_request.rejected? ? "alert-secondary" : "alert-success" %> mb-4">
+              <strong><%= @password_reset_request.rejected? ? "Rechazada" : "Completada" %></strong>
+              el <%= @password_reset_request.updated_at.strftime("%d/%m/%Y %H:%M") %>
+              <% if @password_reset_request.admin %>por <%= @password_reset_request.admin.email %><% end %>.
+              <% if @password_reset_request.completed? %>Se asignó una contraseña temporal.<% end %>
             </div>
 
-            <div class="mb-4">
-              <%= f.label :password_confirmation, "Confirmar Contraseña", class: "form-label fw-bold" %>
-              <%= f.password_field :password_confirmation, class: "form-control", required: true, minlength: 6 %>
-            </div>
-
-            <div class="d-flex justify-content-between">
-              <%= link_to "Cancelar", password_reset_requests_path, class: "btn btn-outline-secondary" %>
-              <%= f.submit "Validar y Guardar Contraseña", class: "btn btn-primary" %>
-            </div>
+            <%= link_to "Volver", password_reset_requests_path, class: "btn btn-outline-secondary" %>
           <% end %>
         </div>
       </div>

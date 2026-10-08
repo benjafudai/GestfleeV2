@@ -3,7 +3,7 @@ class IncidentsController < ApplicationController
   before_action :set_incident, only: %i[ show edit update ]
 
   def index
-    @incidents = policy_scope(Incident).includes(:vehicle, :reporter).order(created_at: :desc)
+    @pagy, @incidents = pagy(policy_scope(Incident).includes(:vehicle, :reporter).order(created_at: :desc))
   end
 
   def show
@@ -33,7 +33,13 @@ class IncidentsController < ApplicationController
 
   def update
     authorize @incident
-    if @incident.update(incident_update_params)
+    # Las fotos nuevas se suman a la evidencia que ya había: asignarlas con
+    # update reemplazaría (y borraría) las fotos que subió el chofer.
+    new_photos = Array(incident_update_params[:photos]).compact_blank
+    @incident.assign_attributes(incident_update_params.except(:photos))
+    @incident.photos.attach(new_photos) if new_photos.any?
+
+    if @incident.save
       redirect_to @incident, notice: "Incidente actualizado exitosamente."
     else
       render :edit, status: :unprocessable_entity

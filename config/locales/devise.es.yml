@@ -1,0 +1,61 @@
+es:
+  devise:
+    confirmations:
+      confirmed: "Tu cuenta ha sido confirmada exitosamente."
+      send_instructions: "En unos minutos recibirás un correo con instrucciones para confirmar tu cuenta."
+      send_paranoid_instructions: "Si tu correo existe en nuestra base de datos, recibirás un correo con instrucciones para confirmar tu cuenta."
+    failure:
+      already_authenticated: "Ya has iniciado sesión."
+      inactive: "Tu cuenta todavía no ha sido activada."
+      invalid: "%{authentication_keys} o contraseña inválida."
+      locked: "Tu cuenta está bloqueada."
+      last_attempt: "Tienes un intento más antes de que tu cuenta sea bloqueada."
+      not_found_in_database: "%{authentication_keys} o contraseña inválida."
+      timeout: "Tu sesión expiró. Por favor inicia sesión de nuevo para continuar."
+      unauthenticated: "Necesitas iniciar sesión o registrarte antes de continuar."
+      unconfirmed: "Debes confirmar tu cuenta para continuar."
+    mailer:
+      confirmation_instructions:
+        subject: "Instrucciones de confirmación"
+      reset_password_instructions:
+        subject: "Instrucciones para restablecer tu contraseña"
+      unlock_instructions:
+        subject: "Instrucciones para desbloquear tu cuenta"
+      password_change:
+        subject: "Tu contraseña ha sido cambiada"
+    omniauth_callbacks:
+      failure: "No se pudo autenticar desde %{kind} porque \"%{reason}\"."
+      success: "Autenticado exitosamente desde la cuenta de %{kind}."
+    passwords:
+      no_token: "No puedes acceder a esta página sin venir desde un correo de restablecimiento de contraseña."
+      send_instructions: "En unos minutos recibirás un correo con instrucciones para restablecer tu contraseña."
+      send_paranoid_instructions: "Si tu correo existe en nuestra base de datos, recibirás un correo con instrucciones para restablecer tu contraseña."
+      updated: "Tu contraseña ha sido cambiada exitosamente. Ya has iniciado sesión."
+      updated_not_active: "Tu contraseña ha sido cambiada exitosamente."
+    registrations:
+      destroyed: "Adiós. Tu cuenta ha sido cancelada exitosamente."
+      signed_up: "Bienvenido, te has registrado exitosamente."
+      signed_up_but_inactive: "Te has registrado exitosamente. Sin embargo, no hemos podido iniciar sesión porque tu cuenta no está activada."
+      signed_up_but_locked: "Te has registrado exitosamente. Sin embargo, no hemos podido iniciar sesión porque tu cuenta está bloqueada."
+      signed_up_but_unconfirmed: "Se ha enviado un mensaje con un link de confirmación a tu correo electrónico. Por favor sigue el link para activar tu cuenta."
+      update_needs_confirmation: "Actualizaste tu cuenta exitosamente, pero necesitamos verificar tu nuevo correo electrónico. Por favor revisa tu correo y sigue el link de confirmación."
+      updated: "Tu cuenta ha sido actualizada exitosamente."
+      updated_but_not_signed_in: "Tu cuenta ha sido actualizada exitosamente, pero como tu contraseña fue cambiada, debes iniciar sesión de nuevo."
+    sessions:
+      signed_in: "Sesión iniciada exitosamente."
+      signed_out: "Sesión cerrada exitosamente."
+      already_signed_out: "Sesión cerrada exitosamente."
+    unlocks:
+      send_instructions: "En unos minutos recibirás un correo con instrucciones para desbloquear tu cuenta."
+      send_paranoid_instructions: "Si tu cuenta existe, recibirás un correo con instrucciones para desbloquearla en unos minutos."
+      unlocked: "Tu cuenta ha sido desbloqueada exitosamente. Por favor inicia sesión para continuar."
+  errors:
+    messages:
+      already_confirmed: "ya fue confirmado, por favor intenta iniciar sesión"
+      confirmation_period_expired: "necesita ser confirmado dentro de %{period}, por favor solicita uno nuevo"
+      expired: "ha expirado, por favor solicita uno nuevo"
+      not_found: "no fue encontrado"
+      not_locked: "no estaba bloqueado"
+      not_saved:
+        one: "1 error impidió que se guarde este %{resource}:"
+        other: "%{count} errores impidieron que se guarde este %{resource}:"

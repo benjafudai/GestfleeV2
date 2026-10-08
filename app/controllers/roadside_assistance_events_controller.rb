@@ -1,9 +1,11 @@
 class RoadsideAssistanceEventsController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_event, only: %i[ show edit update destroy ]
 
   def index
     @events = policy_scope(RoadsideAssistanceEvent).order(created_at: :desc)
     authorize @events
+    @pagy, @events = pagy(@events)
   end
 
   def show
@@ -24,7 +26,7 @@ class RoadsideAssistanceEventsController < ApplicationController
   def create
     @event = RoadsideAssistanceEvent.new(event_params)
     @event.user = current_user
-    @event.company = current_company
+    @event.company = Current.company
     authorize @event
 
     if @event.save

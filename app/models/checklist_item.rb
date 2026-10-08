@@ -2,7 +2,7 @@ class ChecklistItem < ApplicationRecord
   belongs_to :checklist_template
   has_many :checklist_answers, dependent: :destroy
 
-  enum item_type: { boolean: 0, text: 1, number: 2 }
+  enum :item_type, { boolean: 0, text: 1, number: 2 }
 
   validates :label, presence: true
   validates :item_type, presence: true

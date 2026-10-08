@@ -1,8 +1,8 @@
-<%= form_with(model: event, local: true, data: { controller: "geolocation pwa-sync", pwa_sync_target: "form" }, class: "space-y-4") do |form| %>
+<%= form_with(model: event, local: true, data: { controller: "geolocation pwa-sync", pwa_sync_target: "form" }) do |form| %>
   <% if event.errors.any? %>
-    <div class="bg-red-50 dark:bg-red-900 text-red-500 dark:text-red-200 p-4 rounded mb-4">
-      <h2 class="font-bold"><%= pluralize(event.errors.count, "error") %> impidieron guardar:</h2>
-      <ul class="list-disc pl-5">
+    <div class="alert alert-danger">
+      <h6 class="alert-heading fw-semibold mb-2"><%= pluralize(event.errors.count, "error", "errores") %> impidieron guardar:</h6>
+      <ul class="mb-0 small">
         <% event.errors.full_messages.each do |message| %>
           <li><%= message %></li>
         <% end %>
@@ -10,40 +10,39 @@
     </div>
   <% end %>
 
-  <div>
-    <%= form.label :vehicle_id, "Vehículo", class: "block font-medium dark:text-gray-200" %>
-    <%= form.collection_select :vehicle_id, Current.company.vehicles, :id, :plate, { prompt: "Selecciona el vehículo" }, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" %>
+  <div class="mb-3">
+    <%= form.label :vehicle_id, "Vehículo", class: "form-label" %>
+    <%= form.collection_select :vehicle_id, Current.company.vehicles, :id, :plate, { prompt: "Selecciona el vehículo" }, class: "form-select" %>
   </div>
 
   <% if current_user.admin? || current_user.superadmin? || current_user.mecanico? %>
-    <div>
-      <%= form.label :status, "Estado", class: "block font-medium dark:text-gray-200" %>
-      <%= form.select :status, RoadsideAssistanceEvent.statuses.keys.map { |s| [s.humanize, s] }, {}, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" %>
+    <div class="mb-3">
+      <%= form.label :status, "Estado", class: "form-label" %>
+      <%= form.select :status, RoadsideAssistanceEvent.statuses.keys.map { |s| [s.humanize, s] }, {}, class: "form-select" %>
     </div>
   <% end %>
 
-  <div>
-    <%= form.label :description, "Descripción de la Emergencia", class: "block font-medium dark:text-gray-200" %>
-    <%= form.text_area :description, rows: 4, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white", placeholder: "Ej. Se reventó un neumático, motor humeando..." %>
+  <div class="mb-3">
+    <%= form.label :description, "Descripción de la Emergencia", class: "form-label" %>
+    <%= form.text_area :description, rows: 4, class: "form-control", placeholder: "Ej. Se reventó un neumático, motor humeando..." %>
   </div>
 
-  <div>
-    <%= form.label :photos, "Evidencia (Fotos)", class: "block font-medium dark:text-gray-200" %>
-    <%= form.file_field :photos, multiple: true, accept: "image/*", class: "mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-gray-700 dark:file:text-gray-200" %>
+  <div class="mb-3">
+    <%= form.label :photos, "Evidencia (Fotos)", class: "form-label" %>
+    <%= form.file_field :photos, multiple: true, accept: "image/*", class: "form-control" %>
   </div>
 
-  <!-- Hidden fields for Geolocation -->
   <%= form.hidden_field :latitude, data: { geolocation_target: "latitude" } %>
   <%= form.hidden_field :longitude, data: { geolocation_target: "longitude" } %>
 
-  <div class="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
-    <button type="button" data-action="click->geolocation#locate" class="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 py-1 px-3 rounded text-xs font-semibold">
-      Capturar Mi Ubicación Actual
+  <div class="d-flex align-items-center gap-2 mb-4">
+    <button type="button" data-action="click->geolocation#locate" class="btn btn-sm btn-outline-secondary">
+      <i class="bi bi-geo-alt me-1"></i>Capturar Mi Ubicación Actual
     </button>
-    <span data-geolocation-target="statusMsg">Ubicación no capturada.</span>
+    <span class="text-muted small" data-geolocation-target="statusMsg">Ubicación no capturada.</span>
   </div>
 
-  <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
-    <%= form.submit "Reportar Emergencia", class: "w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded cursor-pointer text-center text-lg" %>
+  <div class="pt-3 border-top">
+    <%= form.submit(event.new_record? ? "Reportar Emergencia" : "Actualizar Estado", class: "btn btn-danger w-100 btn-lg") %>
   </div>
 <% end %>

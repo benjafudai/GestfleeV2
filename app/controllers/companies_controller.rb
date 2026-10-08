@@ -39,12 +39,14 @@ class CompaniesController < ApplicationController
     # Capture the PREVIOUS state BEFORE modifying the object
     was_mechanic_enabled = @company.has_mechanic?
     was_analyst_enabled = @company.has_analyst?
+    was_bodeguero_enabled = @company.has_bodeguero?
 
     @company.assign_attributes(company_update_params)
 
     # Detect if modules are being DISABLED
     mechanic_module_disabled = was_mechanic_enabled && !@company.has_mechanic?
     analyst_module_disabled = was_analyst_enabled && !@company.has_analyst?
+    bodeguero_module_disabled = was_bodeguero_enabled && !@company.has_bodeguero?
 
     message = "Empresa actualizada correctamente."
     saved = ActiveRecord::Base.transaction do
@@ -52,6 +54,7 @@ class CompaniesController < ApplicationController
 
       message += disable_role_module(:mecanico, "mecánicos") if mechanic_module_disabled
       message += disable_role_module(:analista, "analistas") if analyst_module_disabled
+      message += disable_role_module(:bodeguero, "bodegueros") if bodeguero_module_disabled
       true
     end
 
@@ -89,10 +92,10 @@ class CompaniesController < ApplicationController
   # "Configurar" (update) no debe poder dar de alta usuarios como efecto
   # colateral de guardar los toggles de módulos.
   def company_create_params
-    params.require(:company).permit(:name, :rut, :has_mechanic, :has_analyst, :fuel_anomaly_threshold, users_attributes: [:email, :password, :password_confirmation, :role])
+    params.require(:company).permit(:name, :rut, :has_mechanic, :has_analyst, :has_bodeguero, :fuel_anomaly_threshold, users_attributes: [:email, :password, :password_confirmation, :role])
   end
 
   def company_update_params
-    params.require(:company).permit(:name, :rut, :has_mechanic, :has_analyst, :fuel_anomaly_threshold)
+    params.require(:company).permit(:name, :rut, :has_mechanic, :has_analyst, :has_bodeguero, :fuel_anomaly_threshold)
   end
 end

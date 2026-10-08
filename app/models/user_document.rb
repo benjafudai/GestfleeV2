@@ -4,7 +4,7 @@ class UserDocument < ApplicationRecord
   belongs_to :user
   has_one_attached :file
 
-  enum doc_type: {
+  enum :doc_type, {
     licencia_conducir: 0,
     carnet_identidad: 1,
     examen_preocupacional: 2,
@@ -12,7 +12,7 @@ class UserDocument < ApplicationRecord
     otro: 4
   }
 
-  enum status: { ok: 0, expiring: 1, expired: 2 }
+  enum :status, { ok: 0, expiring: 1, expired: 2 }
 
   validates :doc_type, presence: true
   validates :due_on, presence: true

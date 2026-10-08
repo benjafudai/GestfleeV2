@@ -1,9 +1,9 @@
 source "https://rubygems.org"
 
-ruby "3.3.12"
+ruby "4.0.7"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
-gem "rails", "~> 7.1.6"
+gem "rails", "~> 8.1.4"
 
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem "sprockets-rails"
@@ -69,6 +69,7 @@ group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
+  gem "simplecov", require: false
 end
 
 
@@ -79,3 +80,9 @@ gem "paper_trail"
 # opcional pero útil en sprint 0
 gem "rspec-rails", group: [:development, :test]
 gem "webpush"
+gem "rack-attack", "~> 6.8"
+gem "pwned", "~> 2.4"
+
+gem "pagy", "~> 43.6"
+
+gem "pundit-matchers", "~> 4.0", :groups => [:development, :test]

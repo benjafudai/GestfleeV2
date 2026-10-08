@@ -1,6 +1,7 @@
 class UsersController < ApplicationController
   before_action :authenticate_user!
   before_action :ensure_admin_or_superadmin!
+  before_action :ensure_superadmin!, only: :unlock
 
   def index
     @users = scoped_users.includes(:company).order(:role, :email)
@@ -14,6 +15,8 @@ class UsersController < ApplicationController
     if params[:role].present?
       @users = @users.where(role: params[:role])
     end
+
+    @pagy, @users = pagy(@users)
   end
 
   def show
@@ -105,6 +108,19 @@ class UsersController < ApplicationController
     end
   end
 
+  # Accounts lock after too many failed logins and unlock on their own after
+  # Devise's unlock_in; the GestFlee team (superadmins) can unlock one right away.
+  def unlock
+    @user = User.find(params[:id])
+
+    if @user.access_locked?
+      @user.unlock_access!
+      redirect_back fallback_location: user_path(@user), notice: "La cuenta de #{@user.email} fue desbloqueada."
+    else
+      redirect_back fallback_location: user_path(@user), notice: "La cuenta de #{@user.email} no estaba bloqueada."
+    end
+  end
+
   private
 
   def scoped_users
@@ -124,14 +140,18 @@ class UsersController < ApplicationController
       redirect_to root_path, alert: "Acceso denegado"
     end
   end
+
+  def ensure_superadmin!
+    redirect_to root_path, alert: "Acceso denegado" unless current_user.superadmin?
+  end
   
   def available_roles_for_current_user
     if current_user.superadmin?
       # SuperAdmin can assign any role
       User.roles.keys
     else
-      # Admin can only assign: chofer, mecanico, analista
-      ['chofer', 'mecanico', 'analista']
+      # Admin can only assign: chofer, mecanico, analista, bodeguero
+      ['chofer', 'mecanico', 'analista', 'bodeguero']
     end
   end
   

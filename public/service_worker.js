@@ -20,8 +20,3 @@ self.addEventListener('push', function(event) {
     })
   );
 });
-
-self.addEventListener('fetch', function(event) {
-  // Simple fetch handler - for offline you'd usually cache first or network first.
-  // We're keeping it simple here.
-});

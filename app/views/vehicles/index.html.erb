@@ -39,7 +39,7 @@
                      else 'text-bg-light'
                      end %>
                   <span class="badge <%= badge_class %> rounded-pill">
-                    <%= vehicle.status.humanize %>
+                    <%= vehicle_status_label(vehicle.status) %>
                   </span>
                 </td>
                 <td class="text-end">
@@ -69,4 +69,5 @@
       </div>
     </div>
   </div>
+  <%= render "shared/pagination", pagy: @pagy %>
 </div>

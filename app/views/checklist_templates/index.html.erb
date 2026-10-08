@@ -17,7 +17,7 @@
               <h5 class="card-title"><%= tpl.name %></h5>
               <p class="card-text text-muted small"><%= tpl.description.presence || "Sin descripción" %></p>
               <span class="badge text-bg-secondary">
-                <%= pluralize(tpl.checklist_items.size, "ítem") %>
+                <%= pluralize(tpl.checklist_items.size, "ítem", "ítems") %>
               </span>
             </div>
             <div class="card-footer bg-white border-0 d-flex gap-2">

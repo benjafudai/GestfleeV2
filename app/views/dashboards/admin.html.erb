@@ -1,59 +1,49 @@
 <div class="container mt-4">
-  <div class="row mb-4">
-    <div class="col-12">
-      <div class="card border-0 bg-primary-subtle shadow-sm">
-        <div class="card-body d-flex align-items-center gap-3 py-3">
-          <i class="bi bi-shield-lock fs-2 text-primary"></i>
-          <div>
-            <h4 class="mb-0 fw-semibold">Dashboard Administrador</h4>
-            <span class="badge bg-primary text-white"><%= current_user.company&.name || "Sin Empresa" %></span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <%= render "dashboards/welcome", icon: "bi-shield-lock", title: "Dashboard Administrador",
+        tag: current_user.company&.name || "Sin Empresa" %>
 
   <div class="row g-4">
     <%# Módulo de Vehículos (Link rápido) %>
     <div class="col-md-4">
-      <div class="card shadow-sm h-100 border-start border-4 border-info">
-        <div class="card-body">
-          <h5 class="card-title"><i class="bi bi-truck me-2"></i> Flota</h5>
-          <p class="card-text text-muted small">Gestión de vehículos, documentos y asignación de choferes.</p>
-          <%= link_to "Ir a Vehículos", vehicles_path, class: "btn btn-outline-info btn-sm" %>
+      <div class="gf-action-card">
+        <div class="gf-action-head">
+          <span class="gf-action-icon is-primary"><i class="bi bi-truck"></i></span>
+          <h5 class="gf-action-title">Flota</h5>
         </div>
+        <p class="gf-action-text">Gestión de vehículos, documentos y asignación de choferes.</p>
+        <%= link_to vehicles_path, class: "gf-action-link" do %>Ir a Vehículos <i class="bi bi-arrow-right"></i><% end %>
       </div>
     </div>
 
     <%# Módulo de Checklists (Configuración) %>
     <div class="col-md-4">
-      <div class="card shadow-sm h-100 border-start border-4 border-primary">
-        <div class="card-body">
-          <div class="d-flex justify-content-between align-items-start">
-            <h5 class="card-title"><i class="bi bi-clipboard me-2"></i> Plantillas Checklist</h5>
-            <span class="badge text-bg-primary rounded-pill"><%= @templates_count %></span>
-          </div>
-          <p class="card-text text-muted small">Configura las preguntas dinámicas que los choferes deben responder.</p>
-          <%= link_to "Gestionar Plantillas", checklist_templates_path, class: "btn btn-outline-primary btn-sm" %>
+      <div class="gf-action-card">
+        <div class="gf-action-head">
+          <span class="gf-action-icon is-success"><i class="bi bi-clipboard-check"></i></span>
+          <h5 class="gf-action-title">Plantillas Checklist</h5>
+          <span class="gf-action-count"><%= pluralize(@templates_count, "plantilla") %></span>
         </div>
+        <p class="gf-action-text">Configura las preguntas dinámicas que los choferes deben responder.</p>
+        <%= link_to checklist_templates_path, class: "gf-action-link" do %>Gestionar Plantillas <i class="bi bi-arrow-right"></i><% end %>
       </div>
     </div>
 
     <%# Módulo de Auditoría (Submissions recientes) %>
     <div class="col-md-4">
-      <div class="card shadow-sm h-100 border-start border-4 border-warning">
-        <div class="card-body">
-          <h5 class="card-title"><i class="bi bi-shield-check me-2"></i> Auditoría Inspecciones</h5>
-          <p class="card-text text-muted small">Aprueba o rechaza los checklists completados por el equipo.</p>
-          <%= link_to "Ver Todos los Envíos", checklist_submissions_path, class: "btn btn-outline-warning btn-sm" %>
+      <div class="gf-action-card">
+        <div class="gf-action-head">
+          <span class="gf-action-icon is-warning"><i class="bi bi-shield-check"></i></span>
+          <h5 class="gf-action-title">Auditoría Inspecciones</h5>
         </div>
+        <p class="gf-action-text">Aprueba o rechaza los checklists completados por el equipo.</p>
+        <%= link_to checklist_submissions_path, class: "gf-action-link" do %>Ver Todos los Envíos <i class="bi bi-arrow-right"></i><% end %>
       </div>
     </div>
   </div>
 
   <div class="row mt-4">
     <div class="col-12">
-      <div class="card shadow-sm">
+      <div class="card shadow-sm gf-card-round">
         <div class="card-header bg-white d-flex justify-content-between align-items-center">
           <h6 class="mb-0">Últimos Checklists Recibidos</h6>
           <%= link_to "Ver listado completo", checklist_submissions_path, class: "btn btn-sm btn-link text-decoration-none" %>

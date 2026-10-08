@@ -10,21 +10,25 @@
 # Crear usuarios de prueba
 # Todos los usuarios demo usan la misma clave. Se reasigna en cada db:seed,
 # así queda igual en todos los computadores aunque el usuario ya exista.
+# Es una clave simple solo para desarrollo: no pasa el chequeo de
+# HaveIBeenPwned (que sigue activo para los usuarios creados desde la app),
+# por eso los usuarios demo se guardan sin validaciones.
 DEMO_PASSWORD = "Password.123456"
 
-company = Company.find_or_create_by!(rut: '77.777.777-7') do |c|
+company = Company.find_by(rut: '77.777.777-7') || Company.new(rut: '77.777.777-7').tap do |c|
   c.name = 'Empresa Principal'
-  c.configuration = {has_mechanic: true, has_analyst: false}
+  c.configuration = {has_mechanic: true, has_analyst: false, has_bodeguero: true}
   # Company exige al menos un usuario al crearse
   c.users.build(email: "admin@demo.cl", role: :admin, password: DEMO_PASSWORD)
+  c.save!(validate: false)
 end
 
-%i[superadmin admin chofer mecanico analista].each do |role|
+%i[superadmin admin chofer mecanico analista bodeguero].each do |role|
   user = User.find_or_initialize_by(email: "#{role}@demo.cl")
   user.role = role
   user.company = company unless role == :superadmin # No company for superadmin
   user.password = DEMO_PASSWORD
-  user.save!
+  user.save!(validate: false)
 end
 
 # Sprint 2: Checklist template demo

@@ -14,7 +14,7 @@ class ChecklistSubmission < ApplicationRecord
 
   has_paper_trail
 
-  enum status: { pending: 0, approved: 1, rejected: 2 }
+  enum :status, { pending: 0, approved: 1, rejected: 2 }
 
   validates :vehicle, :user, :checklist_template, presence: true
   validates :submitted_at, presence: true

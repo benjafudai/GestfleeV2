@@ -1,13 +1,4 @@
-<div class="row">
-  <div class="col-12 mb-4">
-    <div class="card bg-danger text-white shadow">
-      <div class="card-body">
-        <h2 class="card-title">Panel de Super Administración</h2>
-        <p class="card-text">Bienvenido, <%= current_user.email %></p>
-      </div>
-    </div>
-  </div>
-</div>
+<%= render "dashboards/welcome", icon: "bi-shield-check", title: "Panel de Super Administración", tag: current_user.email %>
 
 <div class="row">
   <div class="col-md-4 mb-4">

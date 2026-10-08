@@ -4,7 +4,7 @@ class SupplyRequestsController < ApplicationController
 
   def index
     authorize SupplyRequest
-    @supply_requests = policy_scope(SupplyRequest).includes(:vehicle, :user, :supply_request_lines).order(created_at: :desc)
+    @pagy, @supply_requests = pagy(policy_scope(SupplyRequest).includes(:vehicle, :user, :supply_request_lines).order(created_at: :desc))
   end
 
   def show

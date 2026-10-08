@@ -1,53 +1,70 @@
-<div class="max-w-4xl mx-auto mt-6">
-  <div class="flex items-center justify-between mb-4">
-    <h1 class="text-2xl font-bold dark:text-white">Detalle de Emergencia: <%= @event.vehicle.plate %></h1>
-    <div>
-      <%= link_to "Volver", roadside_assistance_events_path, class: "text-gray-600 dark:text-gray-400 hover:underline mr-4" %>
+<div class="container mt-4" style="max-width: 900px;">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 fw-bold mb-0">Detalle de Emergencia: <%= @event.vehicle.plate %></h1>
+    <div class="d-flex gap-2">
+      <%= link_to "Volver", roadside_assistance_events_path, class: "btn btn-outline-secondary btn-sm" %>
       <% if policy(@event).update? %>
-        <%= link_to "Actualizar Estado", edit_roadside_assistance_event_path(@event), class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
+        <%= link_to "Actualizar Estado", edit_roadside_assistance_event_path(@event), class: "btn btn-primary btn-sm" %>
       <% end %>
     </div>
   </div>
 
-  <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-    <div>
-      <h2 class="text-lg font-semibold mb-2 dark:text-white">Información del Evento</h2>
-      <p class="text-gray-700 dark:text-gray-300 mb-1"><strong>Chofer:</strong> <%= @event.user.name || @event.user.email %></p>
-      <p class="text-gray-700 dark:text-gray-300 mb-1"><strong>Fecha:</strong> <%= @event.created_at.strftime("%d/%m/%Y %H:%M") %></p>
-      <p class="text-gray-700 dark:text-gray-300 mb-1"><strong>Estado actual:</strong> <%= @event.status.humanize %></p>
-      
-      <div class="mt-4">
-        <strong>Descripción:</strong>
-        <p class="mt-1 text-gray-800 dark:text-gray-200 p-3 bg-gray-50 dark:bg-gray-700 rounded border dark:border-gray-600">
-          <%= @event.description %>
-        </p>
-      </div>
-    </div>
+  <div class="card shadow-sm">
+    <div class="card-body p-4">
+      <div class="row g-4">
+        <div class="col-md-6">
+          <h6 class="fw-semibold mb-2">Información del Evento</h6>
+          <p class="mb-1"><strong>Chofer:</strong> <%= @event.user.email %></p>
+          <p class="mb-1"><strong>Fecha:</strong> <%= @event.created_at.strftime("%d/%m/%Y %H:%M") %></p>
+          <p class="mb-3">
+            <strong>Estado actual:</strong>
+            <% badge_class = case @event.status
+                 when 'solicitado' then 'text-bg-danger'
+                 when 'en_camino'  then 'text-bg-warning'
+                 when 'resuelto'   then 'text-bg-success'
+                 else 'text-bg-secondary'
+                 end %>
+            <span class="badge <%= badge_class %> rounded-pill"><%= @event.status.humanize %></span>
+          </p>
 
-    <div>
-      <h2 class="text-lg font-semibold mb-2 dark:text-white">Ubicación</h2>
-      <% if @event.latitude.present? && @event.longitude.present? %>
-        <p class="text-gray-700 dark:text-gray-300 mb-2">
-          Lat: <%= @event.latitude %>, Lon: <%= @event.longitude %>
-        </p>
-        <a href="https://www.google.com/maps/search/?api=1&query=<%= @event.latitude %>,<%= @event.longitude %>" target="_blank" rel="noopener noreferrer" class="inline-block bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-          Ver en Google Maps
-        </a>
-      <% else %>
-        <p class="text-gray-500 italic">No se proporcionó ubicación exacta.</p>
-      <% end %>
+          <div>
+            <strong class="small">Descripción:</strong>
+            <p class="mt-1 p-3 bg-light rounded border small mb-0">
+              <%= @event.description %>
+            </p>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <h6 class="fw-semibold mb-2">Ubicación</h6>
+          <% if @event.latitude.present? && @event.longitude.present? %>
+            <p class="text-muted small mb-2">
+              Lat: <%= @event.latitude %>, Lon: <%= @event.longitude %>
+            </p>
+            <a href="https://www.google.com/maps/search/?api=1&query=<%= @event.latitude %>,<%= @event.longitude %>" target="_blank" rel="noopener noreferrer" class="btn btn-success btn-sm">
+              <i class="bi bi-geo-alt-fill me-1"></i> Ver en Google Maps
+            </a>
+          <% else %>
+            <p class="text-muted small fst-italic">No se proporcionó ubicación exacta.</p>
+          <% end %>
+        </div>
+      </div>
     </div>
   </div>
 
   <% if @event.photos.attached? %>
-    <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 mt-6">
-      <h2 class="text-lg font-semibold mb-4 dark:text-white">Evidencia Fotográfica</h2>
-      <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
-        <% @event.photos.each do |photo| %>
-          <div class="aspect-w-1 aspect-h-1 overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
-            <%= image_tag photo, class: "object-cover w-full h-full" %>
-          </div>
-        <% end %>
+    <div class="card shadow-sm mt-4">
+      <div class="card-body p-4">
+        <h6 class="fw-semibold mb-3">Evidencia Fotográfica</h6>
+        <div class="row g-3">
+          <% @event.photos.each do |photo| %>
+            <div class="col-6 col-sm-4">
+              <div class="ratio ratio-1x1 rounded border overflow-hidden">
+                <%= image_tag photo, class: "w-100 h-100", style: "object-fit: cover;" %>
+              </div>
+            </div>
+          <% end %>
+        </div>
       </div>
     </div>
   <% end %>

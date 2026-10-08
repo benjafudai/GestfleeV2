@@ -7,11 +7,11 @@ class WorkOrder < ApplicationRecord
 
   has_many :work_order_tasks, dependent: :destroy
   has_many :work_order_part_usages, dependent: :destroy
+  
+  accepts_nested_attributes_for :work_order_tasks, allow_destroy: true, reject_if: proc { |attrs| attrs['description'].blank? }
+  accepts_nested_attributes_for :work_order_part_usages, allow_destroy: true, reject_if: proc { |attrs| attrs['part_id'].blank? }
 
-  accepts_nested_attributes_for :work_order_tasks, allow_destroy: true
-  accepts_nested_attributes_for :work_order_part_usages, allow_destroy: true
-
-  enum status: { pending: 0, in_progress: 1, completed: 2, cancelled: 3 }
+  enum :status, { pending: 0, in_progress: 1, completed: 2, cancelled: 3 }
 
   TERMINAL_STATUSES = %w[completed cancelled].freeze
 
