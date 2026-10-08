@@ -40,7 +40,12 @@ RSpec.describe UsersHelper, type: :helper do
   end
 
   describe "#unlock_account_button" do
-    before { chofer.lock_access! }
+    # current_user lo pone Devise en los controladores; la vista de un helper
+    # spec no lo trae, y según el orden de los tests el stub fallaba.
+    before do
+      helper.define_singleton_method(:current_user) { nil }
+      chofer.lock_access!
+    end
 
     it "is shown to a superadmin for a locked account" do
       allow(helper).to receive(:current_user).and_return(superadmin)
