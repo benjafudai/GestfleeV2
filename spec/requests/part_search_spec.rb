@@ -30,8 +30,11 @@ RSpec.describe "Part search", type: :request do
     expect(response.body).to include("Pastillas de freno")
     expect(response.body).to include("Compatible con ABCD12")
     expect(response.body).to include("Repuestos Sur")
-    expect(response.body).to include("https://listado.mercadolibre.cl/freno-toyota-hilux-2020")
-    expect(response.body).to include("https://knasta.cl/results?q=freno%20Toyota%20Hilux%202020")
+    google = "https://www.google.com/search?tbm=shop&amp;gl=cl&amp;hl=es&amp;q=freno%20Toyota%20Hilux%202020"
+    mercado_libre = "https://listado.mercadolibre.cl/freno-toyota-hilux-2020"
+    expect(response.body).to include(google, mercado_libre)
+    expect(response.body.index(google)).to be < response.body.index(mercado_libre)
+    expect(response.body).not_to include("knasta")
   end
 
   it "matches every word, in any order and not necessarily together" do
@@ -55,6 +58,16 @@ RSpec.describe "Part search", type: :request do
 
     expect(response.body).to include("Pastillas de freno")
     expect(response.body).not_to include("Freno ajeno")
+  end
+
+  it "only offers the company's own vehicles in the vehicle selector" do
+    create_vehicle(company: create_other_company, plate: "ZZZZ99")
+    sign_in company_admin(company)
+
+    get part_search_path
+
+    expect(response.body).to include("ABCD12")
+    expect(response.body).not_to include("ZZZZ99")
   end
 
   it "treats % and _ in the search as plain text" do
