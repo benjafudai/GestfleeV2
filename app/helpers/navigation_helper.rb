@@ -57,6 +57,7 @@ module NavigationHelper
         ] },
         { title: "Inventario", items: [
           nav_item("Repuestos", parts_path, "fa-boxes-stacked", "/parts"),
+          nav_item("Buscar repuesto", part_search_path, "fa-magnifying-glass", "/buscar_repuestos"),
           nav_item("Suministros", supply_requests_path, "fa-cart-plus", "/supply_requests")
         ] },
         { title: "Análisis", items: [
@@ -79,6 +80,7 @@ module NavigationHelper
         ] },
         { title: "Inventario", items: [
           nav_item("Repuestos", parts_path, "fa-boxes-stacked", "/parts"),
+          nav_item("Buscar repuesto", part_search_path, "fa-magnifying-glass", "/buscar_repuestos"),
           nav_item("Suministros", supply_requests_path, "fa-cart-plus", "/supply_requests")
         ] },
         { title: "Análisis", items: [
@@ -109,6 +111,7 @@ module NavigationHelper
         ] },
         { title: "Inventario", items: [
           nav_item("Repuestos", parts_path, "fa-boxes-stacked", "/parts"),
+          nav_item("Buscar repuesto", part_search_path, "fa-magnifying-glass", "/buscar_repuestos"),
           nav_item("Solicitudes", supply_requests_path, "fa-cart-plus", "/supply_requests")
         ] }
       ]
@@ -123,6 +126,7 @@ module NavigationHelper
         { title: "Operación", items: [
           nav_item("Combustible", fuel_fills_path, "fa-gas-pump", "/fuel_fills"),
           nav_item("Repuestos", parts_path, "fa-boxes-stacked", "/parts"),
+          nav_item("Buscar repuesto", part_search_path, "fa-magnifying-glass", "/buscar_repuestos"),
           nav_item("Suministros", supply_requests_path, "fa-cart-plus", "/supply_requests")
         ] }
       ]
@@ -131,6 +135,7 @@ module NavigationHelper
         { title: nil, items: [dashboard] },
         { title: "Inventario", items: [
           nav_item("Repuestos", parts_path, "fa-boxes-stacked", "/parts"),
+          nav_item("Buscar repuesto", part_search_path, "fa-magnifying-glass", "/buscar_repuestos"),
           nav_item("Suministros", supply_requests_path, "fa-cart-plus", "/supply_requests")
         ] }
       ]

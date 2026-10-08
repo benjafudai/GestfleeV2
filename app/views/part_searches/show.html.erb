@@ -1,0 +1,90 @@
+<div class="container mt-4">
+  <div class="mb-4">
+    <h1 class="h3 mb-1"><i class="bi bi-search me-2"></i> Buscar repuesto</h1>
+    <p class="text-muted mb-0">Revisa primero lo que hay en bodega y luego compara precios en tiendas.</p>
+  </div>
+
+  <div class="card shadow-sm border-0 mb-4">
+    <div class="card-body">
+      <%= form_with url: part_search_path, method: :get, local: true, class: "row g-3 align-items-end" do %>
+        <div class="col-md-4">
+          <%= label_tag :vehicle_id, "Vehículo (opcional)", class: "form-label fw-bold" %>
+          <%= select_tag :vehicle_id,
+                options_for_select(@vehicles.map { |v| [[v.plate, v.brand, v.model, v.year].compact_blank.join(" · "), v.id] }, @vehicle&.id),
+                include_blank: "Cualquier vehículo", class: "form-select" %>
+        </div>
+        <div class="col-md-6">
+          <%= label_tag :q, "Repuesto", class: "form-label fw-bold" %>
+          <%= search_field_tag :q, @query, class: "form-control", placeholder: "Ej: pastillas de freno, filtro de aceite", required: true %>
+        </div>
+        <div class="col-md-2 d-grid">
+          <%= submit_tag "Buscar", name: nil, class: "btn btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <% if @query.present? %>
+    <div class="row g-4">
+      <div class="col-lg-7">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
+            <h5 class="mb-0 fw-bold"><i class="bi bi-box-seam me-2 text-primary"></i>En tu bodega</h5>
+          </div>
+          <div class="card-body">
+            <% if @parts.any? %>
+              <div class="list-group list-group-flush">
+                <% @parts.each do |part| %>
+                  <% best = part.best_quote %>
+                  <%= link_to part_path(part), class: "list-group-item list-group-item-action px-0" do %>
+                    <div class="d-flex justify-content-between align-items-start gap-3">
+                      <div>
+                        <div class="fw-bold"><%= part.name %></div>
+                        <div class="small text-muted">SKU <%= part.sku %></div>
+                        <% if @vehicle && part.part_fitments.any? { |f| f.vehicle_id == @vehicle.id } %>
+                          <span class="badge rounded-pill text-bg-success mt-1">Compatible con <%= @vehicle.plate %></span>
+                        <% end %>
+                      </div>
+                      <div class="text-end">
+                        <span class="badge rounded-pill <%= part.stock > 0 ? 'text-bg-success' : 'text-bg-danger' %>">
+                          Stock <%= number_with_precision(part.stock, precision: 2, strip_insignificant_zeros: true) %>
+                        </span>
+                        <% if best %>
+                          <div class="small mt-1">Mejor precio: <strong><%= format_money(best.price, best.currency) %></strong></div>
+                          <div class="small text-muted"><%= best.supplier %></div>
+                        <% end %>
+                      </div>
+                    </div>
+                  <% end %>
+                <% end %>
+              </div>
+            <% else %>
+              <div class="p-4 text-center text-muted bg-light rounded">
+                No hay repuestos en el catálogo que coincidan con "<%= @query %>".
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-5">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
+            <h5 class="mb-0 fw-bold"><i class="bi bi-shop me-2 text-primary"></i>Comparar en tiendas</h5>
+          </div>
+          <div class="card-body">
+            <p class="small text-muted">Se busca: <strong><%= @external_query %></strong></p>
+            <div class="d-grid gap-2">
+              <% @stores.each do |store| %>
+                <%= link_to store.url_for(@external_query), target: "_blank", rel: "noopener noreferrer", class: "btn btn-outline-primary text-start" do %>
+                  <i class="bi bi-box-arrow-up-right me-2"></i>Ver en <%= store.name %>
+                <% end %>
+              <% end %>
+            </div>
+            <p class="small text-muted mt-3 mb-0">Cuando un proveedor te dé un precio, regístralo en la ficha del repuesto para compararlo después.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

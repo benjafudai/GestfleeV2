@@ -11,7 +11,10 @@ Rails.application.routes.draw do
       patch :change_status
     end
   end
-  resources :parts
+  resources :parts do
+    resources :part_quotes, only: %i[create destroy]
+  end
+  resource :part_search, only: :show, path: "buscar_repuestos"
   devise_for :users, controllers: {
     passwords: 'users/passwords'
   }

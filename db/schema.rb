@@ -10,9 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_09_23_233000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_08_160000) do
   # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
+  enable_extension "pg_catalog.plpgsql"
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -193,6 +193,23 @@ ActiveRecord::Schema[7.1].define(version: 2026_09_23_233000) do
     t.index ["part_id", "vehicle_id"], name: "index_part_fitments_on_part_id_and_vehicle_id", unique: true
     t.index ["part_id"], name: "index_part_fitments_on_part_id"
     t.index ["vehicle_id"], name: "index_part_fitments_on_vehicle_id"
+  end
+
+  create_table "part_quotes", force: :cascade do |t|
+    t.bigint "company_id", null: false
+    t.bigint "part_id", null: false
+    t.bigint "user_id"
+    t.string "supplier", null: false
+    t.decimal "price", precision: 12, scale: 2, null: false
+    t.string "currency", default: "CLP", null: false
+    t.date "quoted_on", null: false
+    t.string "url"
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_part_quotes_on_company_id"
+    t.index ["part_id"], name: "index_part_quotes_on_part_id"
+    t.index ["user_id"], name: "index_part_quotes_on_user_id"
   end
 
   create_table "parts", force: :cascade do |t|
@@ -416,6 +433,9 @@ ActiveRecord::Schema[7.1].define(version: 2026_09_23_233000) do
   add_foreign_key "part_fitments", "companies"
   add_foreign_key "part_fitments", "parts"
   add_foreign_key "part_fitments", "vehicles"
+  add_foreign_key "part_quotes", "companies"
+  add_foreign_key "part_quotes", "parts"
+  add_foreign_key "part_quotes", "users"
   add_foreign_key "parts", "companies"
   add_foreign_key "password_reset_requests", "users"
   add_foreign_key "password_reset_requests", "users", column: "admin_id"
