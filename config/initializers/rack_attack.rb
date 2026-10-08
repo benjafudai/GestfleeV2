@@ -44,5 +44,3 @@ class Rack::Attack
     [429, { "Content-Type" => "text/plain; charset=utf-8" }, [message]]
   end
 end
-
-Rails.application.config.middleware.use Rack::Attack
