@@ -1,0 +1,29 @@
+﻿id_tarea;nombre;sistema;aplica_a;tiempo_estimado_h;herramientas;epp
+TR-01;Cambio de aceite de motor y filtro;Motor;Todos;0.8;Llave de filtro, llave de tapón, bandeja de drenaje, embudo, torquímetro;Guantes nitrilo, lentes de seguridad, zapatos de seguridad
+TR-02;Reemplazo de filtro de aire de motor;Admisión;Todos;0.3;Paño, linterna, aspiradora;Guantes nitrilo, lentes de seguridad, zapatos de seguridad
+TR-03;Reemplazo de filtro(s) de combustible y purga (diésel);Combustible;Diésel;0.6;Llave de filtro, bandeja, paños absorbentes;Guantes nitrilo, lentes de seguridad, zapatos de seguridad
+TR-04;Reemplazo de filtro de cabina / polen;Climatización;Camionetas y camiones;0.2;Destornillador;Guantes nitrilo, lentes de seguridad, zapatos de seguridad
+TR-05;Inspección de niveles y fugas;General;Todos;0.3;Linterna, paño;Guantes nitrilo, lentes de seguridad, zapatos de seguridad
+TR-06;Inspección de frenos (pastillas, discos, balatas);Frenos;Camionetas y camiones;0.8;Gata, torres, llave de ruedas, pie de metro, torquímetro;Guantes nitrilo, lentes de seguridad, zapatos de seguridad
+TR-07;Reemplazo de líquido de frenos;Frenos;Camionetas y camiones livianos;0.8;Llave de purga, manguera transparente, botella, ayudante;Guantes nitrilo, lentes de seguridad, zapatos de seguridad
+TR-08;Rotación y revisión de neumáticos;Neumáticos;Camionetas y camiones;0.6;Gata, llave de ruedas, torquímetro, medidor de presión y profundidad;Guantes nitrilo, lentes de seguridad, zapatos de seguridad
+TR-09;Cambio de refrigerante;Enfriamiento;Todos;1;Bandeja, embudo con purgador, refractómetro;Guantes nitrilo, lentes de seguridad, zapatos de seguridad
+TR-10;Cambio de aceite de caja de cambios;Transmisión;Todos;0.8;Llave de tapón, bomba de llenado, bandeja;Guantes nitrilo, lentes de seguridad, zapatos de seguridad
+TR-11;Cambio de aceite de diferencial / transfer / ejes;Transmisión;Todos con tracción;0.8;Llave de tapón, bomba de llenado, bandeja;Guantes nitrilo, lentes de seguridad, zapatos de seguridad
+TR-12;Engrase de chasis, cardán y articulaciones;Lubricación;Todos;0.5;Engrasadora, grasa EP2 (o la del manual), paños;Guantes nitrilo, lentes de seguridad, zapatos de seguridad
+TR-13;Inspección de correas y tensores;Motor;Todos;0.3;Linterna, medidor de tensión;Guantes nitrilo, lentes de seguridad, zapatos de seguridad
+TR-14;Inspección de batería y sistema eléctrico;Eléctrico;Todos;0.3;Multímetro, cepillo de bornes;Guantes nitrilo, lentes de seguridad, zapatos de seguridad
+TR-15;Inspección de suspensión y dirección;Chasis;Camionetas y camiones;0.6;Gata, barra palanca, linterna;Guantes nitrilo, lentes de seguridad, zapatos de seguridad
+TR-16;Reemplazo de bujías (gasolina / GLP);Encendido;Gasolina y GLP;0.8;Llave de bujías, torquímetro, galga;Guantes nitrilo, lentes de seguridad, zapatos de seguridad
+TR-17;Servicio de secador de aire y drenaje de estanques;Frenos de aire;Camiones pesados;0.6;Llaves, cartucho secador;Guantes nitrilo, lentes de seguridad, zapatos de seguridad
+TR-18;Calibración de válvulas;Motor;Camiones y maquinaria;2.5;Galgas, llaves, herramienta de giro de motor;Guantes nitrilo, lentes de seguridad, zapatos de seguridad
+TR-19;Cambio de aceite hidráulico;Hidráulico;Maquinaria;2.5;Bomba de vaciado, bandeja grande, llaves;Guantes nitrilo, lentes de seguridad, zapatos de seguridad
+TR-20;Reemplazo de filtros hidráulicos (retorno / piloto);Hidráulico;Maquinaria;0.8;Llave de filtro, bandeja;Guantes nitrilo, lentes de seguridad, zapatos de seguridad
+TR-21;Cambio de aceite de mandos finales / mando de giro;Tren de rodado;Excavadoras y bulldozer;1.5;Llaves, bandeja, bomba de llenado;Guantes nitrilo, lentes de seguridad, zapatos de seguridad
+TR-22;Inspección y tensión de orugas;Tren de rodado;Excavadoras y bulldozer;0.6;Pistola de grasa, huincha;Guantes nitrilo, lentes de seguridad, zapatos de seguridad
+TR-23;Inspección diaria del operador (pre-uso);General;Todos;0.25;Checklist;Guantes nitrilo, lentes de seguridad, zapatos de seguridad
+TR-24;Toma de muestra de aceite para análisis;Monitoreo;Camiones pesados y maquinaria;0.2;Kit de muestra, bomba de vacío;Guantes nitrilo, lentes de seguridad, zapatos de seguridad
+TR-25;Cambio de aceite de transmisión (maquinaria);Transmisión;Retro, cargador, motoniveladora, grúa;1.5;Llaves, bandeja, filtro de transmisión;Guantes nitrilo, lentes de seguridad, zapatos de seguridad
+TR-26;Limpieza de radiadores y enfriadores;Enfriamiento;Maquinaria y camiones;0.5;Aire comprimido, agua a baja presión;Guantes nitrilo, lentes de seguridad, zapatos de seguridad
+TR-27;Cambio de aceite del cárter de cadenas (minicargador);Transmisión;Minicargador;1;Llaves, bandeja;Guantes nitrilo, lentes de seguridad, zapatos de seguridad
+TR-28;Cambio de aceite de excitador / tambor (rodillo);Vibración;Rodillo compactador;1;Llaves, bandeja;Guantes nitrilo, lentes de seguridad, zapatos de seguridad

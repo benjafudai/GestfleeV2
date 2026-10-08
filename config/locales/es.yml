@@ -107,6 +107,13 @@ es:
         brand: "Marca"
         model: "Modelo"
         year: "Año"
+        hour_meter: "Horómetro"
+        vehicle_model: "Modelo de la biblioteca"
+      maintenance_plan:
+        name: "Nombre"
+        interval_km: "Intervalo en km"
+        interval_days: "Intervalo en días"
+        interval_hours: "Intervalo en horas"
       fuel_fill:
         liters: "Litros"
         cost: "Costo"

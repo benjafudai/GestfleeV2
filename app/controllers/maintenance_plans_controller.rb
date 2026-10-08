@@ -73,6 +73,6 @@ class MaintenancePlansController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def maintenance_plan_params
-      params.require(:maintenance_plan).permit(:name, :description, :interval_km, :interval_days, maintenance_task_templates_attributes: [:id, :description, :expected_duration_minutes, :_destroy])
+      params.require(:maintenance_plan).permit(:name, :description, :interval_km, :interval_days, :interval_hours, maintenance_task_templates_attributes: [:id, :description, :expected_duration_minutes, :_destroy])
     end
 end

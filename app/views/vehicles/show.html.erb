@@ -32,8 +32,20 @@
             </li>
             <li class="list-group-item d-flex justify-content-between px-0">
               <span class="text-muted">Odómetro</span>
-              <span class="fw-medium"><%= number_with_delimiter(@vehicle.odometer) %> km</span>
+              <span class="fw-medium"><%= @vehicle.odometer.present? ? "#{number_with_delimiter(@vehicle.odometer)} km" : "—" %></span>
             </li>
+            <% if @vehicle.hour_meter.present? %>
+              <li class="list-group-item d-flex justify-content-between px-0">
+                <span class="text-muted">Horómetro</span>
+                <span class="fw-medium"><%= number_with_delimiter(@vehicle.hour_meter) %> h</span>
+              </li>
+            <% end %>
+            <% if @vehicle.vehicle_model %>
+              <li class="list-group-item d-flex justify-content-between px-0">
+                <span class="text-muted">Modelo de biblioteca</span>
+                <span class="fw-medium text-end"><%= @vehicle.vehicle_model.label %></span>
+              </li>
+            <% end %>
           </ul>
 
             <div class="mt-4 d-grid gap-2">

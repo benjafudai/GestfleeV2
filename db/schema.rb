@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_08_160000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_08_170100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -157,7 +157,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_08_160000) do
     t.integer "interval_days"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "interval_hours"
     t.index ["company_id"], name: "index_maintenance_plans_on_company_id"
+  end
+
+  create_table "maintenance_task_steps", force: :cascade do |t|
+    t.bigint "maintenance_task_id", null: false
+    t.integer "position", null: false
+    t.text "description", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["maintenance_task_id", "position"], name: "idx_on_maintenance_task_id_position_039656bcbe", unique: true
+    t.index ["maintenance_task_id"], name: "index_maintenance_task_steps_on_maintenance_task_id"
   end
 
   create_table "maintenance_task_templates", force: :cascade do |t|
@@ -168,6 +179,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_08_160000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["maintenance_plan_id"], name: "index_maintenance_task_templates_on_maintenance_plan_id"
+  end
+
+  create_table "maintenance_tasks", force: :cascade do |t|
+    t.string "code", null: false
+    t.string "name", null: false
+    t.string "system"
+    t.string "applies_to"
+    t.decimal "estimated_hours", precision: 5, scale: 2
+    t.text "tools"
+    t.text "ppe"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "index_maintenance_tasks_on_code", unique: true
   end
 
   create_table "notifications", force: :cascade do |t|
@@ -349,6 +373,56 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_08_160000) do
     t.index ["vehicle_id"], name: "index_vehicle_documents_on_vehicle_id"
   end
 
+  create_table "vehicle_model_parts", force: :cascade do |t|
+    t.string "code", null: false
+    t.bigint "vehicle_model_id", null: false
+    t.bigint "maintenance_task_id", null: false
+    t.string "description", null: false
+    t.string "specification"
+    t.string "oem_code"
+    t.decimal "quantity", precision: 10, scale: 2, default: "0.0", null: false
+    t.string "unit"
+    t.integer "unit_price_net_clp"
+    t.string "price_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "index_vehicle_model_parts_on_code", unique: true
+    t.index ["maintenance_task_id"], name: "index_vehicle_model_parts_on_maintenance_task_id"
+    t.index ["vehicle_model_id"], name: "index_vehicle_model_parts_on_vehicle_model_id"
+  end
+
+  create_table "vehicle_model_plan_items", force: :cascade do |t|
+    t.string "code", null: false
+    t.bigint "vehicle_model_id", null: false
+    t.bigint "maintenance_task_id", null: false
+    t.string "action"
+    t.integer "frequency_value", null: false
+    t.string "frequency_unit", null: false
+    t.integer "frequency_months"
+    t.text "note"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "index_vehicle_model_plan_items_on_code", unique: true
+    t.index ["maintenance_task_id"], name: "index_vehicle_model_plan_items_on_maintenance_task_id"
+    t.index ["vehicle_model_id"], name: "index_vehicle_model_plan_items_on_vehicle_model_id"
+  end
+
+  create_table "vehicle_models", force: :cascade do |t|
+    t.string "code", null: false
+    t.string "category"
+    t.string "brand", null: false
+    t.string "model", null: false
+    t.string "configuration"
+    t.string "engine"
+    t.string "fuel"
+    t.string "meter_unit", default: "km", null: false
+    t.integer "base_interval"
+    t.text "typical_use"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "index_vehicle_models_on_code", unique: true
+  end
+
   create_table "vehicles", force: :cascade do |t|
     t.string "plate"
     t.string "brand"
@@ -359,7 +433,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_08_160000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "company_id", null: false
+    t.bigint "vehicle_model_id"
+    t.integer "hour_meter"
     t.index ["company_id"], name: "index_vehicles_on_company_id"
+    t.index ["vehicle_model_id"], name: "index_vehicles_on_vehicle_model_id"
   end
 
   create_table "versions", force: :cascade do |t|
@@ -428,6 +505,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_08_160000) do
   add_foreign_key "incidents", "users", column: "reporter_id"
   add_foreign_key "incidents", "vehicles"
   add_foreign_key "maintenance_plans", "companies"
+  add_foreign_key "maintenance_task_steps", "maintenance_tasks"
   add_foreign_key "maintenance_task_templates", "maintenance_plans"
   add_foreign_key "notifications", "users"
   add_foreign_key "part_fitments", "companies"
@@ -454,7 +532,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_08_160000) do
   add_foreign_key "vehicle_assignments", "users"
   add_foreign_key "vehicle_assignments", "vehicles"
   add_foreign_key "vehicle_documents", "vehicles"
+  add_foreign_key "vehicle_model_parts", "maintenance_tasks"
+  add_foreign_key "vehicle_model_parts", "vehicle_models"
+  add_foreign_key "vehicle_model_plan_items", "maintenance_tasks"
+  add_foreign_key "vehicle_model_plan_items", "vehicle_models"
   add_foreign_key "vehicles", "companies"
+  add_foreign_key "vehicles", "vehicle_models"
   add_foreign_key "work_order_part_usages", "parts"
   add_foreign_key "work_order_part_usages", "work_orders"
   add_foreign_key "work_order_tasks", "work_orders"

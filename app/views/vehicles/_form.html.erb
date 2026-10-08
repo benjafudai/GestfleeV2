@@ -11,6 +11,14 @@
   <% end %>
 
   <div class="row g-3">
+    <div class="col-12">
+      <%= form.label :vehicle_model_id, "Modelo de la biblioteca (opcional)", class: "form-label" %>
+      <%= form.grouped_collection_select :vehicle_model_id,
+            VehicleModel.order(:category, :brand, :model).group_by(&:category).map { |category, models| [category, models] },
+            :last, :first, :id, :name, { include_blank: "Sin modelo" }, class: "form-select" %>
+      <div class="form-text">Con el modelo, GestFlee sabe qué plan de mantención y qué repuestos le corresponden.</div>
+    </div>
+
     <div class="col-md-6">
       <%= form.label :plate, "Patente", class: "form-label" %>
       <%= form.text_field :plate, class: "form-control", placeholder: "ABCD-12", required: true,
@@ -35,6 +43,12 @@
     <div class="col-md-6">
       <%= form.label :odometer, "Odómetro (km)", class: "form-label" %>
       <%= form.number_field :odometer, class: "form-control" %>
+    </div>
+
+    <div class="col-md-6">
+      <%= form.label :hour_meter, "Horómetro (horas)", class: "form-label" %>
+      <%= form.number_field :hour_meter, class: "form-control", min: 0 %>
+      <div class="form-text">Para maquinaria que se mide en horas de uso.</div>
     </div>
 
     <div class="col-md-6">
