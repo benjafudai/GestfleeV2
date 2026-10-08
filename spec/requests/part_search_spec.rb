@@ -34,6 +34,18 @@ RSpec.describe "Part search", type: :request do
     expect(response.body).to include("https://knasta.cl/results?q=freno%20Toyota%20Hilux%202020")
   end
 
+  it "matches every word, in any order and not necessarily together" do
+    create_part(company: company, name: "Filtro de aceite · Original", stock: 2)
+    sign_in company_admin(company)
+
+    get part_search_path(q: "aceite filtro")
+    expect(response.body).to include("Filtro de aceite · Original")
+
+    get part_search_path(q: "filtro freno")
+    expect(response.body).not_to include("Filtro de aceite · Original")
+    expect(response.body).not_to include("Pastillas de freno")
+  end
+
   it "doesn't show another company's parts" do
     other = create_other_company
     create_part(company: other, name: "Freno ajeno")

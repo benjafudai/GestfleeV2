@@ -13,12 +13,13 @@ class PartSearchesController < ApplicationController
 
     return if @query.blank?
 
-    pattern = "%#{Part.sanitize_sql_like(@query)}%"
-    @parts = policy_scope(Part)
-             .where("parts.name ILIKE :p OR parts.sku ILIKE :p", p: pattern)
-             .includes(:part_quotes, :part_fitments)
-             .order(:name)
-             .limit(50)
+    # Cada palabra tiene que aparecer en el nombre o el SKU, en cualquier orden:
+    # "filtro aceite" encuentra "Filtro de aceite".
+    parts = policy_scope(Part)
+    @query.split.first(6).each do |word|
+      parts = parts.where("parts.name ILIKE :p OR parts.sku ILIKE :p", p: "%#{Part.sanitize_sql_like(word)}%")
+    end
+    @parts = parts.includes(:part_quotes, :part_fitments).order(:name).limit(50)
     @external_query = [@query, @vehicle&.brand, @vehicle&.model, @vehicle&.year].compact_blank.join(" ")
     @stores = PartStore.all
   end
