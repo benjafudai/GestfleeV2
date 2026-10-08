@@ -18,6 +18,10 @@ module TenantHelpers
     User.create!(email: email || "#{role}-#{SecureRandom.hex(3)}@test.cl",
                  password: SPEC_PASSWORD, role: role, company: company)
   end
+
+  def create_vehicle(company:, plate: "AB#{SecureRandom.hex(2).upcase}", **attrs)
+    Vehicle.unscoped.create!(company: company, plate: plate, **attrs)
+  end
 end
 
 RSpec.configure do |config|

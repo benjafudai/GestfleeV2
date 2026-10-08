@@ -47,3 +47,6 @@ node_modules
 # Windows "downloaded from the internet" metadata artifacts.
 *:Zone.Identifier
 *_Zone.Identifier
+
+# Test coverage report (SimpleCov)
+/coverage
