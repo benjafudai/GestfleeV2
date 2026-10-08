@@ -1,0 +1,31 @@
+﻿id_vehiculo;categoria;marca;modelo;configuracion;motor;combustible;unidad_medicion;intervalo_base;uso_tipico
+CAM-01;Camión;Mercedes-Benz;Actros 2646;Tracto 6x4;OM 471 12,8 L;Diésel;km;30000;Transporte de carga larga distancia, minería
+CAM-02;Camión;Volvo;FH 460 / 540;Tracto 6x4;D13 12,8 L;Diésel;km;30000;Carga larga distancia, forestal, minería
+CAM-03;Camión;Scania;R 450 / G 410;Tracto 6x4;DC13 12,7 L;Diésel;km;30000;Carga larga distancia, minería, forestal
+CAM-04;Camión;Chevrolet (Isuzu);NQR / Serie N;Rígido 4x2 3/4;4HK1 5,2 L;Diésel;km;10000;Reparto urbano, distribución
+CAM-05;Camión;Volkswagen;Delivery 11.180;Rígido 4x2;Cummins ISF 3,8 L;Diésel;km;10000;Reparto urbano e interurbano
+CAM-06;Camión;Hino;Serie 300 (Dutro);Rígido 4x2;N04C 4,0 L;Diésel;km;10000;Reparto urbano, servicios
+CAM-07;Camión;Fuso;Canter;Rígido 4x2;4P10 3,0 L;Diésel;km;10000;Reparto urbano liviano
+CAM-08;Camión;JAC;Serie N (N80 / N120);Rígido 4x2;Diésel (verificar versión);Diésel;km;10000;Reparto y distribución
+CAM-09;Camión;Renault Trucks;C 440;Tolva / tracto 6x4;DTI 13;Diésel;km;30000;Construcción, áridos, minería
+CAM-10;Camión;Foton;Aumark;Rígido 4x2;Cummins ISF 2,8 / 3,8 L;Diésel;km;10000;Reparto urbano liviano
+CTA-01;Camioneta;Toyota;Hilux;Doble cabina 4x2 / 4x4;2GD 2,4 L / 1GD 2,8 L;Diésel;km;10000;Faena, minería, agro, servicios
+CTA-02;Camioneta;Mitsubishi;L200;Doble cabina 4x2 / 4x4;4N15 2,4 L;Diésel;km;10000;Faena, minería, agro
+CTA-03;Camioneta;GWM;Poer;Doble cabina 4x2 / 4x4;GW4D20M 2,0 L;Diésel;km;10000;Faena, servicios, flota
+CTA-04;Camioneta;Ford;Ranger (nueva);Doble cabina 4x4;2,0 L biturbo / 3,0 V6;Diésel;km;10000;Faena, minería, servicios
+CTA-05;Camioneta;Maxus;T60;Doble cabina 4x2 / 4x4;SC28R 2,8 L / 2,0 L;Diésel;km;10000;Flota, servicios
+CTA-06;Camioneta;RAM;700;Cabina simple / doble 4x2;1,3 L Firefly;Gasolina;km;10000;Reparto liviano, servicios urbanos
+CTA-07;Camioneta;Ford;F-150;Doble cabina 4x4;3,5 L EcoBoost / 5,0 L V8;Gasolina;km;10000;Flota, servicios, faena liviana
+CTA-08;Camioneta;Chevrolet;Silverado;Doble cabina 4x4;2,7 L turbo / 5,3 L V8;Gasolina;km;10000;Flota, servicios, faena liviana
+CTA-09;Camioneta;JMC;Grand Avenue;Doble cabina 4x2 / 4x4;Diésel (verificar versión);Diésel;km;10000;Flota, servicios
+CTA-10;Camioneta;KGM (SsangYong);Grand Musso;Doble cabina 4x4;2,2 L e-XDi;Diésel;km;10000;Faena, agro, servicios
+MAQ-01;Maquinaria;Caterpillar;420 (retroexcavadora);Retroexcavadora 4x4;Cat C3.6 / C4.4;Diésel;horas;500;Construcción, obras sanitarias, municipal
+MAQ-02;Maquinaria;JCB;3CX (retroexcavadora);Retroexcavadora 4x4;JCB DieselMax 448;Diésel;horas;500;Construcción, municipal, agro
+MAQ-03;Maquinaria;Caterpillar;320 (excavadora);Excavadora 20 t;Cat C4.4 / C7.1;Diésel;horas;500;Movimiento de tierra, minería, construcción
+MAQ-04;Maquinaria;Komatsu;PC200 (excavadora);Excavadora 20 t;SAA6D107E 6,7 L;Diésel;horas;500;Movimiento de tierra, minería, construcción
+MAQ-05;Maquinaria;Bobcat;S650 (minicargador);Minicargador;Kubota V3307;Diésel;horas;500;Construcción, limpieza, agro, industria
+MAQ-06;Maquinaria;Caterpillar;950 (cargador frontal);Cargador frontal;Cat C7.1 / C9.3;Diésel;horas;500;Áridos, minería, plantas
+MAQ-07;Maquinaria;Caterpillar;140 (motoniveladora);Motoniveladora;Cat C7.1;Diésel;horas;500;Caminos, vialidad, minería
+MAQ-08;Maquinaria;Caterpillar;D6 (bulldozer);Tractor oruga;Cat C9.3;Diésel;horas;500;Movimiento de tierra, minería, forestal
+MAQ-09;Maquinaria;Caterpillar;CS533 (rodillo compactador);Rodillo vibratorio;Cat C4.4;Diésel;horas;500;Vialidad, construcción
+MAQ-10;Maquinaria;Toyota;8FG25 (grúa horquilla);Grúa horquilla 2,5 t;4Y 2,2 L;Gasolina / GLP;horas;500;Bodegas, centros de distribución, industria

@@ -1,0 +1,38 @@
+<%# Paso a paso, herramientas, EPP y repuestos de referencia de una pauta creada desde la biblioteca. %>
+<% task = template.maintenance_task %>
+<% library_parts = vehicle_model ? vehicle_model.parts.select { |part| part.maintenance_task_id == task.id } : [] %>
+<details class="mt-2 small">
+  <summary class="text-primary">Ver paso a paso</summary>
+  <div class="mt-2 p-3 bg-light rounded-3">
+    <% if task.steps.any? %>
+      <ol class="ps-3 mb-2">
+        <% task.steps.each do |step| %>
+          <li class="mb-1"><%= step.description %></li>
+        <% end %>
+      </ol>
+    <% end %>
+    <% if task.tools.present? %>
+      <div class="mb-1"><strong>Herramientas:</strong> <%= task.tools %></div>
+    <% end %>
+    <% if task.ppe.present? %>
+      <div class="mb-1"><strong>EPP:</strong> <%= task.ppe %></div>
+    <% end %>
+    <% if library_parts.any? %>
+      <div class="mt-2"><strong>Repuestos de referencia para esta tarea:</strong></div>
+      <ul class="ps-3 mb-0">
+        <% library_parts.each do |part| %>
+          <li>
+            <%= part.description %><%= " · #{part.specification}" if part.specification.present? %>:
+            <%= number_with_precision(part.quantity, precision: 2, strip_insignificant_zeros: true) %> <%= part.unit %>
+            <% if part.unit_price_net_clp %>
+              a <%= format_money(part.unit_price_net_clp, "CLP") %> neto c/u
+            <% end %>
+            <% if part.price_type == "estimado" %>
+              <span class="badge rounded-pill text-bg-warning">Precio estimado</span>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+  </div>
+</details>

@@ -18,4 +18,9 @@ class VehiclePolicy < ApplicationPolicy
   def destroy?
     user.admin? || user.superadmin?
   end
+
+  # Crear planes y repuestos desde la biblioteca: quien edita el vehículo.
+  def generate_plan?
+    update?
+  end
 end

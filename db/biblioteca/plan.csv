@@ -1,0 +1,537 @@
+﻿id_plan;id_vehiculo;id_tarea;accion;frecuencia_valor;frecuencia_unidad;frecuencia_meses;nota
+CAM-01-TR-23-INS-D;CAM-01;TR-23;Inspeccionar;1;día;;Drenar estanques de aire y separador
+CAM-01-TR-01-REE-30000;CAM-01;TR-01;Reemplazar;30000;km;6;Uso severo/minería. Larga distancia en carretera: hasta 60.000-90.000 km con aceite y análisis aprobados
+CAM-01-TR-24-INS-30000;CAM-01;TR-24;Inspeccionar;30000;km;6;Muestra de aceite en cada cambio
+CAM-01-TR-05-INS-30000;CAM-01;TR-05;Inspeccionar;30000;km;6;
+CAM-01-TR-03-REE-30000;CAM-01;TR-03;Reemplazar;30000;km;6;Prefiltro/separador
+CAM-01-TR-03-REE-60000;CAM-01;TR-03;Reemplazar;60000;km;12;Filtro principal
+CAM-01-TR-02-INS-30000;CAM-01;TR-02;Inspeccionar;30000;km;6;Según indicador de restricción
+CAM-01-TR-02-REE-60000;CAM-01;TR-02;Reemplazar;60000;km;12;
+CAM-01-TR-04-REE-30000;CAM-01;TR-04;Reemplazar;30000;km;12;
+CAM-01-TR-12-LUB-10000;CAM-01;TR-12;Lubricar;10000;km;1;Chasis, quinta rueda, cardán
+CAM-01-TR-06-INS-30000;CAM-01;TR-06;Inspeccionar;30000;km;6;
+CAM-01-TR-08-INS-10000;CAM-01;TR-08;Inspeccionar;10000;km;1;
+CAM-01-TR-17-REE-120000;CAM-01;TR-17;Reemplazar;120000;km;12;Cartucho secador: anual
+CAM-01-TR-26-INS-30000;CAM-01;TR-26;Inspeccionar;30000;km;6;
+CAM-01-TR-13-INS-30000;CAM-01;TR-13;Inspeccionar;30000;km;6;
+CAM-01-TR-14-INS-30000;CAM-01;TR-14;Inspeccionar;30000;km;6;
+CAM-01-TR-15-INS-30000;CAM-01;TR-15;Inspeccionar;30000;km;6;
+CAM-01-TR-18-AJU-120000;CAM-01;TR-18;Ajustar;120000;km;24;
+CAM-01-TR-10-REE-180000;CAM-01;TR-10;Reemplazar;180000;km;24;Caja automatizada: según manual
+CAM-01-TR-11-REE-120000;CAM-01;TR-11;Reemplazar;120000;km;24;Diferenciales y cubos
+CAM-01-TR-09-REE-240000;CAM-01;TR-09;Reemplazar;240000;km;48;Refrigerante de larga vida
+CAM-02-TR-23-INS-D;CAM-02;TR-23;Inspeccionar;1;día;;Drenar estanques de aire y separador
+CAM-02-TR-01-REE-30000;CAM-02;TR-01;Reemplazar;30000;km;6;Uso severo/minería. Larga distancia en carretera: hasta 60.000-90.000 km con aceite y análisis aprobados
+CAM-02-TR-24-INS-30000;CAM-02;TR-24;Inspeccionar;30000;km;6;Muestra de aceite en cada cambio
+CAM-02-TR-05-INS-30000;CAM-02;TR-05;Inspeccionar;30000;km;6;
+CAM-02-TR-03-REE-30000;CAM-02;TR-03;Reemplazar;30000;km;6;Prefiltro/separador
+CAM-02-TR-03-REE-60000;CAM-02;TR-03;Reemplazar;60000;km;12;Filtro principal
+CAM-02-TR-02-INS-30000;CAM-02;TR-02;Inspeccionar;30000;km;6;Según indicador de restricción
+CAM-02-TR-02-REE-60000;CAM-02;TR-02;Reemplazar;60000;km;12;
+CAM-02-TR-04-REE-30000;CAM-02;TR-04;Reemplazar;30000;km;12;
+CAM-02-TR-12-LUB-10000;CAM-02;TR-12;Lubricar;10000;km;1;Chasis, quinta rueda, cardán
+CAM-02-TR-06-INS-30000;CAM-02;TR-06;Inspeccionar;30000;km;6;
+CAM-02-TR-08-INS-10000;CAM-02;TR-08;Inspeccionar;10000;km;1;
+CAM-02-TR-17-REE-120000;CAM-02;TR-17;Reemplazar;120000;km;12;Cartucho secador: anual
+CAM-02-TR-26-INS-30000;CAM-02;TR-26;Inspeccionar;30000;km;6;
+CAM-02-TR-13-INS-30000;CAM-02;TR-13;Inspeccionar;30000;km;6;
+CAM-02-TR-14-INS-30000;CAM-02;TR-14;Inspeccionar;30000;km;6;
+CAM-02-TR-15-INS-30000;CAM-02;TR-15;Inspeccionar;30000;km;6;
+CAM-02-TR-18-AJU-120000;CAM-02;TR-18;Ajustar;120000;km;24;
+CAM-02-TR-10-REE-180000;CAM-02;TR-10;Reemplazar;180000;km;24;Caja automatizada: según manual
+CAM-02-TR-11-REE-120000;CAM-02;TR-11;Reemplazar;120000;km;24;Diferenciales y cubos
+CAM-02-TR-09-REE-240000;CAM-02;TR-09;Reemplazar;240000;km;48;Refrigerante de larga vida
+CAM-03-TR-23-INS-D;CAM-03;TR-23;Inspeccionar;1;día;;Drenar estanques de aire y separador
+CAM-03-TR-01-REE-30000;CAM-03;TR-01;Reemplazar;30000;km;6;Uso severo/minería. Larga distancia en carretera: hasta 60.000-90.000 km con aceite y análisis aprobados
+CAM-03-TR-24-INS-30000;CAM-03;TR-24;Inspeccionar;30000;km;6;Muestra de aceite en cada cambio
+CAM-03-TR-05-INS-30000;CAM-03;TR-05;Inspeccionar;30000;km;6;
+CAM-03-TR-03-REE-30000;CAM-03;TR-03;Reemplazar;30000;km;6;Prefiltro/separador
+CAM-03-TR-03-REE-60000;CAM-03;TR-03;Reemplazar;60000;km;12;Filtro principal
+CAM-03-TR-02-INS-30000;CAM-03;TR-02;Inspeccionar;30000;km;6;Según indicador de restricción
+CAM-03-TR-02-REE-60000;CAM-03;TR-02;Reemplazar;60000;km;12;
+CAM-03-TR-04-REE-30000;CAM-03;TR-04;Reemplazar;30000;km;12;
+CAM-03-TR-12-LUB-10000;CAM-03;TR-12;Lubricar;10000;km;1;Chasis, quinta rueda, cardán
+CAM-03-TR-06-INS-30000;CAM-03;TR-06;Inspeccionar;30000;km;6;
+CAM-03-TR-08-INS-10000;CAM-03;TR-08;Inspeccionar;10000;km;1;
+CAM-03-TR-17-REE-120000;CAM-03;TR-17;Reemplazar;120000;km;12;Cartucho secador: anual
+CAM-03-TR-26-INS-30000;CAM-03;TR-26;Inspeccionar;30000;km;6;
+CAM-03-TR-13-INS-30000;CAM-03;TR-13;Inspeccionar;30000;km;6;
+CAM-03-TR-14-INS-30000;CAM-03;TR-14;Inspeccionar;30000;km;6;
+CAM-03-TR-15-INS-30000;CAM-03;TR-15;Inspeccionar;30000;km;6;
+CAM-03-TR-18-AJU-120000;CAM-03;TR-18;Ajustar;120000;km;24;
+CAM-03-TR-10-REE-180000;CAM-03;TR-10;Reemplazar;180000;km;24;Caja automatizada: según manual
+CAM-03-TR-11-REE-120000;CAM-03;TR-11;Reemplazar;120000;km;24;Diferenciales y cubos
+CAM-03-TR-09-REE-240000;CAM-03;TR-09;Reemplazar;240000;km;48;Refrigerante de larga vida
+CAM-04-TR-23-INS-D;CAM-04;TR-23;Inspeccionar;1;día;;Incluye drenaje del separador de agua
+CAM-04-TR-01-REE-10000;CAM-04;TR-01;Reemplazar;10000;km;6;
+CAM-04-TR-05-INS-10000;CAM-04;TR-05;Inspeccionar;10000;km;6;
+CAM-04-TR-03-REE-20000;CAM-04;TR-03;Reemplazar;20000;km;12;
+CAM-04-TR-02-INS-10000;CAM-04;TR-02;Inspeccionar;10000;km;6;
+CAM-04-TR-02-REE-40000;CAM-04;TR-02;Reemplazar;40000;km;24;
+CAM-04-TR-04-REE-20000;CAM-04;TR-04;Reemplazar;20000;km;12;
+CAM-04-TR-06-INS-10000;CAM-04;TR-06;Inspeccionar;10000;km;6;Ajuste de frenos de tambor
+CAM-04-TR-08-INS-10000;CAM-04;TR-08;Inspeccionar;10000;km;6;
+CAM-04-TR-12-LUB-10000;CAM-04;TR-12;Lubricar;10000;km;3;Chasis, cardán, pasadores de muelles
+CAM-04-TR-13-INS-20000;CAM-04;TR-13;Inspeccionar;20000;km;12;
+CAM-04-TR-14-INS-10000;CAM-04;TR-14;Inspeccionar;10000;km;6;
+CAM-04-TR-15-INS-20000;CAM-04;TR-15;Inspeccionar;20000;km;12;
+CAM-04-TR-18-AJU-60000;CAM-04;TR-18;Ajustar;60000;km;36;"Según motor; algunos con taqués hidráulicos no requieren"
+CAM-04-TR-10-REE-60000;CAM-04;TR-10;Reemplazar;60000;km;24;
+CAM-04-TR-11-REE-60000;CAM-04;TR-11;Reemplazar;60000;km;24;
+CAM-04-TR-07-REE-40000;CAM-04;TR-07;Reemplazar;40000;km;24;Solo con frenos hidráulicos
+CAM-04-TR-09-REE-120000;CAM-04;TR-09;Reemplazar;120000;km;48;
+CAM-05-TR-23-INS-D;CAM-05;TR-23;Inspeccionar;1;día;;Incluye drenaje del separador de agua
+CAM-05-TR-01-REE-10000;CAM-05;TR-01;Reemplazar;10000;km;6;
+CAM-05-TR-05-INS-10000;CAM-05;TR-05;Inspeccionar;10000;km;6;
+CAM-05-TR-03-REE-20000;CAM-05;TR-03;Reemplazar;20000;km;12;
+CAM-05-TR-02-INS-10000;CAM-05;TR-02;Inspeccionar;10000;km;6;
+CAM-05-TR-02-REE-40000;CAM-05;TR-02;Reemplazar;40000;km;24;
+CAM-05-TR-04-REE-20000;CAM-05;TR-04;Reemplazar;20000;km;12;
+CAM-05-TR-06-INS-10000;CAM-05;TR-06;Inspeccionar;10000;km;6;Ajuste de frenos de tambor
+CAM-05-TR-08-INS-10000;CAM-05;TR-08;Inspeccionar;10000;km;6;
+CAM-05-TR-12-LUB-10000;CAM-05;TR-12;Lubricar;10000;km;3;Chasis, cardán, pasadores de muelles
+CAM-05-TR-13-INS-20000;CAM-05;TR-13;Inspeccionar;20000;km;12;
+CAM-05-TR-14-INS-10000;CAM-05;TR-14;Inspeccionar;10000;km;6;
+CAM-05-TR-15-INS-20000;CAM-05;TR-15;Inspeccionar;20000;km;12;
+CAM-05-TR-18-AJU-60000;CAM-05;TR-18;Ajustar;60000;km;36;"Según motor; algunos con taqués hidráulicos no requieren"
+CAM-05-TR-10-REE-60000;CAM-05;TR-10;Reemplazar;60000;km;24;
+CAM-05-TR-11-REE-60000;CAM-05;TR-11;Reemplazar;60000;km;24;
+CAM-05-TR-07-REE-40000;CAM-05;TR-07;Reemplazar;40000;km;24;Solo con frenos hidráulicos
+CAM-05-TR-09-REE-120000;CAM-05;TR-09;Reemplazar;120000;km;48;
+CAM-06-TR-23-INS-D;CAM-06;TR-23;Inspeccionar;1;día;;Incluye drenaje del separador de agua
+CAM-06-TR-01-REE-10000;CAM-06;TR-01;Reemplazar;10000;km;6;
+CAM-06-TR-05-INS-10000;CAM-06;TR-05;Inspeccionar;10000;km;6;
+CAM-06-TR-03-REE-20000;CAM-06;TR-03;Reemplazar;20000;km;12;
+CAM-06-TR-02-INS-10000;CAM-06;TR-02;Inspeccionar;10000;km;6;
+CAM-06-TR-02-REE-40000;CAM-06;TR-02;Reemplazar;40000;km;24;
+CAM-06-TR-04-REE-20000;CAM-06;TR-04;Reemplazar;20000;km;12;
+CAM-06-TR-06-INS-10000;CAM-06;TR-06;Inspeccionar;10000;km;6;Ajuste de frenos de tambor
+CAM-06-TR-08-INS-10000;CAM-06;TR-08;Inspeccionar;10000;km;6;
+CAM-06-TR-12-LUB-10000;CAM-06;TR-12;Lubricar;10000;km;3;Chasis, cardán, pasadores de muelles
+CAM-06-TR-13-INS-20000;CAM-06;TR-13;Inspeccionar;20000;km;12;
+CAM-06-TR-14-INS-10000;CAM-06;TR-14;Inspeccionar;10000;km;6;
+CAM-06-TR-15-INS-20000;CAM-06;TR-15;Inspeccionar;20000;km;12;
+CAM-06-TR-18-AJU-60000;CAM-06;TR-18;Ajustar;60000;km;36;"Según motor; algunos con taqués hidráulicos no requieren"
+CAM-06-TR-10-REE-60000;CAM-06;TR-10;Reemplazar;60000;km;24;
+CAM-06-TR-11-REE-60000;CAM-06;TR-11;Reemplazar;60000;km;24;
+CAM-06-TR-07-REE-40000;CAM-06;TR-07;Reemplazar;40000;km;24;Solo con frenos hidráulicos
+CAM-06-TR-09-REE-120000;CAM-06;TR-09;Reemplazar;120000;km;48;
+CAM-07-TR-23-INS-D;CAM-07;TR-23;Inspeccionar;1;día;;Incluye drenaje del separador de agua
+CAM-07-TR-01-REE-10000;CAM-07;TR-01;Reemplazar;10000;km;6;
+CAM-07-TR-05-INS-10000;CAM-07;TR-05;Inspeccionar;10000;km;6;
+CAM-07-TR-03-REE-20000;CAM-07;TR-03;Reemplazar;20000;km;12;
+CAM-07-TR-02-INS-10000;CAM-07;TR-02;Inspeccionar;10000;km;6;
+CAM-07-TR-02-REE-40000;CAM-07;TR-02;Reemplazar;40000;km;24;
+CAM-07-TR-04-REE-20000;CAM-07;TR-04;Reemplazar;20000;km;12;
+CAM-07-TR-06-INS-10000;CAM-07;TR-06;Inspeccionar;10000;km;6;Ajuste de frenos de tambor
+CAM-07-TR-08-INS-10000;CAM-07;TR-08;Inspeccionar;10000;km;6;
+CAM-07-TR-12-LUB-10000;CAM-07;TR-12;Lubricar;10000;km;3;Chasis, cardán, pasadores de muelles
+CAM-07-TR-13-INS-20000;CAM-07;TR-13;Inspeccionar;20000;km;12;
+CAM-07-TR-14-INS-10000;CAM-07;TR-14;Inspeccionar;10000;km;6;
+CAM-07-TR-15-INS-20000;CAM-07;TR-15;Inspeccionar;20000;km;12;
+CAM-07-TR-18-AJU-60000;CAM-07;TR-18;Ajustar;60000;km;36;"Según motor; algunos con taqués hidráulicos no requieren"
+CAM-07-TR-10-REE-60000;CAM-07;TR-10;Reemplazar;60000;km;24;
+CAM-07-TR-11-REE-60000;CAM-07;TR-11;Reemplazar;60000;km;24;
+CAM-07-TR-07-REE-40000;CAM-07;TR-07;Reemplazar;40000;km;24;Solo con frenos hidráulicos
+CAM-07-TR-09-REE-120000;CAM-07;TR-09;Reemplazar;120000;km;48;
+CAM-08-TR-23-INS-D;CAM-08;TR-23;Inspeccionar;1;día;;Incluye drenaje del separador de agua
+CAM-08-TR-01-REE-10000;CAM-08;TR-01;Reemplazar;10000;km;6;
+CAM-08-TR-05-INS-10000;CAM-08;TR-05;Inspeccionar;10000;km;6;
+CAM-08-TR-03-REE-20000;CAM-08;TR-03;Reemplazar;20000;km;12;
+CAM-08-TR-02-INS-10000;CAM-08;TR-02;Inspeccionar;10000;km;6;
+CAM-08-TR-02-REE-40000;CAM-08;TR-02;Reemplazar;40000;km;24;
+CAM-08-TR-04-REE-20000;CAM-08;TR-04;Reemplazar;20000;km;12;
+CAM-08-TR-06-INS-10000;CAM-08;TR-06;Inspeccionar;10000;km;6;Ajuste de frenos de tambor
+CAM-08-TR-08-INS-10000;CAM-08;TR-08;Inspeccionar;10000;km;6;
+CAM-08-TR-12-LUB-10000;CAM-08;TR-12;Lubricar;10000;km;3;Chasis, cardán, pasadores de muelles
+CAM-08-TR-13-INS-20000;CAM-08;TR-13;Inspeccionar;20000;km;12;
+CAM-08-TR-14-INS-10000;CAM-08;TR-14;Inspeccionar;10000;km;6;
+CAM-08-TR-15-INS-20000;CAM-08;TR-15;Inspeccionar;20000;km;12;
+CAM-08-TR-18-AJU-60000;CAM-08;TR-18;Ajustar;60000;km;36;"Según motor; algunos con taqués hidráulicos no requieren"
+CAM-08-TR-10-REE-60000;CAM-08;TR-10;Reemplazar;60000;km;24;
+CAM-08-TR-11-REE-60000;CAM-08;TR-11;Reemplazar;60000;km;24;
+CAM-08-TR-07-REE-40000;CAM-08;TR-07;Reemplazar;40000;km;24;Solo con frenos hidráulicos
+CAM-08-TR-09-REE-120000;CAM-08;TR-09;Reemplazar;120000;km;48;
+CAM-09-TR-23-INS-D;CAM-09;TR-23;Inspeccionar;1;día;;Drenar estanques de aire y separador
+CAM-09-TR-01-REE-30000;CAM-09;TR-01;Reemplazar;30000;km;6;Uso severo/minería. Larga distancia en carretera: hasta 60.000-90.000 km con aceite y análisis aprobados
+CAM-09-TR-24-INS-30000;CAM-09;TR-24;Inspeccionar;30000;km;6;Muestra de aceite en cada cambio
+CAM-09-TR-05-INS-30000;CAM-09;TR-05;Inspeccionar;30000;km;6;
+CAM-09-TR-03-REE-30000;CAM-09;TR-03;Reemplazar;30000;km;6;Prefiltro/separador
+CAM-09-TR-03-REE-60000;CAM-09;TR-03;Reemplazar;60000;km;12;Filtro principal
+CAM-09-TR-02-INS-30000;CAM-09;TR-02;Inspeccionar;30000;km;6;Según indicador de restricción
+CAM-09-TR-02-REE-60000;CAM-09;TR-02;Reemplazar;60000;km;12;
+CAM-09-TR-04-REE-30000;CAM-09;TR-04;Reemplazar;30000;km;12;
+CAM-09-TR-12-LUB-10000;CAM-09;TR-12;Lubricar;10000;km;1;Chasis, quinta rueda, cardán
+CAM-09-TR-06-INS-30000;CAM-09;TR-06;Inspeccionar;30000;km;6;
+CAM-09-TR-08-INS-10000;CAM-09;TR-08;Inspeccionar;10000;km;1;
+CAM-09-TR-17-REE-120000;CAM-09;TR-17;Reemplazar;120000;km;12;Cartucho secador: anual
+CAM-09-TR-26-INS-30000;CAM-09;TR-26;Inspeccionar;30000;km;6;
+CAM-09-TR-13-INS-30000;CAM-09;TR-13;Inspeccionar;30000;km;6;
+CAM-09-TR-14-INS-30000;CAM-09;TR-14;Inspeccionar;30000;km;6;
+CAM-09-TR-15-INS-30000;CAM-09;TR-15;Inspeccionar;30000;km;6;
+CAM-09-TR-18-AJU-120000;CAM-09;TR-18;Ajustar;120000;km;24;
+CAM-09-TR-10-REE-180000;CAM-09;TR-10;Reemplazar;180000;km;24;Caja automatizada: según manual
+CAM-09-TR-11-REE-120000;CAM-09;TR-11;Reemplazar;120000;km;24;Diferenciales y cubos
+CAM-09-TR-09-REE-240000;CAM-09;TR-09;Reemplazar;240000;km;48;Refrigerante de larga vida
+CAM-10-TR-23-INS-D;CAM-10;TR-23;Inspeccionar;1;día;;Incluye drenaje del separador de agua
+CAM-10-TR-01-REE-10000;CAM-10;TR-01;Reemplazar;10000;km;6;
+CAM-10-TR-05-INS-10000;CAM-10;TR-05;Inspeccionar;10000;km;6;
+CAM-10-TR-03-REE-20000;CAM-10;TR-03;Reemplazar;20000;km;12;
+CAM-10-TR-02-INS-10000;CAM-10;TR-02;Inspeccionar;10000;km;6;
+CAM-10-TR-02-REE-40000;CAM-10;TR-02;Reemplazar;40000;km;24;
+CAM-10-TR-04-REE-20000;CAM-10;TR-04;Reemplazar;20000;km;12;
+CAM-10-TR-06-INS-10000;CAM-10;TR-06;Inspeccionar;10000;km;6;Ajuste de frenos de tambor
+CAM-10-TR-08-INS-10000;CAM-10;TR-08;Inspeccionar;10000;km;6;
+CAM-10-TR-12-LUB-10000;CAM-10;TR-12;Lubricar;10000;km;3;Chasis, cardán, pasadores de muelles
+CAM-10-TR-13-INS-20000;CAM-10;TR-13;Inspeccionar;20000;km;12;
+CAM-10-TR-14-INS-10000;CAM-10;TR-14;Inspeccionar;10000;km;6;
+CAM-10-TR-15-INS-20000;CAM-10;TR-15;Inspeccionar;20000;km;12;
+CAM-10-TR-18-AJU-60000;CAM-10;TR-18;Ajustar;60000;km;36;"Según motor; algunos con taqués hidráulicos no requieren"
+CAM-10-TR-10-REE-60000;CAM-10;TR-10;Reemplazar;60000;km;24;
+CAM-10-TR-11-REE-60000;CAM-10;TR-11;Reemplazar;60000;km;24;
+CAM-10-TR-07-REE-40000;CAM-10;TR-07;Reemplazar;40000;km;24;Solo con frenos hidráulicos
+CAM-10-TR-09-REE-120000;CAM-10;TR-09;Reemplazar;120000;km;48;
+CTA-01-TR-23-INS-D;CTA-01;TR-23;Inspeccionar;1;día;;Checklist del conductor
+CTA-01-TR-01-REE-10000;CTA-01;TR-01;Reemplazar;10000;km;6;Uso severo (faena, polvo): mitad del intervalo
+CTA-01-TR-05-INS-10000;CTA-01;TR-05;Inspeccionar;10000;km;6;
+CTA-01-TR-03-REE-20000;CTA-01;TR-03;Reemplazar;20000;km;12;Drenar agua del separador en cada servicio
+CTA-01-TR-02-INS-10000;CTA-01;TR-02;Inspeccionar;10000;km;6;Reemplazar si está sucio
+CTA-01-TR-02-REE-40000;CTA-01;TR-02;Reemplazar;40000;km;24;En faena polvorienta: cada 20.000 km
+CTA-01-TR-04-REE-20000;CTA-01;TR-04;Reemplazar;20000;km;12;
+CTA-01-TR-06-INS-10000;CTA-01;TR-06;Inspeccionar;10000;km;6;
+CTA-01-TR-08-INS-10000;CTA-01;TR-08;Inspeccionar;10000;km;6;Rotar cada 10.000 km
+CTA-01-TR-12-LUB-10000;CTA-01;TR-12;Lubricar;10000;km;6;Cardán y 4x4
+CTA-01-TR-13-INS-20000;CTA-01;TR-13;Inspeccionar;20000;km;12;
+CTA-01-TR-14-INS-10000;CTA-01;TR-14;Inspeccionar;10000;km;6;
+CTA-01-TR-15-INS-20000;CTA-01;TR-15;Inspeccionar;20000;km;12;
+CTA-01-TR-07-REE-40000;CTA-01;TR-07;Reemplazar;40000;km;24;
+CTA-01-TR-10-REE-80000;CTA-01;TR-10;Reemplazar;80000;km;48;Uso severo: 40.000 km
+CTA-01-TR-11-REE-40000;CTA-01;TR-11;Reemplazar;40000;km;24;Diferenciales y transfer
+CTA-01-TR-09-REE-100000;CTA-01;TR-09;Reemplazar;100000;km;60;Primer cambio según manual (a veces 160.000 km)
+CTA-02-TR-23-INS-D;CTA-02;TR-23;Inspeccionar;1;día;;Checklist del conductor
+CTA-02-TR-01-REE-10000;CTA-02;TR-01;Reemplazar;10000;km;6;Uso severo (faena, polvo): mitad del intervalo
+CTA-02-TR-05-INS-10000;CTA-02;TR-05;Inspeccionar;10000;km;6;
+CTA-02-TR-03-REE-20000;CTA-02;TR-03;Reemplazar;20000;km;12;Drenar agua del separador en cada servicio
+CTA-02-TR-02-INS-10000;CTA-02;TR-02;Inspeccionar;10000;km;6;Reemplazar si está sucio
+CTA-02-TR-02-REE-40000;CTA-02;TR-02;Reemplazar;40000;km;24;En faena polvorienta: cada 20.000 km
+CTA-02-TR-04-REE-20000;CTA-02;TR-04;Reemplazar;20000;km;12;
+CTA-02-TR-06-INS-10000;CTA-02;TR-06;Inspeccionar;10000;km;6;
+CTA-02-TR-08-INS-10000;CTA-02;TR-08;Inspeccionar;10000;km;6;Rotar cada 10.000 km
+CTA-02-TR-12-LUB-10000;CTA-02;TR-12;Lubricar;10000;km;6;Cardán y 4x4
+CTA-02-TR-13-INS-20000;CTA-02;TR-13;Inspeccionar;20000;km;12;
+CTA-02-TR-14-INS-10000;CTA-02;TR-14;Inspeccionar;10000;km;6;
+CTA-02-TR-15-INS-20000;CTA-02;TR-15;Inspeccionar;20000;km;12;
+CTA-02-TR-07-REE-40000;CTA-02;TR-07;Reemplazar;40000;km;24;
+CTA-02-TR-10-REE-80000;CTA-02;TR-10;Reemplazar;80000;km;48;Uso severo: 40.000 km
+CTA-02-TR-11-REE-40000;CTA-02;TR-11;Reemplazar;40000;km;24;Diferenciales y transfer
+CTA-02-TR-09-REE-100000;CTA-02;TR-09;Reemplazar;100000;km;60;Primer cambio según manual (a veces 160.000 km)
+CTA-03-TR-23-INS-D;CTA-03;TR-23;Inspeccionar;1;día;;Checklist del conductor
+CTA-03-TR-01-REE-10000;CTA-03;TR-01;Reemplazar;10000;km;6;Uso severo (faena, polvo): mitad del intervalo
+CTA-03-TR-05-INS-10000;CTA-03;TR-05;Inspeccionar;10000;km;6;
+CTA-03-TR-03-REE-20000;CTA-03;TR-03;Reemplazar;20000;km;12;Drenar agua del separador en cada servicio
+CTA-03-TR-02-INS-10000;CTA-03;TR-02;Inspeccionar;10000;km;6;Reemplazar si está sucio
+CTA-03-TR-02-REE-40000;CTA-03;TR-02;Reemplazar;40000;km;24;En faena polvorienta: cada 20.000 km
+CTA-03-TR-04-REE-20000;CTA-03;TR-04;Reemplazar;20000;km;12;
+CTA-03-TR-06-INS-10000;CTA-03;TR-06;Inspeccionar;10000;km;6;
+CTA-03-TR-08-INS-10000;CTA-03;TR-08;Inspeccionar;10000;km;6;Rotar cada 10.000 km
+CTA-03-TR-12-LUB-10000;CTA-03;TR-12;Lubricar;10000;km;6;Cardán y 4x4
+CTA-03-TR-13-INS-20000;CTA-03;TR-13;Inspeccionar;20000;km;12;
+CTA-03-TR-14-INS-10000;CTA-03;TR-14;Inspeccionar;10000;km;6;
+CTA-03-TR-15-INS-20000;CTA-03;TR-15;Inspeccionar;20000;km;12;
+CTA-03-TR-07-REE-40000;CTA-03;TR-07;Reemplazar;40000;km;24;
+CTA-03-TR-10-REE-80000;CTA-03;TR-10;Reemplazar;80000;km;48;Uso severo: 40.000 km
+CTA-03-TR-11-REE-40000;CTA-03;TR-11;Reemplazar;40000;km;24;Diferenciales y transfer
+CTA-03-TR-09-REE-100000;CTA-03;TR-09;Reemplazar;100000;km;60;Primer cambio según manual (a veces 160.000 km)
+CTA-04-TR-23-INS-D;CTA-04;TR-23;Inspeccionar;1;día;;Checklist del conductor
+CTA-04-TR-01-REE-10000;CTA-04;TR-01;Reemplazar;10000;km;6;Uso severo (faena, polvo): mitad del intervalo
+CTA-04-TR-05-INS-10000;CTA-04;TR-05;Inspeccionar;10000;km;6;
+CTA-04-TR-03-REE-20000;CTA-04;TR-03;Reemplazar;20000;km;12;Drenar agua del separador en cada servicio
+CTA-04-TR-02-INS-10000;CTA-04;TR-02;Inspeccionar;10000;km;6;Reemplazar si está sucio
+CTA-04-TR-02-REE-40000;CTA-04;TR-02;Reemplazar;40000;km;24;En faena polvorienta: cada 20.000 km
+CTA-04-TR-04-REE-20000;CTA-04;TR-04;Reemplazar;20000;km;12;
+CTA-04-TR-06-INS-10000;CTA-04;TR-06;Inspeccionar;10000;km;6;
+CTA-04-TR-08-INS-10000;CTA-04;TR-08;Inspeccionar;10000;km;6;Rotar cada 10.000 km
+CTA-04-TR-12-LUB-10000;CTA-04;TR-12;Lubricar;10000;km;6;Cardán y 4x4
+CTA-04-TR-13-INS-20000;CTA-04;TR-13;Inspeccionar;20000;km;12;
+CTA-04-TR-14-INS-10000;CTA-04;TR-14;Inspeccionar;10000;km;6;
+CTA-04-TR-15-INS-20000;CTA-04;TR-15;Inspeccionar;20000;km;12;
+CTA-04-TR-07-REE-40000;CTA-04;TR-07;Reemplazar;40000;km;24;
+CTA-04-TR-10-REE-80000;CTA-04;TR-10;Reemplazar;80000;km;48;Uso severo: 40.000 km
+CTA-04-TR-11-REE-40000;CTA-04;TR-11;Reemplazar;40000;km;24;Diferenciales y transfer
+CTA-04-TR-09-REE-100000;CTA-04;TR-09;Reemplazar;100000;km;60;Primer cambio según manual (a veces 160.000 km)
+CTA-05-TR-23-INS-D;CTA-05;TR-23;Inspeccionar;1;día;;Checklist del conductor
+CTA-05-TR-01-REE-10000;CTA-05;TR-01;Reemplazar;10000;km;6;Uso severo (faena, polvo): mitad del intervalo
+CTA-05-TR-05-INS-10000;CTA-05;TR-05;Inspeccionar;10000;km;6;
+CTA-05-TR-03-REE-20000;CTA-05;TR-03;Reemplazar;20000;km;12;Drenar agua del separador en cada servicio
+CTA-05-TR-02-INS-10000;CTA-05;TR-02;Inspeccionar;10000;km;6;Reemplazar si está sucio
+CTA-05-TR-02-REE-40000;CTA-05;TR-02;Reemplazar;40000;km;24;En faena polvorienta: cada 20.000 km
+CTA-05-TR-04-REE-20000;CTA-05;TR-04;Reemplazar;20000;km;12;
+CTA-05-TR-06-INS-10000;CTA-05;TR-06;Inspeccionar;10000;km;6;
+CTA-05-TR-08-INS-10000;CTA-05;TR-08;Inspeccionar;10000;km;6;Rotar cada 10.000 km
+CTA-05-TR-12-LUB-10000;CTA-05;TR-12;Lubricar;10000;km;6;Cardán y 4x4
+CTA-05-TR-13-INS-20000;CTA-05;TR-13;Inspeccionar;20000;km;12;
+CTA-05-TR-14-INS-10000;CTA-05;TR-14;Inspeccionar;10000;km;6;
+CTA-05-TR-15-INS-20000;CTA-05;TR-15;Inspeccionar;20000;km;12;
+CTA-05-TR-07-REE-40000;CTA-05;TR-07;Reemplazar;40000;km;24;
+CTA-05-TR-10-REE-80000;CTA-05;TR-10;Reemplazar;80000;km;48;Uso severo: 40.000 km
+CTA-05-TR-11-REE-40000;CTA-05;TR-11;Reemplazar;40000;km;24;Diferenciales y transfer
+CTA-05-TR-09-REE-100000;CTA-05;TR-09;Reemplazar;100000;km;60;Primer cambio según manual (a veces 160.000 km)
+CTA-06-TR-23-INS-D;CTA-06;TR-23;Inspeccionar;1;día;;Checklist del conductor
+CTA-06-TR-01-REE-10000;CTA-06;TR-01;Reemplazar;10000;km;12;Uso severo (faena, polvo): mitad del intervalo
+CTA-06-TR-05-INS-10000;CTA-06;TR-05;Inspeccionar;10000;km;6;
+CTA-06-TR-02-INS-10000;CTA-06;TR-02;Inspeccionar;10000;km;6;Reemplazar si está sucio
+CTA-06-TR-02-REE-40000;CTA-06;TR-02;Reemplazar;40000;km;24;En faena polvorienta: cada 20.000 km
+CTA-06-TR-04-REE-20000;CTA-06;TR-04;Reemplazar;20000;km;12;
+CTA-06-TR-06-INS-10000;CTA-06;TR-06;Inspeccionar;10000;km;6;
+CTA-06-TR-08-INS-10000;CTA-06;TR-08;Inspeccionar;10000;km;6;Rotar cada 10.000 km
+CTA-06-TR-12-LUB-10000;CTA-06;TR-12;Lubricar;10000;km;6;Cardán y 4x4
+CTA-06-TR-13-INS-20000;CTA-06;TR-13;Inspeccionar;20000;km;12;
+CTA-06-TR-14-INS-10000;CTA-06;TR-14;Inspeccionar;10000;km;6;
+CTA-06-TR-15-INS-20000;CTA-06;TR-15;Inspeccionar;20000;km;12;
+CTA-06-TR-07-REE-40000;CTA-06;TR-07;Reemplazar;40000;km;24;
+CTA-06-TR-10-REE-80000;CTA-06;TR-10;Reemplazar;80000;km;48;Uso severo: 40.000 km
+CTA-06-TR-11-REE-40000;CTA-06;TR-11;Reemplazar;40000;km;24;Diferenciales y transfer
+CTA-06-TR-09-REE-100000;CTA-06;TR-09;Reemplazar;100000;km;60;Primer cambio según manual (a veces 160.000 km)
+CTA-06-TR-16-REE-100000;CTA-06;TR-16;Reemplazar;100000;km;60;"Bujías de iridio; cobre cada 30.000 km"
+CTA-07-TR-23-INS-D;CTA-07;TR-23;Inspeccionar;1;día;;Checklist del conductor
+CTA-07-TR-01-REE-10000;CTA-07;TR-01;Reemplazar;10000;km;12;Uso severo (faena, polvo): mitad del intervalo
+CTA-07-TR-05-INS-10000;CTA-07;TR-05;Inspeccionar;10000;km;6;
+CTA-07-TR-02-INS-10000;CTA-07;TR-02;Inspeccionar;10000;km;6;Reemplazar si está sucio
+CTA-07-TR-02-REE-40000;CTA-07;TR-02;Reemplazar;40000;km;24;En faena polvorienta: cada 20.000 km
+CTA-07-TR-04-REE-20000;CTA-07;TR-04;Reemplazar;20000;km;12;
+CTA-07-TR-06-INS-10000;CTA-07;TR-06;Inspeccionar;10000;km;6;
+CTA-07-TR-08-INS-10000;CTA-07;TR-08;Inspeccionar;10000;km;6;Rotar cada 10.000 km
+CTA-07-TR-12-LUB-10000;CTA-07;TR-12;Lubricar;10000;km;6;Cardán y 4x4
+CTA-07-TR-13-INS-20000;CTA-07;TR-13;Inspeccionar;20000;km;12;
+CTA-07-TR-14-INS-10000;CTA-07;TR-14;Inspeccionar;10000;km;6;
+CTA-07-TR-15-INS-20000;CTA-07;TR-15;Inspeccionar;20000;km;12;
+CTA-07-TR-07-REE-40000;CTA-07;TR-07;Reemplazar;40000;km;24;
+CTA-07-TR-10-REE-80000;CTA-07;TR-10;Reemplazar;80000;km;48;Uso severo: 40.000 km
+CTA-07-TR-11-REE-40000;CTA-07;TR-11;Reemplazar;40000;km;24;Diferenciales y transfer
+CTA-07-TR-09-REE-100000;CTA-07;TR-09;Reemplazar;100000;km;60;Primer cambio según manual (a veces 160.000 km)
+CTA-07-TR-16-REE-100000;CTA-07;TR-16;Reemplazar;100000;km;60;"Bujías de iridio; cobre cada 30.000 km"
+CTA-08-TR-23-INS-D;CTA-08;TR-23;Inspeccionar;1;día;;Checklist del conductor
+CTA-08-TR-01-REE-10000;CTA-08;TR-01;Reemplazar;10000;km;12;Uso severo (faena, polvo): mitad del intervalo
+CTA-08-TR-05-INS-10000;CTA-08;TR-05;Inspeccionar;10000;km;6;
+CTA-08-TR-02-INS-10000;CTA-08;TR-02;Inspeccionar;10000;km;6;Reemplazar si está sucio
+CTA-08-TR-02-REE-40000;CTA-08;TR-02;Reemplazar;40000;km;24;En faena polvorienta: cada 20.000 km
+CTA-08-TR-04-REE-20000;CTA-08;TR-04;Reemplazar;20000;km;12;
+CTA-08-TR-06-INS-10000;CTA-08;TR-06;Inspeccionar;10000;km;6;
+CTA-08-TR-08-INS-10000;CTA-08;TR-08;Inspeccionar;10000;km;6;Rotar cada 10.000 km
+CTA-08-TR-12-LUB-10000;CTA-08;TR-12;Lubricar;10000;km;6;Cardán y 4x4
+CTA-08-TR-13-INS-20000;CTA-08;TR-13;Inspeccionar;20000;km;12;
+CTA-08-TR-14-INS-10000;CTA-08;TR-14;Inspeccionar;10000;km;6;
+CTA-08-TR-15-INS-20000;CTA-08;TR-15;Inspeccionar;20000;km;12;
+CTA-08-TR-07-REE-40000;CTA-08;TR-07;Reemplazar;40000;km;24;
+CTA-08-TR-10-REE-80000;CTA-08;TR-10;Reemplazar;80000;km;48;Uso severo: 40.000 km
+CTA-08-TR-11-REE-40000;CTA-08;TR-11;Reemplazar;40000;km;24;Diferenciales y transfer
+CTA-08-TR-09-REE-100000;CTA-08;TR-09;Reemplazar;100000;km;60;Primer cambio según manual (a veces 160.000 km)
+CTA-08-TR-16-REE-100000;CTA-08;TR-16;Reemplazar;100000;km;60;"Bujías de iridio; cobre cada 30.000 km"
+CTA-09-TR-23-INS-D;CTA-09;TR-23;Inspeccionar;1;día;;Checklist del conductor
+CTA-09-TR-01-REE-10000;CTA-09;TR-01;Reemplazar;10000;km;6;Uso severo (faena, polvo): mitad del intervalo
+CTA-09-TR-05-INS-10000;CTA-09;TR-05;Inspeccionar;10000;km;6;
+CTA-09-TR-03-REE-20000;CTA-09;TR-03;Reemplazar;20000;km;12;Drenar agua del separador en cada servicio
+CTA-09-TR-02-INS-10000;CTA-09;TR-02;Inspeccionar;10000;km;6;Reemplazar si está sucio
+CTA-09-TR-02-REE-40000;CTA-09;TR-02;Reemplazar;40000;km;24;En faena polvorienta: cada 20.000 km
+CTA-09-TR-04-REE-20000;CTA-09;TR-04;Reemplazar;20000;km;12;
+CTA-09-TR-06-INS-10000;CTA-09;TR-06;Inspeccionar;10000;km;6;
+CTA-09-TR-08-INS-10000;CTA-09;TR-08;Inspeccionar;10000;km;6;Rotar cada 10.000 km
+CTA-09-TR-12-LUB-10000;CTA-09;TR-12;Lubricar;10000;km;6;Cardán y 4x4
+CTA-09-TR-13-INS-20000;CTA-09;TR-13;Inspeccionar;20000;km;12;
+CTA-09-TR-14-INS-10000;CTA-09;TR-14;Inspeccionar;10000;km;6;
+CTA-09-TR-15-INS-20000;CTA-09;TR-15;Inspeccionar;20000;km;12;
+CTA-09-TR-07-REE-40000;CTA-09;TR-07;Reemplazar;40000;km;24;
+CTA-09-TR-10-REE-80000;CTA-09;TR-10;Reemplazar;80000;km;48;Uso severo: 40.000 km
+CTA-09-TR-11-REE-40000;CTA-09;TR-11;Reemplazar;40000;km;24;Diferenciales y transfer
+CTA-09-TR-09-REE-100000;CTA-09;TR-09;Reemplazar;100000;km;60;Primer cambio según manual (a veces 160.000 km)
+CTA-10-TR-23-INS-D;CTA-10;TR-23;Inspeccionar;1;día;;Checklist del conductor
+CTA-10-TR-01-REE-10000;CTA-10;TR-01;Reemplazar;10000;km;6;Uso severo (faena, polvo): mitad del intervalo
+CTA-10-TR-05-INS-10000;CTA-10;TR-05;Inspeccionar;10000;km;6;
+CTA-10-TR-03-REE-20000;CTA-10;TR-03;Reemplazar;20000;km;12;Drenar agua del separador en cada servicio
+CTA-10-TR-02-INS-10000;CTA-10;TR-02;Inspeccionar;10000;km;6;Reemplazar si está sucio
+CTA-10-TR-02-REE-40000;CTA-10;TR-02;Reemplazar;40000;km;24;En faena polvorienta: cada 20.000 km
+CTA-10-TR-04-REE-20000;CTA-10;TR-04;Reemplazar;20000;km;12;
+CTA-10-TR-06-INS-10000;CTA-10;TR-06;Inspeccionar;10000;km;6;
+CTA-10-TR-08-INS-10000;CTA-10;TR-08;Inspeccionar;10000;km;6;Rotar cada 10.000 km
+CTA-10-TR-12-LUB-10000;CTA-10;TR-12;Lubricar;10000;km;6;Cardán y 4x4
+CTA-10-TR-13-INS-20000;CTA-10;TR-13;Inspeccionar;20000;km;12;
+CTA-10-TR-14-INS-10000;CTA-10;TR-14;Inspeccionar;10000;km;6;
+CTA-10-TR-15-INS-20000;CTA-10;TR-15;Inspeccionar;20000;km;12;
+CTA-10-TR-07-REE-40000;CTA-10;TR-07;Reemplazar;40000;km;24;
+CTA-10-TR-10-REE-80000;CTA-10;TR-10;Reemplazar;80000;km;48;Uso severo: 40.000 km
+CTA-10-TR-11-REE-40000;CTA-10;TR-11;Reemplazar;40000;km;24;Diferenciales y transfer
+CTA-10-TR-09-REE-100000;CTA-10;TR-09;Reemplazar;100000;km;60;Primer cambio según manual (a veces 160.000 km)
+MAQ-01-TR-23-INS-D;MAQ-01;TR-23;Inspeccionar;1;día;;Cada 10 h o turno
+MAQ-01-TR-12-LUB-50;MAQ-01;TR-12;Lubricar;50;horas;;Pasadores de implementos (excavadora/retro: cada 10 h en trabajo con agua o barro)
+MAQ-01-TR-05-INS-50;MAQ-01;TR-05;Inspeccionar;50;horas;;
+MAQ-01-TR-26-INS-250;MAQ-01;TR-26;Inspeccionar;250;horas;;Más seguido en ambiente con polvo
+MAQ-01-TR-14-INS-250;MAQ-01;TR-14;Inspeccionar;250;horas;;
+MAQ-01-TR-24-INS-250;MAQ-01;TR-24;Inspeccionar;250;horas;;Motor, hidráulico, transmisión
+MAQ-01-TR-01-REE-500;MAQ-01;TR-01;Reemplazar;500;horas;;Uso severo o aceite fuera de especificación: 250 h
+MAQ-01-TR-03-REE-500;MAQ-01;TR-03;Reemplazar;500;horas;;
+MAQ-01-TR-02-INS-250;MAQ-01;TR-02;Inspeccionar;250;horas;;Según indicador
+MAQ-01-TR-02-REE-1000;MAQ-01;TR-02;Reemplazar;1000;horas;;O según indicador de restricción
+MAQ-01-TR-13-INS-500;MAQ-01;TR-13;Inspeccionar;500;horas;;
+MAQ-01-TR-20-REE-1000;MAQ-01;TR-20;Reemplazar;1000;horas;;
+MAQ-01-TR-18-AJU-3000;MAQ-01;TR-18;Ajustar;3000;horas;;
+MAQ-01-TR-09-REE-6000;MAQ-01;TR-09;Reemplazar;6000;horas;;Refrigerante de larga vida (ELC: 12.000 h)
+MAQ-01-TR-25-REE-1000;MAQ-01;TR-25;Reemplazar;1000;horas;;Transmisión
+MAQ-01-TR-11-REE-1000;MAQ-01;TR-11;Reemplazar;1000;horas;;Ejes y reducciones planetarias
+MAQ-01-TR-19-REE-3000;MAQ-01;TR-19;Reemplazar;3000;horas;;O según análisis de aceite
+MAQ-02-TR-23-INS-D;MAQ-02;TR-23;Inspeccionar;1;día;;Cada 10 h o turno
+MAQ-02-TR-12-LUB-50;MAQ-02;TR-12;Lubricar;50;horas;;Pasadores de implementos (excavadora/retro: cada 10 h en trabajo con agua o barro)
+MAQ-02-TR-05-INS-50;MAQ-02;TR-05;Inspeccionar;50;horas;;
+MAQ-02-TR-26-INS-250;MAQ-02;TR-26;Inspeccionar;250;horas;;Más seguido en ambiente con polvo
+MAQ-02-TR-14-INS-250;MAQ-02;TR-14;Inspeccionar;250;horas;;
+MAQ-02-TR-24-INS-250;MAQ-02;TR-24;Inspeccionar;250;horas;;Motor, hidráulico, transmisión
+MAQ-02-TR-01-REE-500;MAQ-02;TR-01;Reemplazar;500;horas;;Uso severo o aceite fuera de especificación: 250 h
+MAQ-02-TR-03-REE-500;MAQ-02;TR-03;Reemplazar;500;horas;;
+MAQ-02-TR-02-INS-250;MAQ-02;TR-02;Inspeccionar;250;horas;;Según indicador
+MAQ-02-TR-02-REE-1000;MAQ-02;TR-02;Reemplazar;1000;horas;;O según indicador de restricción
+MAQ-02-TR-13-INS-500;MAQ-02;TR-13;Inspeccionar;500;horas;;
+MAQ-02-TR-20-REE-1000;MAQ-02;TR-20;Reemplazar;1000;horas;;
+MAQ-02-TR-18-AJU-3000;MAQ-02;TR-18;Ajustar;3000;horas;;
+MAQ-02-TR-09-REE-6000;MAQ-02;TR-09;Reemplazar;6000;horas;;Refrigerante de larga vida (ELC: 12.000 h)
+MAQ-02-TR-25-REE-1000;MAQ-02;TR-25;Reemplazar;1000;horas;;Transmisión
+MAQ-02-TR-11-REE-1000;MAQ-02;TR-11;Reemplazar;1000;horas;;Ejes y reducciones planetarias
+MAQ-02-TR-19-REE-3000;MAQ-02;TR-19;Reemplazar;3000;horas;;O según análisis de aceite
+MAQ-03-TR-23-INS-D;MAQ-03;TR-23;Inspeccionar;1;día;;Cada 10 h o turno
+MAQ-03-TR-12-LUB-50;MAQ-03;TR-12;Lubricar;50;horas;;Pasadores de implementos (excavadora/retro: cada 10 h en trabajo con agua o barro)
+MAQ-03-TR-05-INS-50;MAQ-03;TR-05;Inspeccionar;50;horas;;
+MAQ-03-TR-26-INS-250;MAQ-03;TR-26;Inspeccionar;250;horas;;Más seguido en ambiente con polvo
+MAQ-03-TR-14-INS-250;MAQ-03;TR-14;Inspeccionar;250;horas;;
+MAQ-03-TR-24-INS-250;MAQ-03;TR-24;Inspeccionar;250;horas;;Motor, hidráulico, transmisión
+MAQ-03-TR-01-REE-500;MAQ-03;TR-01;Reemplazar;500;horas;;Uso severo o aceite fuera de especificación: 250 h
+MAQ-03-TR-03-REE-500;MAQ-03;TR-03;Reemplazar;500;horas;;
+MAQ-03-TR-02-INS-250;MAQ-03;TR-02;Inspeccionar;250;horas;;Según indicador
+MAQ-03-TR-02-REE-1000;MAQ-03;TR-02;Reemplazar;1000;horas;;O según indicador de restricción
+MAQ-03-TR-13-INS-500;MAQ-03;TR-13;Inspeccionar;500;horas;;
+MAQ-03-TR-20-REE-1000;MAQ-03;TR-20;Reemplazar;1000;horas;;
+MAQ-03-TR-18-AJU-3000;MAQ-03;TR-18;Ajustar;3000;horas;;
+MAQ-03-TR-09-REE-6000;MAQ-03;TR-09;Reemplazar;6000;horas;;Refrigerante de larga vida (ELC: 12.000 h)
+MAQ-03-TR-21-REE-1000;MAQ-03;TR-21;Reemplazar;1000;horas;;Mando de giro
+MAQ-03-TR-21-REE-2000;MAQ-03;TR-21;Reemplazar;2000;horas;;Mandos finales
+MAQ-03-TR-22-INS-50;MAQ-03;TR-22;Inspeccionar;50;horas;;Tensión y desgaste
+MAQ-03-TR-19-REE-5000;MAQ-03;TR-19;Reemplazar;5000;horas;;O según análisis de aceite
+MAQ-04-TR-23-INS-D;MAQ-04;TR-23;Inspeccionar;1;día;;Cada 10 h o turno
+MAQ-04-TR-12-LUB-50;MAQ-04;TR-12;Lubricar;50;horas;;Pasadores de implementos (excavadora/retro: cada 10 h en trabajo con agua o barro)
+MAQ-04-TR-05-INS-50;MAQ-04;TR-05;Inspeccionar;50;horas;;
+MAQ-04-TR-26-INS-250;MAQ-04;TR-26;Inspeccionar;250;horas;;Más seguido en ambiente con polvo
+MAQ-04-TR-14-INS-250;MAQ-04;TR-14;Inspeccionar;250;horas;;
+MAQ-04-TR-24-INS-250;MAQ-04;TR-24;Inspeccionar;250;horas;;Motor, hidráulico, transmisión
+MAQ-04-TR-01-REE-500;MAQ-04;TR-01;Reemplazar;500;horas;;Uso severo o aceite fuera de especificación: 250 h
+MAQ-04-TR-03-REE-500;MAQ-04;TR-03;Reemplazar;500;horas;;
+MAQ-04-TR-02-INS-250;MAQ-04;TR-02;Inspeccionar;250;horas;;Según indicador
+MAQ-04-TR-02-REE-1000;MAQ-04;TR-02;Reemplazar;1000;horas;;O según indicador de restricción
+MAQ-04-TR-13-INS-500;MAQ-04;TR-13;Inspeccionar;500;horas;;
+MAQ-04-TR-20-REE-1000;MAQ-04;TR-20;Reemplazar;1000;horas;;
+MAQ-04-TR-18-AJU-3000;MAQ-04;TR-18;Ajustar;3000;horas;;
+MAQ-04-TR-09-REE-6000;MAQ-04;TR-09;Reemplazar;6000;horas;;Refrigerante de larga vida (ELC: 12.000 h)
+MAQ-04-TR-21-REE-1000;MAQ-04;TR-21;Reemplazar;1000;horas;;Mando de giro
+MAQ-04-TR-21-REE-2000;MAQ-04;TR-21;Reemplazar;2000;horas;;Mandos finales
+MAQ-04-TR-22-INS-50;MAQ-04;TR-22;Inspeccionar;50;horas;;Tensión y desgaste
+MAQ-04-TR-19-REE-5000;MAQ-04;TR-19;Reemplazar;5000;horas;;O según análisis de aceite
+MAQ-05-TR-23-INS-D;MAQ-05;TR-23;Inspeccionar;1;día;;Cada 10 h o turno
+MAQ-05-TR-12-LUB-50;MAQ-05;TR-12;Lubricar;50;horas;;Pasadores de implementos (excavadora/retro: cada 10 h en trabajo con agua o barro)
+MAQ-05-TR-05-INS-50;MAQ-05;TR-05;Inspeccionar;50;horas;;
+MAQ-05-TR-26-INS-250;MAQ-05;TR-26;Inspeccionar;250;horas;;Más seguido en ambiente con polvo
+MAQ-05-TR-14-INS-250;MAQ-05;TR-14;Inspeccionar;250;horas;;
+MAQ-05-TR-24-INS-250;MAQ-05;TR-24;Inspeccionar;250;horas;;Motor, hidráulico, transmisión
+MAQ-05-TR-01-REE-500;MAQ-05;TR-01;Reemplazar;500;horas;;Uso severo o aceite fuera de especificación: 250 h
+MAQ-05-TR-03-REE-500;MAQ-05;TR-03;Reemplazar;500;horas;;
+MAQ-05-TR-02-INS-250;MAQ-05;TR-02;Inspeccionar;250;horas;;Según indicador
+MAQ-05-TR-02-REE-1000;MAQ-05;TR-02;Reemplazar;1000;horas;;O según indicador de restricción
+MAQ-05-TR-13-INS-500;MAQ-05;TR-13;Inspeccionar;500;horas;;
+MAQ-05-TR-20-REE-1000;MAQ-05;TR-20;Reemplazar;1000;horas;;
+MAQ-05-TR-18-AJU-3000;MAQ-05;TR-18;Ajustar;3000;horas;;
+MAQ-05-TR-09-REE-6000;MAQ-05;TR-09;Reemplazar;6000;horas;;Refrigerante de larga vida (ELC: 12.000 h)
+MAQ-05-TR-27-REE-1000;MAQ-05;TR-27;Reemplazar;1000;horas;;
+MAQ-05-TR-19-REE-1000;MAQ-05;TR-19;Reemplazar;1000;horas;;O según análisis de aceite
+MAQ-06-TR-23-INS-D;MAQ-06;TR-23;Inspeccionar;1;día;;Cada 10 h o turno
+MAQ-06-TR-12-LUB-50;MAQ-06;TR-12;Lubricar;50;horas;;Pasadores de implementos (excavadora/retro: cada 10 h en trabajo con agua o barro)
+MAQ-06-TR-05-INS-50;MAQ-06;TR-05;Inspeccionar;50;horas;;
+MAQ-06-TR-26-INS-250;MAQ-06;TR-26;Inspeccionar;250;horas;;Más seguido en ambiente con polvo
+MAQ-06-TR-14-INS-250;MAQ-06;TR-14;Inspeccionar;250;horas;;
+MAQ-06-TR-24-INS-250;MAQ-06;TR-24;Inspeccionar;250;horas;;Motor, hidráulico, transmisión
+MAQ-06-TR-01-REE-500;MAQ-06;TR-01;Reemplazar;500;horas;;Uso severo o aceite fuera de especificación: 250 h
+MAQ-06-TR-03-REE-500;MAQ-06;TR-03;Reemplazar;500;horas;;
+MAQ-06-TR-02-INS-250;MAQ-06;TR-02;Inspeccionar;250;horas;;Según indicador
+MAQ-06-TR-02-REE-1000;MAQ-06;TR-02;Reemplazar;1000;horas;;O según indicador de restricción
+MAQ-06-TR-13-INS-500;MAQ-06;TR-13;Inspeccionar;500;horas;;
+MAQ-06-TR-20-REE-1000;MAQ-06;TR-20;Reemplazar;1000;horas;;
+MAQ-06-TR-18-AJU-3000;MAQ-06;TR-18;Ajustar;3000;horas;;
+MAQ-06-TR-09-REE-6000;MAQ-06;TR-09;Reemplazar;6000;horas;;Refrigerante de larga vida (ELC: 12.000 h)
+MAQ-06-TR-25-REE-1000;MAQ-06;TR-25;Reemplazar;1000;horas;;
+MAQ-06-TR-11-REE-2000;MAQ-06;TR-11;Reemplazar;2000;horas;;Ejes
+MAQ-06-TR-19-REE-3000;MAQ-06;TR-19;Reemplazar;3000;horas;;O según análisis de aceite
+MAQ-07-TR-23-INS-D;MAQ-07;TR-23;Inspeccionar;1;día;;Cada 10 h o turno
+MAQ-07-TR-12-LUB-50;MAQ-07;TR-12;Lubricar;50;horas;;Pasadores de implementos (excavadora/retro: cada 10 h en trabajo con agua o barro)
+MAQ-07-TR-05-INS-50;MAQ-07;TR-05;Inspeccionar;50;horas;;
+MAQ-07-TR-26-INS-250;MAQ-07;TR-26;Inspeccionar;250;horas;;Más seguido en ambiente con polvo
+MAQ-07-TR-14-INS-250;MAQ-07;TR-14;Inspeccionar;250;horas;;
+MAQ-07-TR-24-INS-250;MAQ-07;TR-24;Inspeccionar;250;horas;;Motor, hidráulico, transmisión
+MAQ-07-TR-01-REE-500;MAQ-07;TR-01;Reemplazar;500;horas;;Uso severo o aceite fuera de especificación: 250 h
+MAQ-07-TR-03-REE-500;MAQ-07;TR-03;Reemplazar;500;horas;;
+MAQ-07-TR-02-INS-250;MAQ-07;TR-02;Inspeccionar;250;horas;;Según indicador
+MAQ-07-TR-02-REE-1000;MAQ-07;TR-02;Reemplazar;1000;horas;;O según indicador de restricción
+MAQ-07-TR-13-INS-500;MAQ-07;TR-13;Inspeccionar;500;horas;;
+MAQ-07-TR-20-REE-1000;MAQ-07;TR-20;Reemplazar;1000;horas;;
+MAQ-07-TR-18-AJU-3000;MAQ-07;TR-18;Ajustar;3000;horas;;
+MAQ-07-TR-09-REE-6000;MAQ-07;TR-09;Reemplazar;6000;horas;;Refrigerante de larga vida (ELC: 12.000 h)
+MAQ-07-TR-25-REE-1000;MAQ-07;TR-25;Reemplazar;1000;horas;;
+MAQ-07-TR-11-REE-2000;MAQ-07;TR-11;Reemplazar;2000;horas;;Tándem y eje trasero
+MAQ-07-TR-08-INS-250;MAQ-07;TR-08;Inspeccionar;250;horas;;Neumáticos
+MAQ-07-TR-19-REE-3000;MAQ-07;TR-19;Reemplazar;3000;horas;;O según análisis de aceite
+MAQ-08-TR-23-INS-D;MAQ-08;TR-23;Inspeccionar;1;día;;Cada 10 h o turno
+MAQ-08-TR-12-LUB-50;MAQ-08;TR-12;Lubricar;50;horas;;Pasadores de implementos (excavadora/retro: cada 10 h en trabajo con agua o barro)
+MAQ-08-TR-05-INS-50;MAQ-08;TR-05;Inspeccionar;50;horas;;
+MAQ-08-TR-26-INS-250;MAQ-08;TR-26;Inspeccionar;250;horas;;Más seguido en ambiente con polvo
+MAQ-08-TR-14-INS-250;MAQ-08;TR-14;Inspeccionar;250;horas;;
+MAQ-08-TR-24-INS-250;MAQ-08;TR-24;Inspeccionar;250;horas;;Motor, hidráulico, transmisión
+MAQ-08-TR-01-REE-500;MAQ-08;TR-01;Reemplazar;500;horas;;Uso severo o aceite fuera de especificación: 250 h
+MAQ-08-TR-03-REE-500;MAQ-08;TR-03;Reemplazar;500;horas;;
+MAQ-08-TR-02-INS-250;MAQ-08;TR-02;Inspeccionar;250;horas;;Según indicador
+MAQ-08-TR-02-REE-1000;MAQ-08;TR-02;Reemplazar;1000;horas;;O según indicador de restricción
+MAQ-08-TR-13-INS-500;MAQ-08;TR-13;Inspeccionar;500;horas;;
+MAQ-08-TR-20-REE-1000;MAQ-08;TR-20;Reemplazar;1000;horas;;
+MAQ-08-TR-18-AJU-3000;MAQ-08;TR-18;Ajustar;3000;horas;;
+MAQ-08-TR-09-REE-6000;MAQ-08;TR-09;Reemplazar;6000;horas;;Refrigerante de larga vida (ELC: 12.000 h)
+MAQ-08-TR-21-REE-2000;MAQ-08;TR-21;Reemplazar;2000;horas;;Mandos finales
+MAQ-08-TR-25-REE-1000;MAQ-08;TR-25;Reemplazar;1000;horas;;Tren de potencia
+MAQ-08-TR-22-INS-50;MAQ-08;TR-22;Inspeccionar;50;horas;;
+MAQ-08-TR-19-REE-3000;MAQ-08;TR-19;Reemplazar;3000;horas;;O según análisis de aceite
+MAQ-09-TR-23-INS-D;MAQ-09;TR-23;Inspeccionar;1;día;;Cada 10 h o turno
+MAQ-09-TR-12-LUB-50;MAQ-09;TR-12;Lubricar;50;horas;;Pasadores de implementos (excavadora/retro: cada 10 h en trabajo con agua o barro)
+MAQ-09-TR-05-INS-50;MAQ-09;TR-05;Inspeccionar;50;horas;;
+MAQ-09-TR-26-INS-250;MAQ-09;TR-26;Inspeccionar;250;horas;;Más seguido en ambiente con polvo
+MAQ-09-TR-14-INS-250;MAQ-09;TR-14;Inspeccionar;250;horas;;
+MAQ-09-TR-24-INS-250;MAQ-09;TR-24;Inspeccionar;250;horas;;Motor, hidráulico, transmisión
+MAQ-09-TR-01-REE-500;MAQ-09;TR-01;Reemplazar;500;horas;;Uso severo o aceite fuera de especificación: 250 h
+MAQ-09-TR-03-REE-500;MAQ-09;TR-03;Reemplazar;500;horas;;
+MAQ-09-TR-02-INS-250;MAQ-09;TR-02;Inspeccionar;250;horas;;Según indicador
+MAQ-09-TR-02-REE-1000;MAQ-09;TR-02;Reemplazar;1000;horas;;O según indicador de restricción
+MAQ-09-TR-13-INS-500;MAQ-09;TR-13;Inspeccionar;500;horas;;
+MAQ-09-TR-20-REE-1000;MAQ-09;TR-20;Reemplazar;1000;horas;;
+MAQ-09-TR-18-AJU-3000;MAQ-09;TR-18;Ajustar;3000;horas;;
+MAQ-09-TR-09-REE-6000;MAQ-09;TR-09;Reemplazar;6000;horas;;Refrigerante de larga vida (ELC: 12.000 h)
+MAQ-09-TR-28-REE-3000;MAQ-09;TR-28;Reemplazar;3000;horas;;O cada 3 años
+MAQ-09-TR-11-REE-2000;MAQ-09;TR-11;Reemplazar;2000;horas;;Eje trasero/planetarios
+MAQ-09-TR-19-REE-3000;MAQ-09;TR-19;Reemplazar;3000;horas;;O según análisis de aceite
+MAQ-10-TR-23-INS-D;MAQ-10;TR-23;Inspeccionar;1;día;;Cada 10 h o turno
+MAQ-10-TR-12-LUB-50;MAQ-10;TR-12;Lubricar;50;horas;;Pasadores de implementos (excavadora/retro: cada 10 h en trabajo con agua o barro)
+MAQ-10-TR-05-INS-50;MAQ-10;TR-05;Inspeccionar;50;horas;;
+MAQ-10-TR-26-INS-250;MAQ-10;TR-26;Inspeccionar;250;horas;;Más seguido en ambiente con polvo
+MAQ-10-TR-14-INS-250;MAQ-10;TR-14;Inspeccionar;250;horas;;
+MAQ-10-TR-24-INS-250;MAQ-10;TR-24;Inspeccionar;250;horas;;Motor, hidráulico, transmisión
+MAQ-10-TR-01-REE-250;MAQ-10;TR-01;Reemplazar;250;horas;;Gasolina/GLP
+MAQ-10-TR-02-INS-250;MAQ-10;TR-02;Inspeccionar;250;horas;;Según indicador
+MAQ-10-TR-02-REE-1000;MAQ-10;TR-02;Reemplazar;1000;horas;;O según indicador de restricción
+MAQ-10-TR-13-INS-500;MAQ-10;TR-13;Inspeccionar;500;horas;;
+MAQ-10-TR-20-REE-1000;MAQ-10;TR-20;Reemplazar;1000;horas;;
+MAQ-10-TR-09-REE-6000;MAQ-10;TR-09;Reemplazar;6000;horas;;Refrigerante de larga vida (ELC: 12.000 h)
+MAQ-10-TR-16-REE-1000;MAQ-10;TR-16;Reemplazar;1000;horas;;
+MAQ-10-TR-25-REE-1000;MAQ-10;TR-25;Reemplazar;1000;horas;;Transmisión
+MAQ-10-TR-11-REE-1000;MAQ-10;TR-11;Reemplazar;1000;horas;;Diferencial
+MAQ-10-TR-06-INS-500;MAQ-10;TR-06;Inspeccionar;500;horas;;Frenos
+MAQ-10-TR-08-INS-250;MAQ-10;TR-08;Inspeccionar;250;horas;;Neumáticos
+MAQ-10-TR-19-REE-2000;MAQ-10;TR-19;Reemplazar;2000;horas;;O según análisis de aceite

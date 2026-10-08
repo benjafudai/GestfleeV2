@@ -95,11 +95,25 @@ es:
       work_order_part_usage:
         part: "Repuesto"
         quantity: "Cantidad"
+      part_quote:
+        supplier: "Proveedor"
+        price: "Precio"
+        currency: "Moneda"
+        quoted_on: "Fecha"
+        url: "Enlace"
+        part: "Repuesto"
       vehicle:
         plate: "Patente"
         brand: "Marca"
         model: "Modelo"
         year: "Año"
+        hour_meter: "Horómetro"
+        vehicle_model: "Modelo de la biblioteca"
+      maintenance_plan:
+        name: "Nombre"
+        interval_km: "Intervalo en km"
+        interval_days: "Intervalo en días"
+        interval_hours: "Intervalo en horas"
       fuel_fill:
         liters: "Litros"
         cost: "Costo"

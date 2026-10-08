@@ -1,0 +1,10 @@
+# Tiendas donde "Buscar repuesto" arma la búsqueda. Cada url puede usar
+# %{query} (texto codificado para un parámetro) o %{slug} (palabras-con-guion).
+shared:
+  stores:
+    - name: "Mercado Libre"
+      url: "https://listado.mercadolibre.cl/%{slug}"
+    - name: "Knasta"
+      url: "https://knasta.cl/results?q=%{query}"
+    - name: "Google Shopping"
+      url: "https://www.google.com/search?tbm=shop&gl=cl&hl=es&q=%{query}"

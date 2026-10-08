@@ -86,3 +86,6 @@ gem "pwned", "~> 2.4"
 gem "pagy", "~> 43.6"
 
 gem "pundit-matchers", "~> 4.0", :groups => [:development, :test]
+
+# Ruby 3.4+ ya no trae csv por defecto; lo usa la carga de la biblioteca (BibliotecaImporter).
+gem "csv"

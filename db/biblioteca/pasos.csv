@@ -1,0 +1,137 @@
+﻿id_tarea;n_paso;descripcion
+TR-01;1;"Calentar el motor 5 min a temperatura de operación y apagarlo; estacionar en superficie plana, freno de mano y cuñas (maquinaria: implementos apoyados en el suelo)."
+TR-01;2;Colocar bandeja bajo el cárter, retirar el tapón de drenaje y dejar escurrir completamente.
+TR-01;3;"Retirar el filtro de aceite; limpiar el asiento y verificar que la empaquetadura antigua salió completa."
+TR-01;4;Lubricar la empaquetadura del filtro nuevo con aceite limpio (en diésel, llenar el filtro si el manual lo permite) e instalar apriete a mano + 3/4 de vuelta.
+TR-01;5;Instalar el tapón con golilla nueva y apretar al torque del manual.
+TR-01;6;"Llenar con el aceite y la cantidad especificados en el manual; esperar 2 min y verificar con la varilla."
+TR-01;7;Arrancar 1 min, revisar fugas en filtro y tapón, apagar, esperar y corregir nivel.
+TR-01;8;Reiniciar el indicador de servicio (si tiene) y registrar km/horas, marca y cantidad de aceite.
+TR-01;9;Entregar el aceite usado a gestor autorizado (residuo peligroso, DS 148).
+TR-02;1;Con motor apagado, abrir la caja del filtro de aire (abrazaderas o tornillos).
+TR-02;2;Retirar el elemento primario con cuidado de no botar polvo hacia la admisión.
+TR-02;3;"Limpiar el interior de la caja con paño húmedo; nunca soplar aire hacia el ducto del motor."
+TR-02;4;Revisar el elemento de seguridad (secundario) si tiene: se cambia cada 3 cambios del primario o si está sucio.
+TR-02;5;"Instalar el elemento nuevo verificando que el sello asiente parejo; cerrar la caja."
+TR-02;6;"Revisar mangueras y abrazaderas de admisión hasta el turbo; reiniciar indicador de restricción si tiene."
+TR-03;1;"Cerrar llave de paso de combustible si existe; colocar bandeja y paños."
+TR-03;2;Drenar el agua del separador/decantador abriendo el tapón inferior.
+TR-03;3;"Retirar el filtro (o cartucho) y su empaquetadura; limpiar el asiento."
+TR-03;4;Instalar filtro nuevo con la empaquetadura lubricada con diésel limpio. No llenar el filtro secundario con combustible sin filtrar.
+TR-03;5;Purgar el sistema con la bomba manual (cebador) hasta que salga combustible sin burbujas.
+TR-03;6;"Arrancar; si cuesta, esperar 30 s entre intentos. Revisar fugas con motor en ralentí."
+TR-03;7;Revisar que no quede luz de agua en combustible encendida.
+TR-04;1;Ubicar el filtro (normalmente detrás de la guantera o bajo el parabrisas).
+TR-04;2;Retirar la tapa y sacar el filtro anotando la flecha de flujo de aire.
+TR-04;3;Aspirar la carcasa e instalar el filtro nuevo con la flecha en el mismo sentido.
+TR-04;4;Cerrar la tapa y probar el ventilador en todas las velocidades.
+TR-05;1;Con motor frío y vehículo nivelado, revisar nivel de refrigerante en el depósito.
+TR-05;2;Revisar líquido de frenos/embrague, dirección hidráulica, limpiaparabrisas y (maquinaria) aceite hidráulico.
+TR-05;3;Revisar fugas bajo el motor, caja, diferenciales, mangueras y cilindros.
+TR-05;4;Completar niveles con el fluido especificado y registrar cualquier fuga para orden de trabajo.
+TR-06;1;"Levantar el vehículo y apoyarlo en torres; retirar ruedas."
+TR-06;2;"Medir espesor de pastillas/balatas y discos/tambores; comparar con el mínimo del manual."
+TR-06;3;Revisar flexibles, cañerías y calipers por fugas o daños.
+TR-06;4;Limpiar y lubricar guías de caliper con grasa para frenos.
+TR-06;5;Reemplazar componentes bajo el mínimo (siempre por eje completo).
+TR-06;6;Montar ruedas, apretar pernos en cruz al torque especificado y probar frenos en baja velocidad.
+TR-07;1;Extraer el líquido viejo del depósito y rellenar con líquido nuevo del tipo indicado en la tapa (DOT 3/DOT 4).
+TR-07;2;Purgar empezando por la rueda más lejana al cilindro maestro y terminando por la más cercana.
+TR-07;3;En cada rueda: ayudante pisa y mantiene, abrir purgador, cerrar, repetir hasta que salga líquido limpio sin burbujas.
+TR-07;4;No dejar que el depósito se vacíe durante la purga.
+TR-07;5;Ajustar nivel a MAX y probar pedal firme antes de mover el vehículo.
+TR-08;1;Medir profundidad de banda en 3 puntos y revisar cortes, globos o desgaste irregular.
+TR-08;2;Rotar según el esquema del fabricante (camioneta: cruzado en tracción trasera/4x4).
+TR-08;3;Apretar pernos en cruz al torque del manual.
+TR-08;4;Ajustar presiones en frío según la etiqueta de la puerta o el manual, incluida la rueda de repuesto.
+TR-08;5;Re-apretar pernos a los 50-100 km (camiones).
+TR-09;1;Con motor FRÍO, abrir la tapa del depósito y el drenaje del radiador (y del block si tiene).
+TR-09;2;"Drenar completamente; si el líquido viene sucio, enjuagar con agua desmineralizada."
+TR-09;3;Cerrar drenajes y llenar con el refrigerante especificado (premezcla o 50/50 con agua desmineralizada).
+TR-09;4;Arrancar con calefacción al máximo y purgar el aire hasta que no salgan burbujas.
+TR-09;5;Verificar concentración con refractómetro y completar nivel en frío.
+TR-09;6;Eliminar el refrigerante usado como residuo peligroso.
+TR-10;1;Con aceite tibio y vehículo nivelado, retirar primero el tapón de llenado (para asegurar que se podrá llenar).
+TR-10;2;Retirar el tapón de drenaje, limpiar el imán y dejar escurrir.
+TR-10;3;Instalar tapón de drenaje con golilla nueva al torque especificado.
+TR-10;4;Llenar con el aceite especificado hasta que rebalse por el orificio de llenado (manual) o según varilla/procedimiento del fabricante (automática).
+TR-10;5;Instalar tapón de llenado y revisar fugas.
+TR-11;1;"Retirar tapón de llenado primero, luego el de drenaje; limpiar imán."
+TR-11;2;Dejar escurrir, instalar tapón de drenaje con golilla nueva.
+TR-11;3;"Llenar con aceite del grado indicado (ej. 75W-90/80W-90 GL-5; LSD si es autoblocante) hasta el borde del orificio."
+TR-11;4;Repetir en diferencial delantero, trasero y caja de transferencia (4x4) o mandos de ejes (maquinaria).
+TR-11;5;Revisar respiraderos destapados.
+TR-12;1;Limpiar cada grasera antes de engrasar.
+TR-12;2;Engrasar hasta ver salir grasa nueva por los sellos (sin exceso en rótulas con guardapolvo).
+TR-12;3;Puntos típicos: crucetas y deslizante del cardán, rótulas, pasadores de muelles, quinta rueda (tractos), pasadores de pluma/balde (maquinaria).
+TR-12;4;Reemplazar graseras que no reciban grasa.
+TR-12;5;Limpiar el exceso de grasa.
+TR-13;1;Con motor apagado, revisar grietas, desgaste y brillo en la correa de accesorios.
+TR-13;2;Verificar que el tensor automático mantiene tensión y que las poleas no tengan juego ni ruido.
+TR-13;3;"Reemplazar correa con grietas o según intervalo; registrar."
+TR-14;1;Medir voltaje en reposo (12,6 V o 24 V+ en camiones/maquinaria) y en carga (13,8-14,4 V / 27,6-28,8 V).
+TR-14;2;"Limpiar bornes y aplicar protector; revisar fijación."
+TR-14;3;Revisar luces, alarma de retroceso, baliza y bocina.
+TR-15;1;Con el vehículo levantado, revisar juego en rótulas, terminales y bujes.
+TR-15;2;Revisar amortiguadores por fugas, muelles por hojas rotas y pernos U apretados.
+TR-15;3;Revisar fuelles de homocinéticas (4x4) y caja de dirección por fugas.
+TR-15;4;Alinear si hay desgaste irregular de neumáticos.
+TR-16;1;Con motor frío, retirar bobinas o cables marcando el orden.
+TR-16;2;Soplar alrededor de cada bujía antes de retirarla.
+TR-16;3;Verificar calibración de las nuevas (si no son iridio precalibradas).
+TR-16;4;"Instalar a mano y apretar al torque del manual; reinstalar bobinas."
+TR-16;5;Arrancar y verificar ralentí estable sin luz de check.
+TR-17;1;Drenar diariamente los estanques de aire (operador).
+TR-17;2;Con sistema despresurizado, retirar el cartucho del secador.
+TR-17;3;"Instalar cartucho nuevo con el o-ring lubricado; apretar a mano según marca."
+TR-17;4;Cargar presión y verificar que el secador purga al llegar al corte.
+TR-18;1;Con motor frío, retirar tapa de válvulas.
+TR-18;2;Girar el motor hasta PMS del cilindro 1 según marcas del manual.
+TR-18;3;Medir holgura de admisión y escape con galga y ajustar a la especificación.
+TR-18;4;Repetir según secuencia del fabricante para el resto de cilindros.
+TR-18;5;Instalar tapa con empaquetadura nueva si corresponde y revisar fugas.
+TR-19;1;Bajar todos los implementos al suelo, apagar y aliviar presión moviendo los mandos.
+TR-19;2;Liberar presión del estanque por la tapa de respiradero lentamente.
+TR-19;3;"Drenar el estanque; limpiar el colador de succión."
+TR-19;4;Reemplazar filtros de retorno y piloto (ver TR-20).
+TR-19;5;Llenar con aceite del grado especificado hasta la marca con cilindros en posición de revisión.
+TR-19;6;Arrancar en ralentí y mover suavemente todos los cilindros a fondo varias veces para purgar aire.
+TR-19;7;Revisar nivel con la máquina en posición de revisión y corregir. Tomar muestra para análisis.
+TR-20;1;Implementos al suelo, aliviar presión y respiradero del estanque.
+TR-20;2;"Retirar tapa del filtro de retorno y extraer el elemento; inspeccionar si trae partículas metálicas (reportar)."
+TR-20;3;Instalar elemento nuevo con o-rings nuevos.
+TR-20;4;Reemplazar filtro piloto si corresponde.
+TR-20;5;Completar nivel, arrancar y revisar fugas.
+TR-21;1;Posicionar el mando final con el tapón de drenaje abajo (mover la máquina).
+TR-21;2;"Retirar tapón de nivel y luego el de drenaje; dejar escurrir y revisar limaduras."
+TR-21;3;Instalar drenaje y llenar por el orificio de nivel con el aceite especificado.
+TR-21;4;Repetir en el otro lado y en el mando de giro (excavadoras).
+TR-22;1;Limpiar barro del tren de rodado.
+TR-22;2;Levantar la oruga (excavadora) o avanzar y detener (bulldozer) y medir la flecha según manual.
+TR-22;3;Ajustar inyectando grasa por la válvula del tensor o aflojándola para soltar (nunca pararse frente a la válvula).
+TR-22;4;Revisar zapatas, pernos, rodillos y ruedas guía.
+TR-23;1;Vuelta del perro: fugas, neumáticos/orugas, daños, luces.
+TR-23;2;Niveles: aceite motor, refrigerante, hidráulico (maquinaria), combustible.
+TR-23;3;Drenar separador de agua (diésel) y estanques de aire (camiones).
+TR-23;4;Revisar cinturón, extintor, alarma de retroceso, espejos y bocina.
+TR-23;5;"Arrancar, revisar indicadores y testigos; no operar con alarmas activas."
+TR-23;6;Registrar horómetro/kilometraje y firmar checklist.
+TR-24;1;Tomar la muestra con el aceite a temperatura de operación, máx. 30 min después de apagar.
+TR-24;2;Usar la válvula de muestreo o bomba por la varilla, sin tocar el interior del frasco.
+TR-24;3;Rotular con equipo, horas/km, horas del aceite y compartimiento.
+TR-24;4;Enviar al laboratorio y registrar resultado en la ficha del equipo.
+TR-25;1;Con aceite tibio y máquina nivelada, drenar el cárter de transmisión.
+TR-25;2;Reemplazar el filtro de transmisión y limpiar el colador/imán.
+TR-25;3;Llenar con aceite especificado (ej. TO-4 en Cat) hasta el nivel en frío.
+TR-25;4;Arrancar, ciclar marchas con freno aplicado y verificar nivel en caliente.
+TR-26;1;Con motor apagado y frío, abrir accesos al paquete de enfriamiento.
+TR-26;2;Soplar desde el lado del ventilador hacia afuera (contra el flujo) con aire a baja presión.
+TR-26;3;No usar hidrolavadora de alta presión directo a las aletas.
+TR-26;4;Revisar aletas dobladas y mangueras.
+TR-27;1;Retirar tapón de nivel/llenado del cárter de cadenas.
+TR-27;2;Drenar por el tapón inferior (o con bomba de succión).
+TR-27;3;Llenar con el aceite especificado hasta el nivel del tapón.
+TR-27;4;Revisar tensión de cadenas según manual.
+TR-28;1;Posicionar el tambor con el tapón de drenaje abajo (según marcas).
+TR-28;2;Drenar, instalar tapón y girar el tambor a la posición de llenado.
+TR-28;3;Llenar con aceite especificado hasta el nivel del tapón de revisión.

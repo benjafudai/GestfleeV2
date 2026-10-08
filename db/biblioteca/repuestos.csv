@@ -1,0 +1,372 @@
+﻿id_repuesto;id_vehiculo;id_tarea;descripcion;especificacion;codigo_oem;cantidad;unidad;precio_unit_neto_clp;subtotal_neto_clp;iva_clp;total_clp;tipo_precio
+CAM-01-R01;CAM-01;TR-01;Aceite de motor;10W-40 MB 228.51 (se usa precio 15W-40);;38;L;4378;166364;31609;197973;Verificado
+CAM-01-R02;CAM-01;TR-01;Filtro de aceite (full flow + bypass);Ref. tipo Fleetguard LF16015;Consultar OEM;2;un;10496;20992;3988;24980;Verificado
+CAM-01-R03;CAM-01;TR-03;Prefiltro / separador de agua;Ref. tipo Fleetguard FS19532;Consultar OEM;1;un;18479;18479;3511;21990;Verificado
+CAM-01-R04;CAM-01;TR-03;Filtro de combustible principal;;Consultar OEM;1;un;15958;15958;3032;18990;Estimado
+CAM-01-R05;CAM-01;TR-02;Filtro de aire primario;Ref. tipo Fleetguard AF25707;Consultar OEM;1;un;39487;39487;7503;46990;Verificado
+CAM-01-R06;CAM-01;TR-02;Filtro de aire de seguridad;Cada 3 cambios del primario;Consultar OEM;1;un;25202;25202;4788;29990;Estimado
+CAM-01-R07;CAM-01;TR-04;Filtro de cabina;Ref. tipo Fleetguard AF26430;Consultar OEM;1;un;22681;22681;4309;26990;Verificado
+CAM-01-R08;CAM-01;TR-06;Balatas;"Juego por eje; según desgaste";Consultar OEM;1;jgo;79832;79832;15168;95000;Estimado
+CAM-01-R09;CAM-01;TR-17;Cartucho secador de aire;Tipo AD-9 o según marca;Consultar OEM;1;un;20664;20664;3926;24590;Verificado
+CAM-01-R10;CAM-01;TR-09;Refrigerante;Larga vida HD, premezcla 50/50;;50;L;1638;81900;15561;97461;Verificado
+CAM-01-R11;CAM-01;TR-10;Aceite de caja de cambios;Según manual (ej. 75W-80/SAE 50 sintético);;13;L;3825;49725;9448;59173;Verificado
+CAM-01-R12;CAM-01;TR-11;Aceite de diferenciales y cubos;80W-90 / 85W-140 GL-5;;27;L;3825;103275;19622;122897;Verificado
+CAM-01-R13;CAM-01;TR-12;Grasa;EP2 litio (quinta rueda y chasis);;1;kg;6565;6565;1247;7812;Verificado
+CAM-01-R14;CAM-01;TR-13;Correa de accesorios;Al reemplazar según inspección;Consultar OEM;1;un;42008;42008;7982;49990;Estimado
+CAM-02-R01;CAM-02;TR-01;Aceite de motor;10W-40 VDS-4.5 (se usa precio 15W-40);;36;L;4378;157608;29946;187554;Verificado
+CAM-02-R02;CAM-02;TR-01;Filtro de aceite (full flow + bypass);Ref. tipo Fleetguard LF16015;Consultar OEM;2;un;10496;20992;3988;24980;Verificado
+CAM-02-R03;CAM-02;TR-03;Prefiltro / separador de agua;Ref. tipo Fleetguard FS19532;Consultar OEM;1;un;18479;18479;3511;21990;Verificado
+CAM-02-R04;CAM-02;TR-03;Filtro de combustible principal;;Consultar OEM;1;un;15958;15958;3032;18990;Estimado
+CAM-02-R05;CAM-02;TR-02;Filtro de aire primario;Ref. tipo Fleetguard AF25707;Consultar OEM;1;un;39487;39487;7503;46990;Verificado
+CAM-02-R06;CAM-02;TR-02;Filtro de aire de seguridad;Cada 3 cambios del primario;Consultar OEM;1;un;25202;25202;4788;29990;Estimado
+CAM-02-R07;CAM-02;TR-04;Filtro de cabina;Ref. tipo Fleetguard AF26430;Consultar OEM;1;un;22681;22681;4309;26990;Verificado
+CAM-02-R08;CAM-02;TR-06;Balatas;"Juego por eje; según desgaste";Consultar OEM;1;jgo;79832;79832;15168;95000;Estimado
+CAM-02-R09;CAM-02;TR-17;Cartucho secador de aire;Tipo AD-9 o según marca;Consultar OEM;1;un;20664;20664;3926;24590;Verificado
+CAM-02-R10;CAM-02;TR-09;Refrigerante;Larga vida HD, premezcla 50/50;;48;L;1638;78624;14939;93563;Verificado
+CAM-02-R11;CAM-02;TR-10;Aceite de caja de cambios;Según manual (ej. 75W-80/SAE 50 sintético);;13;L;3825;49725;9448;59173;Verificado
+CAM-02-R12;CAM-02;TR-11;Aceite de diferenciales y cubos;80W-90 / 85W-140 GL-5;;27;L;3825;103275;19622;122897;Verificado
+CAM-02-R13;CAM-02;TR-12;Grasa;EP2 litio (quinta rueda y chasis);;1;kg;6565;6565;1247;7812;Verificado
+CAM-02-R14;CAM-02;TR-13;Correa de accesorios;Al reemplazar según inspección;Consultar OEM;1;un;42008;42008;7982;49990;Estimado
+CAM-03-R01;CAM-03;TR-01;Aceite de motor;10W-40 LDF-4 (se usa precio 15W-40);;38;L;4378;166364;31609;197973;Verificado
+CAM-03-R02;CAM-03;TR-01;Filtro de aceite (full flow + bypass);Ref. tipo Fleetguard LF16015;Consultar OEM;2;un;10496;20992;3988;24980;Verificado
+CAM-03-R03;CAM-03;TR-03;Prefiltro / separador de agua;Ref. tipo Fleetguard FS19532;Consultar OEM;1;un;18479;18479;3511;21990;Verificado
+CAM-03-R04;CAM-03;TR-03;Filtro de combustible principal;;Consultar OEM;1;un;15958;15958;3032;18990;Estimado
+CAM-03-R05;CAM-03;TR-02;Filtro de aire primario;Ref. tipo Fleetguard AF25707;Consultar OEM;1;un;39487;39487;7503;46990;Verificado
+CAM-03-R06;CAM-03;TR-02;Filtro de aire de seguridad;Cada 3 cambios del primario;Consultar OEM;1;un;25202;25202;4788;29990;Estimado
+CAM-03-R07;CAM-03;TR-04;Filtro de cabina;Ref. tipo Fleetguard AF26430;Consultar OEM;1;un;22681;22681;4309;26990;Verificado
+CAM-03-R08;CAM-03;TR-06;Balatas;"Juego por eje; según desgaste";Consultar OEM;1;jgo;79832;79832;15168;95000;Estimado
+CAM-03-R09;CAM-03;TR-17;Cartucho secador de aire;Tipo AD-9 o según marca;Consultar OEM;1;un;20664;20664;3926;24590;Verificado
+CAM-03-R10;CAM-03;TR-09;Refrigerante;Larga vida HD, premezcla 50/50;;50;L;1638;81900;15561;97461;Verificado
+CAM-03-R11;CAM-03;TR-10;Aceite de caja de cambios;Según manual (ej. 75W-80/SAE 50 sintético);;13;L;3825;49725;9448;59173;Verificado
+CAM-03-R12;CAM-03;TR-11;Aceite de diferenciales y cubos;80W-90 / 85W-140 GL-5;;27;L;3825;103275;19622;122897;Verificado
+CAM-03-R13;CAM-03;TR-12;Grasa;EP2 litio (quinta rueda y chasis);;1;kg;6565;6565;1247;7812;Verificado
+CAM-03-R14;CAM-03;TR-13;Correa de accesorios;Al reemplazar según inspección;Consultar OEM;1;un;42008;42008;7982;49990;Estimado
+CAM-04-R01;CAM-04;TR-01;Aceite de motor;15W-40 (API CI-4+);;13;L;4378;56914;10814;67728;Verificado
+CAM-04-R02;CAM-04;TR-01;Filtro de aceite;Original o equivalente Fleetguard/Donaldson;Consultar OEM;1;un;8395;8395;1595;9990;Estimado
+CAM-04-R03;CAM-04;TR-02;Filtro de aire de motor;Elemento primario;Consultar OEM;1;un;21000;21000;3990;24990;Estimado
+CAM-04-R04;CAM-04;TR-03;Filtro de combustible;Con separador de agua;Consultar OEM;1;un;12597;12597;2393;14990;Estimado
+CAM-04-R05;CAM-04;TR-04;Filtro de cabina;;Consultar OEM;1;un;10916;10916;2074;12990;Estimado
+CAM-04-R06;CAM-04;TR-06;Pastillas / balatas;"Juego por eje; según desgaste";Consultar OEM;1;jgo;37815;37815;7185;45000;Estimado
+CAM-04-R07;CAM-04;TR-07;Líquido de frenos;DOT 4 (solo frenos hidráulicos);;1;L;8395;8395;1595;9990;Estimado
+CAM-04-R08;CAM-04;TR-09;Refrigerante;Larga vida HD, premezcla 50/50;;18;L;1638;29484;5602;35086;Verificado
+CAM-04-R09;CAM-04;TR-10;Aceite de caja de cambios;Según manual (ej. 80W-90 GL-4 o SAE 50);;4.5;L;3825;17212;3270;20482;Verificado
+CAM-04-R10;CAM-04;TR-11;Aceite de diferencial;80W-90 / 85W-140 GL-5;;5;L;3825;19125;3634;22759;Verificado
+CAM-04-R11;CAM-04;TR-12;Grasa;EP2 litio;;0.5;kg;6565;3282;624;3906;Verificado
+CAM-04-R12;CAM-04;TR-13;Correa de accesorios;Al reemplazar según inspección;Consultar OEM;1;un;29403;29403;5587;34990;Estimado
+CAM-05-R01;CAM-05;TR-01;Aceite de motor;15W-40 (API CI-4+);;10;L;4378;43780;8318;52098;Verificado
+CAM-05-R02;CAM-05;TR-01;Filtro de aceite;Original o equivalente Fleetguard/Donaldson;Consultar OEM;1;un;8395;8395;1595;9990;Estimado
+CAM-05-R03;CAM-05;TR-02;Filtro de aire de motor;Elemento primario;Consultar OEM;1;un;21000;21000;3990;24990;Estimado
+CAM-05-R04;CAM-05;TR-03;Filtro de combustible;Con separador de agua;Consultar OEM;1;un;12597;12597;2393;14990;Estimado
+CAM-05-R05;CAM-05;TR-04;Filtro de cabina;;Consultar OEM;1;un;10916;10916;2074;12990;Estimado
+CAM-05-R06;CAM-05;TR-06;Pastillas / balatas;"Juego por eje; según desgaste";Consultar OEM;1;jgo;37815;37815;7185;45000;Estimado
+CAM-05-R07;CAM-05;TR-07;Líquido de frenos;DOT 4 (solo frenos hidráulicos);;1;L;8395;8395;1595;9990;Estimado
+CAM-05-R08;CAM-05;TR-09;Refrigerante;Larga vida HD, premezcla 50/50;;20;L;1638;32760;6224;38984;Verificado
+CAM-05-R09;CAM-05;TR-10;Aceite de caja de cambios;Según manual (ej. 80W-90 GL-4 o SAE 50);;4.5;L;3825;17212;3270;20482;Verificado
+CAM-05-R10;CAM-05;TR-11;Aceite de diferencial;80W-90 / 85W-140 GL-5;;4.5;L;3825;17212;3270;20482;Verificado
+CAM-05-R11;CAM-05;TR-12;Grasa;EP2 litio;;0.5;kg;6565;3282;624;3906;Verificado
+CAM-05-R12;CAM-05;TR-13;Correa de accesorios;Al reemplazar según inspección;Consultar OEM;1;un;29403;29403;5587;34990;Estimado
+CAM-06-R01;CAM-06;TR-01;Aceite de motor;15W-40 (API CI-4+);;8.5;L;4378;37213;7070;44283;Verificado
+CAM-06-R02;CAM-06;TR-01;Filtro de aceite;Original o equivalente Fleetguard/Donaldson;Consultar OEM;1;un;8395;8395;1595;9990;Estimado
+CAM-06-R03;CAM-06;TR-02;Filtro de aire de motor;Elemento primario;Consultar OEM;1;un;21000;21000;3990;24990;Estimado
+CAM-06-R04;CAM-06;TR-03;Filtro de combustible;Con separador de agua;Consultar OEM;1;un;12597;12597;2393;14990;Estimado
+CAM-06-R05;CAM-06;TR-04;Filtro de cabina;;Consultar OEM;1;un;10916;10916;2074;12990;Estimado
+CAM-06-R06;CAM-06;TR-06;Pastillas / balatas;"Juego por eje; según desgaste";Consultar OEM;1;jgo;37815;37815;7185;45000;Estimado
+CAM-06-R07;CAM-06;TR-07;Líquido de frenos;DOT 4 (solo frenos hidráulicos);;1;L;8395;8395;1595;9990;Estimado
+CAM-06-R08;CAM-06;TR-09;Refrigerante;Larga vida HD, premezcla 50/50;;16;L;1638;26208;4980;31188;Verificado
+CAM-06-R09;CAM-06;TR-10;Aceite de caja de cambios;Según manual (ej. 80W-90 GL-4 o SAE 50);;4.5;L;3825;17212;3270;20482;Verificado
+CAM-06-R10;CAM-06;TR-11;Aceite de diferencial;80W-90 / 85W-140 GL-5;;4;L;3825;15300;2907;18207;Verificado
+CAM-06-R11;CAM-06;TR-12;Grasa;EP2 litio;;0.5;kg;6565;3282;624;3906;Verificado
+CAM-06-R12;CAM-06;TR-13;Correa de accesorios;Al reemplazar según inspección;Consultar OEM;1;un;29403;29403;5587;34990;Estimado
+CAM-07-R01;CAM-07;TR-01;Aceite de motor;15W-40 (API CI-4+);;8;L;4378;35024;6655;41679;Verificado
+CAM-07-R02;CAM-07;TR-01;Filtro de aceite;Original o equivalente Fleetguard/Donaldson;Consultar OEM;1;un;8395;8395;1595;9990;Estimado
+CAM-07-R03;CAM-07;TR-02;Filtro de aire de motor;Elemento primario;Consultar OEM;1;un;21000;21000;3990;24990;Estimado
+CAM-07-R04;CAM-07;TR-03;Filtro de combustible;Con separador de agua;Consultar OEM;1;un;12597;12597;2393;14990;Estimado
+CAM-07-R05;CAM-07;TR-04;Filtro de cabina;;Consultar OEM;1;un;10916;10916;2074;12990;Estimado
+CAM-07-R06;CAM-07;TR-06;Pastillas / balatas;"Juego por eje; según desgaste";Consultar OEM;1;jgo;37815;37815;7185;45000;Estimado
+CAM-07-R07;CAM-07;TR-07;Líquido de frenos;DOT 4 (solo frenos hidráulicos);;1;L;8395;8395;1595;9990;Estimado
+CAM-07-R08;CAM-07;TR-09;Refrigerante;Larga vida HD, premezcla 50/50;;14;L;1638;22932;4357;27289;Verificado
+CAM-07-R09;CAM-07;TR-10;Aceite de caja de cambios;Según manual (ej. 80W-90 GL-4 o SAE 50);;4.5;L;3825;17212;3270;20482;Verificado
+CAM-07-R10;CAM-07;TR-11;Aceite de diferencial;80W-90 / 85W-140 GL-5;;3.5;L;3825;13388;2544;15932;Verificado
+CAM-07-R11;CAM-07;TR-12;Grasa;EP2 litio;;0.5;kg;6565;3282;624;3906;Verificado
+CAM-07-R12;CAM-07;TR-13;Correa de accesorios;Al reemplazar según inspección;Consultar OEM;1;un;29403;29403;5587;34990;Estimado
+CAM-08-R01;CAM-08;TR-01;Aceite de motor;15W-40 (API CI-4+);;9;L;4378;39402;7486;46888;Verificado
+CAM-08-R02;CAM-08;TR-01;Filtro de aceite;Original o equivalente Fleetguard/Donaldson;Consultar OEM;1;un;8395;8395;1595;9990;Estimado
+CAM-08-R03;CAM-08;TR-02;Filtro de aire de motor;Elemento primario;Consultar OEM;1;un;21000;21000;3990;24990;Estimado
+CAM-08-R04;CAM-08;TR-03;Filtro de combustible;Con separador de agua;Consultar OEM;1;un;12597;12597;2393;14990;Estimado
+CAM-08-R05;CAM-08;TR-04;Filtro de cabina;;Consultar OEM;1;un;10916;10916;2074;12990;Estimado
+CAM-08-R06;CAM-08;TR-06;Pastillas / balatas;"Juego por eje; según desgaste";Consultar OEM;1;jgo;37815;37815;7185;45000;Estimado
+CAM-08-R07;CAM-08;TR-07;Líquido de frenos;DOT 4 (solo frenos hidráulicos);;1;L;8395;8395;1595;9990;Estimado
+CAM-08-R08;CAM-08;TR-09;Refrigerante;Larga vida HD, premezcla 50/50;;16;L;1638;26208;4980;31188;Verificado
+CAM-08-R09;CAM-08;TR-10;Aceite de caja de cambios;Según manual (ej. 80W-90 GL-4 o SAE 50);;4.5;L;3825;17212;3270;20482;Verificado
+CAM-08-R10;CAM-08;TR-11;Aceite de diferencial;80W-90 / 85W-140 GL-5;;4;L;3825;15300;2907;18207;Verificado
+CAM-08-R11;CAM-08;TR-12;Grasa;EP2 litio;;0.5;kg;6565;3282;624;3906;Verificado
+CAM-08-R12;CAM-08;TR-13;Correa de accesorios;Al reemplazar según inspección;Consultar OEM;1;un;29403;29403;5587;34990;Estimado
+CAM-09-R01;CAM-09;TR-01;Aceite de motor;10W-40 RLD-4 (se usa precio 15W-40);;36;L;4378;157608;29946;187554;Verificado
+CAM-09-R02;CAM-09;TR-01;Filtro de aceite (full flow + bypass);Ref. tipo Fleetguard LF16015;Consultar OEM;2;un;10496;20992;3988;24980;Verificado
+CAM-09-R03;CAM-09;TR-03;Prefiltro / separador de agua;Ref. tipo Fleetguard FS19532;Consultar OEM;1;un;18479;18479;3511;21990;Verificado
+CAM-09-R04;CAM-09;TR-03;Filtro de combustible principal;;Consultar OEM;1;un;15958;15958;3032;18990;Estimado
+CAM-09-R05;CAM-09;TR-02;Filtro de aire primario;Ref. tipo Fleetguard AF25707;Consultar OEM;1;un;39487;39487;7503;46990;Verificado
+CAM-09-R06;CAM-09;TR-02;Filtro de aire de seguridad;Cada 3 cambios del primario;Consultar OEM;1;un;25202;25202;4788;29990;Estimado
+CAM-09-R07;CAM-09;TR-04;Filtro de cabina;Ref. tipo Fleetguard AF26430;Consultar OEM;1;un;22681;22681;4309;26990;Verificado
+CAM-09-R08;CAM-09;TR-06;Balatas;"Juego por eje; según desgaste";Consultar OEM;1;jgo;79832;79832;15168;95000;Estimado
+CAM-09-R09;CAM-09;TR-17;Cartucho secador de aire;Tipo AD-9 o según marca;Consultar OEM;1;un;20664;20664;3926;24590;Verificado
+CAM-09-R10;CAM-09;TR-09;Refrigerante;Larga vida HD, premezcla 50/50;;48;L;1638;78624;14939;93563;Verificado
+CAM-09-R11;CAM-09;TR-10;Aceite de caja de cambios;Según manual (ej. 75W-80/SAE 50 sintético);;13;L;3825;49725;9448;59173;Verificado
+CAM-09-R12;CAM-09;TR-11;Aceite de diferenciales y cubos;80W-90 / 85W-140 GL-5;;27;L;3825;103275;19622;122897;Verificado
+CAM-09-R13;CAM-09;TR-12;Grasa;EP2 litio (quinta rueda y chasis);;1;kg;6565;6565;1247;7812;Verificado
+CAM-09-R14;CAM-09;TR-13;Correa de accesorios;Al reemplazar según inspección;Consultar OEM;1;un;42008;42008;7982;49990;Estimado
+CAM-10-R01;CAM-10;TR-01;Aceite de motor;15W-40 (API CI-4+);;7.5;L;4378;32835;6239;39074;Verificado
+CAM-10-R02;CAM-10;TR-01;Filtro de aceite;Original o equivalente Fleetguard/Donaldson;Consultar OEM;1;un;8395;8395;1595;9990;Estimado
+CAM-10-R03;CAM-10;TR-02;Filtro de aire de motor;Elemento primario;Consultar OEM;1;un;21000;21000;3990;24990;Estimado
+CAM-10-R04;CAM-10;TR-03;Filtro de combustible;Con separador de agua;Consultar OEM;1;un;12597;12597;2393;14990;Estimado
+CAM-10-R05;CAM-10;TR-04;Filtro de cabina;;Consultar OEM;1;un;10916;10916;2074;12990;Estimado
+CAM-10-R06;CAM-10;TR-06;Pastillas / balatas;"Juego por eje; según desgaste";Consultar OEM;1;jgo;37815;37815;7185;45000;Estimado
+CAM-10-R07;CAM-10;TR-07;Líquido de frenos;DOT 4 (solo frenos hidráulicos);;1;L;8395;8395;1595;9990;Estimado
+CAM-10-R08;CAM-10;TR-09;Refrigerante;Larga vida HD, premezcla 50/50;;14;L;1638;22932;4357;27289;Verificado
+CAM-10-R09;CAM-10;TR-10;Aceite de caja de cambios;Según manual (ej. 80W-90 GL-4 o SAE 50);;4.5;L;3825;17212;3270;20482;Verificado
+CAM-10-R10;CAM-10;TR-11;Aceite de diferencial;80W-90 / 85W-140 GL-5;;3.5;L;3825;13388;2544;15932;Verificado
+CAM-10-R11;CAM-10;TR-12;Grasa;EP2 litio;;0.5;kg;6565;3282;624;3906;Verificado
+CAM-10-R12;CAM-10;TR-13;Correa de accesorios;Al reemplazar según inspección;Consultar OEM;1;un;29403;29403;5587;34990;Estimado
+CTA-01-R01;CTA-01;TR-01;Aceite de motor;5W-30 (API CK-4/ACEA C2);;7.5;L;9032;67740;12871;80611;Verificado
+CTA-01-R02;CTA-01;TR-01;Filtro de aceite;Original o equivalente;Consultar OEM;1;un;3782;3782;719;4501;Verificado
+CTA-01-R03;CTA-01;TR-02;Filtro de aire de motor;Elemento primario;Consultar OEM;1;un;5462;5462;1038;6500;Verificado
+CTA-01-R04;CTA-01;TR-03;Filtro de combustible;Con separador de agua;Consultar OEM;1;un;4622;4622;878;5500;Verificado
+CTA-01-R05;CTA-01;TR-04;Filtro de cabina / polen;;Consultar OEM;1;un;3353;3353;637;3990;Verificado
+CTA-01-R06;CTA-01;TR-06;Pastillas de freno delanteras;"Juego por eje; según desgaste";Consultar OEM;1;jgo;18479;18479;3511;21990;Verificado
+CTA-01-R07;CTA-01;TR-06;Discos de freno delanteros;"Par; según desgaste";Consultar OEM;1;par;81504;81504;15486;96990;Verificado
+CTA-01-R08;CTA-01;TR-07;Líquido de frenos;DOT 4 o el indicado en la tapa;;1;L;8395;8395;1595;9990;Estimado
+CTA-01-R09;CTA-01;TR-09;Refrigerante;Larga vida, premezcla 50/50;;10;L;1638;16380;3112;19492;Verificado
+CTA-01-R10;CTA-01;TR-10;Aceite de caja de cambios;Manual 75W-90 GL-4 / automática ATF según manual;;2.5;L;8395;20988;3988;24976;Estimado
+CTA-01-R11;CTA-01;TR-11;Aceite de diferenciales y transfer;80W-90 GL-5 (LSD si es autoblocante);;4;L;3825;15300;2907;18207;Verificado
+CTA-01-R12;CTA-01;TR-12;Grasa;EP2 litio;;0.3;kg;6565;1970;374;2344;Verificado
+CTA-01-R13;CTA-01;TR-13;Correa de accesorios;Al reemplazar según inspección;Consultar OEM;1;un;21000;21000;3990;24990;Estimado
+CTA-02-R01;CTA-02;TR-01;Aceite de motor;5W-30;;8;L;9032;72256;13729;85985;Verificado
+CTA-02-R02;CTA-02;TR-01;Filtro de aceite;Original o equivalente;Consultar OEM;1;un;3782;3782;719;4501;Verificado
+CTA-02-R03;CTA-02;TR-02;Filtro de aire de motor;Elemento primario;Consultar OEM;1;un;5462;5462;1038;6500;Verificado
+CTA-02-R04;CTA-02;TR-03;Filtro de combustible;Con separador de agua;Consultar OEM;1;un;4622;4622;878;5500;Verificado
+CTA-02-R05;CTA-02;TR-04;Filtro de cabina / polen;;Consultar OEM;1;un;3353;3353;637;3990;Verificado
+CTA-02-R06;CTA-02;TR-06;Pastillas de freno delanteras;"Juego por eje; según desgaste";Consultar OEM;1;jgo;18479;18479;3511;21990;Verificado
+CTA-02-R07;CTA-02;TR-06;Discos de freno delanteros;"Par; según desgaste";Consultar OEM;1;par;81504;81504;15486;96990;Verificado
+CTA-02-R08;CTA-02;TR-07;Líquido de frenos;DOT 4 o el indicado en la tapa;;1;L;8395;8395;1595;9990;Estimado
+CTA-02-R09;CTA-02;TR-09;Refrigerante;Larga vida, premezcla 50/50;;10;L;1638;16380;3112;19492;Verificado
+CTA-02-R10;CTA-02;TR-10;Aceite de caja de cambios;Manual 75W-90 GL-4 / automática ATF según manual;;2.5;L;8395;20988;3988;24976;Estimado
+CTA-02-R11;CTA-02;TR-11;Aceite de diferenciales y transfer;80W-90 GL-5 (LSD si es autoblocante);;3.5;L;3825;13388;2544;15932;Verificado
+CTA-02-R12;CTA-02;TR-12;Grasa;EP2 litio;;0.3;kg;6565;1970;374;2344;Verificado
+CTA-02-R13;CTA-02;TR-13;Correa de accesorios;Al reemplazar según inspección;Consultar OEM;1;un;21000;21000;3990;24990;Estimado
+CTA-03-R01;CTA-03;TR-01;Aceite de motor;5W-30;;6.5;L;9032;58708;11155;69863;Verificado
+CTA-03-R02;CTA-03;TR-01;Filtro de aceite;Original o equivalente;Consultar OEM;1;un;3782;3782;719;4501;Verificado
+CTA-03-R03;CTA-03;TR-02;Filtro de aire de motor;Elemento primario;Consultar OEM;1;un;5462;5462;1038;6500;Verificado
+CTA-03-R04;CTA-03;TR-03;Filtro de combustible;Con separador de agua;Consultar OEM;1;un;4622;4622;878;5500;Verificado
+CTA-03-R05;CTA-03;TR-04;Filtro de cabina / polen;;Consultar OEM;1;un;3353;3353;637;3990;Verificado
+CTA-03-R06;CTA-03;TR-06;Pastillas de freno delanteras;"Juego por eje; según desgaste";Consultar OEM;1;jgo;18479;18479;3511;21990;Verificado
+CTA-03-R07;CTA-03;TR-06;Discos de freno delanteros;"Par; según desgaste";Consultar OEM;1;par;81504;81504;15486;96990;Verificado
+CTA-03-R08;CTA-03;TR-07;Líquido de frenos;DOT 4 o el indicado en la tapa;;1;L;8395;8395;1595;9990;Estimado
+CTA-03-R09;CTA-03;TR-09;Refrigerante;Larga vida, premezcla 50/50;;9;L;1638;14742;2801;17543;Verificado
+CTA-03-R10;CTA-03;TR-10;Aceite de caja de cambios;Manual 75W-90 GL-4 / automática ATF según manual;;2.5;L;8395;20988;3988;24976;Estimado
+CTA-03-R11;CTA-03;TR-11;Aceite de diferenciales y transfer;80W-90 GL-5 (LSD si es autoblocante);;3.5;L;3825;13388;2544;15932;Verificado
+CTA-03-R12;CTA-03;TR-12;Grasa;EP2 litio;;0.3;kg;6565;1970;374;2344;Verificado
+CTA-03-R13;CTA-03;TR-13;Correa de accesorios;Al reemplazar según inspección;Consultar OEM;1;un;21000;21000;3990;24990;Estimado
+CTA-04-R01;CTA-04;TR-01;Aceite de motor;5W-30 (WSS-M2C950-A);;9;L;9032;81288;15445;96733;Verificado
+CTA-04-R02;CTA-04;TR-01;Filtro de aceite;Original o equivalente;Consultar OEM;1;un;3782;3782;719;4501;Verificado
+CTA-04-R03;CTA-04;TR-02;Filtro de aire de motor;Elemento primario;Consultar OEM;1;un;5462;5462;1038;6500;Verificado
+CTA-04-R04;CTA-04;TR-03;Filtro de combustible;Con separador de agua;Consultar OEM;1;un;4622;4622;878;5500;Verificado
+CTA-04-R05;CTA-04;TR-04;Filtro de cabina / polen;;Consultar OEM;1;un;3353;3353;637;3990;Verificado
+CTA-04-R06;CTA-04;TR-06;Pastillas de freno delanteras;"Juego por eje; según desgaste";Consultar OEM;1;jgo;18479;18479;3511;21990;Verificado
+CTA-04-R07;CTA-04;TR-06;Discos de freno delanteros;"Par; según desgaste";Consultar OEM;1;par;81504;81504;15486;96990;Verificado
+CTA-04-R08;CTA-04;TR-07;Líquido de frenos;DOT 4 o el indicado en la tapa;;1;L;8395;8395;1595;9990;Estimado
+CTA-04-R09;CTA-04;TR-09;Refrigerante;Larga vida, premezcla 50/50;;11;L;1638;18018;3423;21441;Verificado
+CTA-04-R10;CTA-04;TR-10;Aceite de caja de cambios;Manual 75W-90 GL-4 / automática ATF según manual;;2.5;L;8395;20988;3988;24976;Estimado
+CTA-04-R11;CTA-04;TR-11;Aceite de diferenciales y transfer;80W-90 GL-5 (LSD si es autoblocante);;4;L;3825;15300;2907;18207;Verificado
+CTA-04-R12;CTA-04;TR-12;Grasa;EP2 litio;;0.3;kg;6565;1970;374;2344;Verificado
+CTA-04-R13;CTA-04;TR-13;Correa de accesorios;Al reemplazar según inspección;Consultar OEM;1;un;21000;21000;3990;24990;Estimado
+CTA-05-R01;CTA-05;TR-01;Aceite de motor;5W-30;;7;L;9032;63224;12013;75237;Verificado
+CTA-05-R02;CTA-05;TR-01;Filtro de aceite;Original o equivalente;Consultar OEM;1;un;3782;3782;719;4501;Verificado
+CTA-05-R03;CTA-05;TR-02;Filtro de aire de motor;Elemento primario;Consultar OEM;1;un;5462;5462;1038;6500;Verificado
+CTA-05-R04;CTA-05;TR-03;Filtro de combustible;Con separador de agua;Consultar OEM;1;un;4622;4622;878;5500;Verificado
+CTA-05-R05;CTA-05;TR-04;Filtro de cabina / polen;;Consultar OEM;1;un;3353;3353;637;3990;Verificado
+CTA-05-R06;CTA-05;TR-06;Pastillas de freno delanteras;"Juego por eje; según desgaste";Consultar OEM;1;jgo;18479;18479;3511;21990;Verificado
+CTA-05-R07;CTA-05;TR-06;Discos de freno delanteros;"Par; según desgaste";Consultar OEM;1;par;81504;81504;15486;96990;Verificado
+CTA-05-R08;CTA-05;TR-07;Líquido de frenos;DOT 4 o el indicado en la tapa;;1;L;8395;8395;1595;9990;Estimado
+CTA-05-R09;CTA-05;TR-09;Refrigerante;Larga vida, premezcla 50/50;;10;L;1638;16380;3112;19492;Verificado
+CTA-05-R10;CTA-05;TR-10;Aceite de caja de cambios;Manual 75W-90 GL-4 / automática ATF según manual;;2.5;L;8395;20988;3988;24976;Estimado
+CTA-05-R11;CTA-05;TR-11;Aceite de diferenciales y transfer;80W-90 GL-5 (LSD si es autoblocante);;3.5;L;3825;13388;2544;15932;Verificado
+CTA-05-R12;CTA-05;TR-12;Grasa;EP2 litio;;0.3;kg;6565;1970;374;2344;Verificado
+CTA-05-R13;CTA-05;TR-13;Correa de accesorios;Al reemplazar según inspección;Consultar OEM;1;un;21000;21000;3990;24990;Estimado
+CTA-06-R01;CTA-06;TR-01;Aceite de motor;5W-30 (Firefly 1.3);;3.5;L;9032;31612;6006;37618;Verificado
+CTA-06-R02;CTA-06;TR-01;Filtro de aceite;Original o equivalente;Consultar OEM;1;un;3782;3782;719;4501;Verificado
+CTA-06-R03;CTA-06;TR-02;Filtro de aire de motor;Elemento primario;Consultar OEM;1;un;5462;5462;1038;6500;Verificado
+CTA-06-R04;CTA-06;TR-04;Filtro de cabina / polen;;Consultar OEM;1;un;3353;3353;637;3990;Verificado
+CTA-06-R05;CTA-06;TR-06;Pastillas de freno delanteras;"Juego por eje; según desgaste";Consultar OEM;1;jgo;18479;18479;3511;21990;Verificado
+CTA-06-R06;CTA-06;TR-06;Discos de freno delanteros;"Par; según desgaste";Consultar OEM;1;par;81504;81504;15486;96990;Verificado
+CTA-06-R07;CTA-06;TR-07;Líquido de frenos;DOT 4 o el indicado en la tapa;;1;L;8395;8395;1595;9990;Estimado
+CTA-06-R08;CTA-06;TR-09;Refrigerante;Larga vida, premezcla 50/50;;6;L;1638;9828;1867;11695;Verificado
+CTA-06-R09;CTA-06;TR-10;Aceite de caja de cambios;Manual 75W-90 GL-4 / automática ATF según manual;;2.5;L;8395;20988;3988;24976;Estimado
+CTA-06-R10;CTA-06;TR-11;Aceite de diferenciales y transfer;80W-90 GL-5 (LSD si es autoblocante);;0;L;3825;0;0;0;Verificado
+CTA-06-R11;CTA-06;TR-12;Grasa;EP2 litio;;0.3;kg;6565;1970;374;2344;Verificado
+CTA-06-R12;CTA-06;TR-13;Correa de accesorios;Al reemplazar según inspección;Consultar OEM;1;un;21000;21000;3990;24990;Estimado
+CTA-06-R13;CTA-06;TR-16;Bujías;Iridio;Consultar OEM;4;un;10916;43664;8296;51960;Estimado
+CTA-07-R01;CTA-07;TR-01;Aceite de motor;5W-30;;5.7;L;9032;51482;9782;61264;Verificado
+CTA-07-R02;CTA-07;TR-01;Filtro de aceite;Original o equivalente;Consultar OEM;1;un;3782;3782;719;4501;Verificado
+CTA-07-R03;CTA-07;TR-02;Filtro de aire de motor;Elemento primario;Consultar OEM;1;un;5462;5462;1038;6500;Verificado
+CTA-07-R04;CTA-07;TR-04;Filtro de cabina / polen;;Consultar OEM;1;un;3353;3353;637;3990;Verificado
+CTA-07-R05;CTA-07;TR-06;Pastillas de freno delanteras;"Juego por eje; según desgaste";Consultar OEM;1;jgo;18479;18479;3511;21990;Verificado
+CTA-07-R06;CTA-07;TR-06;Discos de freno delanteros;"Par; según desgaste";Consultar OEM;1;par;81504;81504;15486;96990;Verificado
+CTA-07-R07;CTA-07;TR-07;Líquido de frenos;DOT 4 o el indicado en la tapa;;1;L;8395;8395;1595;9990;Estimado
+CTA-07-R08;CTA-07;TR-09;Refrigerante;Larga vida, premezcla 50/50;;15;L;1638;24570;4668;29238;Verificado
+CTA-07-R09;CTA-07;TR-10;Aceite de caja de cambios;Manual 75W-90 GL-4 / automática ATF según manual;;2.5;L;8395;20988;3988;24976;Estimado
+CTA-07-R10;CTA-07;TR-11;Aceite de diferenciales y transfer;80W-90 GL-5 (LSD si es autoblocante);;3.5;L;3825;13388;2544;15932;Verificado
+CTA-07-R11;CTA-07;TR-12;Grasa;EP2 litio;;0.3;kg;6565;1970;374;2344;Verificado
+CTA-07-R12;CTA-07;TR-13;Correa de accesorios;Al reemplazar según inspección;Consultar OEM;1;un;21000;21000;3990;24990;Estimado
+CTA-07-R13;CTA-07;TR-16;Bujías;Iridio;Consultar OEM;6;un;10916;65496;12444;77940;Estimado
+CTA-08-R01;CTA-08;TR-01;Aceite de motor;0W-20 dexos1 (se usa precio 5W-30);;7.6;L;9032;68643;13042;81685;Verificado
+CTA-08-R02;CTA-08;TR-01;Filtro de aceite;Original o equivalente;Consultar OEM;1;un;3782;3782;719;4501;Verificado
+CTA-08-R03;CTA-08;TR-02;Filtro de aire de motor;Elemento primario;Consultar OEM;1;un;5462;5462;1038;6500;Verificado
+CTA-08-R04;CTA-08;TR-04;Filtro de cabina / polen;;Consultar OEM;1;un;3353;3353;637;3990;Verificado
+CTA-08-R05;CTA-08;TR-06;Pastillas de freno delanteras;"Juego por eje; según desgaste";Consultar OEM;1;jgo;18479;18479;3511;21990;Verificado
+CTA-08-R06;CTA-08;TR-06;Discos de freno delanteros;"Par; según desgaste";Consultar OEM;1;par;81504;81504;15486;96990;Verificado
+CTA-08-R07;CTA-08;TR-07;Líquido de frenos;DOT 4 o el indicado en la tapa;;1;L;8395;8395;1595;9990;Estimado
+CTA-08-R08;CTA-08;TR-09;Refrigerante;Larga vida, premezcla 50/50;;14;L;1638;22932;4357;27289;Verificado
+CTA-08-R09;CTA-08;TR-10;Aceite de caja de cambios;Manual 75W-90 GL-4 / automática ATF según manual;;2.5;L;8395;20988;3988;24976;Estimado
+CTA-08-R10;CTA-08;TR-11;Aceite de diferenciales y transfer;80W-90 GL-5 (LSD si es autoblocante);;3.5;L;3825;13388;2544;15932;Verificado
+CTA-08-R11;CTA-08;TR-12;Grasa;EP2 litio;;0.3;kg;6565;1970;374;2344;Verificado
+CTA-08-R12;CTA-08;TR-13;Correa de accesorios;Al reemplazar según inspección;Consultar OEM;1;un;21000;21000;3990;24990;Estimado
+CTA-08-R13;CTA-08;TR-16;Bujías;Iridio;Consultar OEM;8;un;10916;87328;16592;103920;Estimado
+CTA-09-R01;CTA-09;TR-01;Aceite de motor;5W-30;;6.5;L;9032;58708;11155;69863;Verificado
+CTA-09-R02;CTA-09;TR-01;Filtro de aceite;Original o equivalente;Consultar OEM;1;un;3782;3782;719;4501;Verificado
+CTA-09-R03;CTA-09;TR-02;Filtro de aire de motor;Elemento primario;Consultar OEM;1;un;5462;5462;1038;6500;Verificado
+CTA-09-R04;CTA-09;TR-03;Filtro de combustible;Con separador de agua;Consultar OEM;1;un;4622;4622;878;5500;Verificado
+CTA-09-R05;CTA-09;TR-04;Filtro de cabina / polen;;Consultar OEM;1;un;3353;3353;637;3990;Verificado
+CTA-09-R06;CTA-09;TR-06;Pastillas de freno delanteras;"Juego por eje; según desgaste";Consultar OEM;1;jgo;18479;18479;3511;21990;Verificado
+CTA-09-R07;CTA-09;TR-06;Discos de freno delanteros;"Par; según desgaste";Consultar OEM;1;par;81504;81504;15486;96990;Verificado
+CTA-09-R08;CTA-09;TR-07;Líquido de frenos;DOT 4 o el indicado en la tapa;;1;L;8395;8395;1595;9990;Estimado
+CTA-09-R09;CTA-09;TR-09;Refrigerante;Larga vida, premezcla 50/50;;9;L;1638;14742;2801;17543;Verificado
+CTA-09-R10;CTA-09;TR-10;Aceite de caja de cambios;Manual 75W-90 GL-4 / automática ATF según manual;;2.5;L;8395;20988;3988;24976;Estimado
+CTA-09-R11;CTA-09;TR-11;Aceite de diferenciales y transfer;80W-90 GL-5 (LSD si es autoblocante);;3.5;L;3825;13388;2544;15932;Verificado
+CTA-09-R12;CTA-09;TR-12;Grasa;EP2 litio;;0.3;kg;6565;1970;374;2344;Verificado
+CTA-09-R13;CTA-09;TR-13;Correa de accesorios;Al reemplazar según inspección;Consultar OEM;1;un;21000;21000;3990;24990;Estimado
+CTA-10-R01;CTA-10;TR-01;Aceite de motor;5W-30;;6.5;L;9032;58708;11155;69863;Verificado
+CTA-10-R02;CTA-10;TR-01;Filtro de aceite;Original o equivalente;Consultar OEM;1;un;3782;3782;719;4501;Verificado
+CTA-10-R03;CTA-10;TR-02;Filtro de aire de motor;Elemento primario;Consultar OEM;1;un;5462;5462;1038;6500;Verificado
+CTA-10-R04;CTA-10;TR-03;Filtro de combustible;Con separador de agua;Consultar OEM;1;un;4622;4622;878;5500;Verificado
+CTA-10-R05;CTA-10;TR-04;Filtro de cabina / polen;;Consultar OEM;1;un;3353;3353;637;3990;Verificado
+CTA-10-R06;CTA-10;TR-06;Pastillas de freno delanteras;"Juego por eje; según desgaste";Consultar OEM;1;jgo;18479;18479;3511;21990;Verificado
+CTA-10-R07;CTA-10;TR-06;Discos de freno delanteros;"Par; según desgaste";Consultar OEM;1;par;81504;81504;15486;96990;Verificado
+CTA-10-R08;CTA-10;TR-07;Líquido de frenos;DOT 4 o el indicado en la tapa;;1;L;8395;8395;1595;9990;Estimado
+CTA-10-R09;CTA-10;TR-09;Refrigerante;Larga vida, premezcla 50/50;;10;L;1638;16380;3112;19492;Verificado
+CTA-10-R10;CTA-10;TR-10;Aceite de caja de cambios;Manual 75W-90 GL-4 / automática ATF según manual;;2.5;L;8395;20988;3988;24976;Estimado
+CTA-10-R11;CTA-10;TR-11;Aceite de diferenciales y transfer;80W-90 GL-5 (LSD si es autoblocante);;3.5;L;3825;13388;2544;15932;Verificado
+CTA-10-R12;CTA-10;TR-12;Grasa;EP2 litio;;0.3;kg;6565;1970;374;2344;Verificado
+CTA-10-R13;CTA-10;TR-13;Correa de accesorios;Al reemplazar según inspección;Consultar OEM;1;un;21000;21000;3990;24990;Estimado
+MAQ-01-R01;MAQ-01;TR-01;Aceite de motor;15W-40 Cat DEO;;11;L;4378;48158;9150;57308;Verificado
+MAQ-01-R02;MAQ-01;TR-01;Filtro de aceite motor;Original o equivalente;Consultar OEM;1;un;25202;25202;4788;29990;Estimado
+MAQ-01-R03;MAQ-01;TR-03;Filtro de combustible / separador;Primario y secundario según modelo;Consultar OEM;2;un;29403;58806;11173;69979;Estimado
+MAQ-01-R04;MAQ-01;TR-02;Filtro de aire primario;;Consultar OEM;1;un;67218;67218;12771;79989;Estimado
+MAQ-01-R05;MAQ-01;TR-02;Filtro de aire de seguridad;Cada 3 cambios del primario;Consultar OEM;1;un;37807;37807;7183;44990;Estimado
+MAQ-01-R06;MAQ-01;TR-20;Filtro hidráulico de retorno;;Consultar OEM;1;un;84025;84025;15965;99990;Estimado
+MAQ-01-R07;MAQ-01;TR-19;Aceite hidráulico;ISO 46/68 o 10W según manual (se usa precio ISO 68);;45;L;2609;117405;22307;139712;Verificado
+MAQ-01-R08;MAQ-01;TR-09;Refrigerante;Larga vida HD, premezcla 50/50;;20;L;1638;32760;6224;38984;Verificado
+MAQ-01-R09;MAQ-01;TR-12;Grasa;EP2 litio (pasadores);;0.5;kg;6565;3282;624;3906;Verificado
+MAQ-01-R10;MAQ-01;TR-25;Aceite de transmisión;TO-4 10W;;12;L;5086;61032;11596;72628;Estimado
+MAQ-01-R11;MAQ-01;TR-25;Filtro de transmisión;;Consultar OEM;1;un;42008;42008;7982;49990;Estimado
+MAQ-01-R12;MAQ-01;TR-11;Aceite de ejes / tándem / planetarios;TO-4 50 o 80W-90 según manual (se usa precio 80W-90);;18;L;3825;68850;13082;81932;Verificado
+MAQ-02-R01;MAQ-02;TR-01;Aceite de motor;15W-40;;15;L;4378;65670;12477;78147;Verificado
+MAQ-02-R02;MAQ-02;TR-01;Filtro de aceite motor;Original o equivalente;Consultar OEM;1;un;25202;25202;4788;29990;Estimado
+MAQ-02-R03;MAQ-02;TR-03;Filtro de combustible / separador;Primario y secundario según modelo;Consultar OEM;2;un;29403;58806;11173;69979;Estimado
+MAQ-02-R04;MAQ-02;TR-02;Filtro de aire primario;;Consultar OEM;1;un;67218;67218;12771;79989;Estimado
+MAQ-02-R05;MAQ-02;TR-02;Filtro de aire de seguridad;Cada 3 cambios del primario;Consultar OEM;1;un;37807;37807;7183;44990;Estimado
+MAQ-02-R06;MAQ-02;TR-20;Filtro hidráulico de retorno;;Consultar OEM;1;un;84025;84025;15965;99990;Estimado
+MAQ-02-R07;MAQ-02;TR-19;Aceite hidráulico;ISO 46/68 o 10W según manual (se usa precio ISO 68);;60;L;2609;156540;29743;186283;Verificado
+MAQ-02-R08;MAQ-02;TR-09;Refrigerante;Larga vida HD, premezcla 50/50;;22;L;1638;36036;6847;42883;Verificado
+MAQ-02-R09;MAQ-02;TR-12;Grasa;EP2 litio (pasadores);;0.5;kg;6565;3282;624;3906;Verificado
+MAQ-02-R10;MAQ-02;TR-25;Aceite de transmisión;TO-4 10W;;12;L;5086;61032;11596;72628;Estimado
+MAQ-02-R11;MAQ-02;TR-25;Filtro de transmisión;;Consultar OEM;1;un;42008;42008;7982;49990;Estimado
+MAQ-02-R12;MAQ-02;TR-11;Aceite de ejes / tándem / planetarios;TO-4 50 o 80W-90 según manual (se usa precio 80W-90);;18;L;3825;68850;13082;81932;Verificado
+MAQ-03-R01;MAQ-03;TR-01;Aceite de motor;15W-40 Cat DEO;;15;L;4378;65670;12477;78147;Verificado
+MAQ-03-R02;MAQ-03;TR-01;Filtro de aceite motor;Original o equivalente;Consultar OEM;1;un;25202;25202;4788;29990;Estimado
+MAQ-03-R03;MAQ-03;TR-03;Filtro de combustible / separador;Primario y secundario según modelo;Consultar OEM;2;un;29403;58806;11173;69979;Estimado
+MAQ-03-R04;MAQ-03;TR-02;Filtro de aire primario;;Consultar OEM;1;un;67218;67218;12771;79989;Estimado
+MAQ-03-R05;MAQ-03;TR-02;Filtro de aire de seguridad;Cada 3 cambios del primario;Consultar OEM;1;un;37807;37807;7183;44990;Estimado
+MAQ-03-R06;MAQ-03;TR-20;Filtro hidráulico de retorno;;Consultar OEM;1;un;84025;84025;15965;99990;Estimado
+MAQ-03-R07;MAQ-03;TR-20;Filtro piloto hidráulico;;Consultar OEM;1;un;25202;25202;4788;29990;Estimado
+MAQ-03-R08;MAQ-03;TR-19;Aceite hidráulico;ISO 46/68 o 10W según manual (se usa precio ISO 68);;130;L;2609;339170;64442;403612;Verificado
+MAQ-03-R09;MAQ-03;TR-09;Refrigerante;Larga vida HD, premezcla 50/50;;25;L;1638;40950;7780;48730;Verificado
+MAQ-03-R10;MAQ-03;TR-12;Grasa;EP2 litio (pasadores);;0.5;kg;6565;3282;624;3906;Verificado
+MAQ-03-R11;MAQ-03;TR-21;Aceite de mandos finales / giro;TO-4 50 o 80W-90 según manual (se usa precio 80W-90);;14;L;3825;53550;10174;63724;Verificado
+MAQ-04-R01;MAQ-04;TR-01;Aceite de motor;15W-40;;23;L;4378;100694;19132;119826;Verificado
+MAQ-04-R02;MAQ-04;TR-01;Filtro de aceite motor;Original o equivalente;Consultar OEM;1;un;25202;25202;4788;29990;Estimado
+MAQ-04-R03;MAQ-04;TR-03;Filtro de combustible / separador;Primario y secundario según modelo;Consultar OEM;2;un;29403;58806;11173;69979;Estimado
+MAQ-04-R04;MAQ-04;TR-02;Filtro de aire primario;;Consultar OEM;1;un;67218;67218;12771;79989;Estimado
+MAQ-04-R05;MAQ-04;TR-02;Filtro de aire de seguridad;Cada 3 cambios del primario;Consultar OEM;1;un;37807;37807;7183;44990;Estimado
+MAQ-04-R06;MAQ-04;TR-20;Filtro hidráulico de retorno;;Consultar OEM;1;un;84025;84025;15965;99990;Estimado
+MAQ-04-R07;MAQ-04;TR-20;Filtro piloto hidráulico;;Consultar OEM;1;un;25202;25202;4788;29990;Estimado
+MAQ-04-R08;MAQ-04;TR-19;Aceite hidráulico;ISO 46/68 o 10W según manual (se usa precio ISO 68);;135;L;2609;352215;66921;419136;Verificado
+MAQ-04-R09;MAQ-04;TR-09;Refrigerante;Larga vida HD, premezcla 50/50;;30;L;1638;49140;9337;58477;Verificado
+MAQ-04-R10;MAQ-04;TR-12;Grasa;EP2 litio (pasadores);;0.5;kg;6565;3282;624;3906;Verificado
+MAQ-04-R11;MAQ-04;TR-21;Aceite de mandos finales / giro;TO-4 50 o 80W-90 según manual (se usa precio 80W-90);;14;L;3825;53550;10174;63724;Verificado
+MAQ-05-R01;MAQ-05;TR-01;Aceite de motor;15W-40;;11;L;4378;48158;9150;57308;Verificado
+MAQ-05-R02;MAQ-05;TR-01;Filtro de aceite motor;Original o equivalente;Consultar OEM;1;un;25202;25202;4788;29990;Estimado
+MAQ-05-R03;MAQ-05;TR-03;Filtro de combustible / separador;Primario y secundario según modelo;Consultar OEM;2;un;29403;58806;11173;69979;Estimado
+MAQ-05-R04;MAQ-05;TR-02;Filtro de aire primario;;Consultar OEM;1;un;67218;67218;12771;79989;Estimado
+MAQ-05-R05;MAQ-05;TR-02;Filtro de aire de seguridad;Cada 3 cambios del primario;Consultar OEM;1;un;37807;37807;7183;44990;Estimado
+MAQ-05-R06;MAQ-05;TR-20;Filtro hidráulico de retorno;;Consultar OEM;1;un;84025;84025;15965;99990;Estimado
+MAQ-05-R07;MAQ-05;TR-19;Aceite hidráulico;ISO 46/68 o 10W según manual (se usa precio ISO 68);;37;L;2609;96533;18341;114874;Verificado
+MAQ-05-R08;MAQ-05;TR-09;Refrigerante;Larga vida HD, premezcla 50/50;;15;L;1638;24570;4668;29238;Verificado
+MAQ-05-R09;MAQ-05;TR-12;Grasa;EP2 litio (pasadores);;0.3;kg;6565;1970;374;2344;Verificado
+MAQ-05-R10;MAQ-05;TR-27;Aceite cárter de cadenas;10W-30 según manual (se usa precio 15W-40);;12;L;4378;52536;9982;62518;Verificado
+MAQ-06-R01;MAQ-06;TR-01;Aceite de motor;15W-40 Cat DEO;;25;L;4378;109450;20796;130246;Verificado
+MAQ-06-R02;MAQ-06;TR-01;Filtro de aceite motor;Original o equivalente;Consultar OEM;1;un;25202;25202;4788;29990;Estimado
+MAQ-06-R03;MAQ-06;TR-03;Filtro de combustible / separador;Primario y secundario según modelo;Consultar OEM;2;un;29403;58806;11173;69979;Estimado
+MAQ-06-R04;MAQ-06;TR-02;Filtro de aire primario;;Consultar OEM;1;un;67218;67218;12771;79989;Estimado
+MAQ-06-R05;MAQ-06;TR-02;Filtro de aire de seguridad;Cada 3 cambios del primario;Consultar OEM;1;un;37807;37807;7183;44990;Estimado
+MAQ-06-R06;MAQ-06;TR-20;Filtro hidráulico de retorno;;Consultar OEM;1;un;84025;84025;15965;99990;Estimado
+MAQ-06-R07;MAQ-06;TR-19;Aceite hidráulico;ISO 46/68 o 10W según manual (se usa precio ISO 68);;110;L;2609;286990;54528;341518;Verificado
+MAQ-06-R08;MAQ-06;TR-09;Refrigerante;Larga vida HD, premezcla 50/50;;40;L;1638;65520;12449;77969;Verificado
+MAQ-06-R09;MAQ-06;TR-12;Grasa;EP2 litio (pasadores);;0.5;kg;6565;3282;624;3906;Verificado
+MAQ-06-R10;MAQ-06;TR-25;Aceite de transmisión;TO-4 10W;;24;L;5086;122064;23192;145256;Estimado
+MAQ-06-R11;MAQ-06;TR-25;Filtro de transmisión;;Consultar OEM;1;un;42008;42008;7982;49990;Estimado
+MAQ-06-R12;MAQ-06;TR-11;Aceite de ejes / tándem / planetarios;TO-4 50 o 80W-90 según manual (se usa precio 80W-90);;36;L;3825;137700;26163;163863;Verificado
+MAQ-07-R01;MAQ-07;TR-01;Aceite de motor;15W-40 Cat DEO;;26;L;4378;113828;21627;135455;Verificado
+MAQ-07-R02;MAQ-07;TR-01;Filtro de aceite motor;Original o equivalente;Consultar OEM;1;un;25202;25202;4788;29990;Estimado
+MAQ-07-R03;MAQ-07;TR-03;Filtro de combustible / separador;Primario y secundario según modelo;Consultar OEM;2;un;29403;58806;11173;69979;Estimado
+MAQ-07-R04;MAQ-07;TR-02;Filtro de aire primario;;Consultar OEM;1;un;67218;67218;12771;79989;Estimado
+MAQ-07-R05;MAQ-07;TR-02;Filtro de aire de seguridad;Cada 3 cambios del primario;Consultar OEM;1;un;37807;37807;7183;44990;Estimado
+MAQ-07-R06;MAQ-07;TR-20;Filtro hidráulico de retorno;;Consultar OEM;1;un;84025;84025;15965;99990;Estimado
+MAQ-07-R07;MAQ-07;TR-19;Aceite hidráulico;ISO 46/68 o 10W según manual (se usa precio ISO 68);;60;L;2609;156540;29743;186283;Verificado
+MAQ-07-R08;MAQ-07;TR-09;Refrigerante;Larga vida HD, premezcla 50/50;;40;L;1638;65520;12449;77969;Verificado
+MAQ-07-R09;MAQ-07;TR-12;Grasa;EP2 litio (pasadores);;0.5;kg;6565;3282;624;3906;Verificado
+MAQ-07-R10;MAQ-07;TR-25;Aceite de transmisión;TO-4 10W;;28;L;5086;142408;27058;169466;Estimado
+MAQ-07-R11;MAQ-07;TR-25;Filtro de transmisión;;Consultar OEM;1;un;42008;42008;7982;49990;Estimado
+MAQ-07-R12;MAQ-07;TR-11;Aceite de ejes / tándem / planetarios;TO-4 50 o 80W-90 según manual (se usa precio 80W-90);;42;L;3825;160650;30524;191174;Verificado
+MAQ-08-R01;MAQ-08;TR-01;Aceite de motor;15W-40 Cat DEO;;30;L;4378;131340;24955;156295;Verificado
+MAQ-08-R02;MAQ-08;TR-01;Filtro de aceite motor;Original o equivalente;Consultar OEM;1;un;25202;25202;4788;29990;Estimado
+MAQ-08-R03;MAQ-08;TR-03;Filtro de combustible / separador;Primario y secundario según modelo;Consultar OEM;2;un;29403;58806;11173;69979;Estimado
+MAQ-08-R04;MAQ-08;TR-02;Filtro de aire primario;;Consultar OEM;1;un;67218;67218;12771;79989;Estimado
+MAQ-08-R05;MAQ-08;TR-02;Filtro de aire de seguridad;Cada 3 cambios del primario;Consultar OEM;1;un;37807;37807;7183;44990;Estimado
+MAQ-08-R06;MAQ-08;TR-20;Filtro hidráulico de retorno;;Consultar OEM;1;un;84025;84025;15965;99990;Estimado
+MAQ-08-R07;MAQ-08;TR-19;Aceite hidráulico;ISO 46/68 o 10W según manual (se usa precio ISO 68);;80;L;2609;208720;39657;248377;Verificado
+MAQ-08-R08;MAQ-08;TR-09;Refrigerante;Larga vida HD, premezcla 50/50;;50;L;1638;81900;15561;97461;Verificado
+MAQ-08-R09;MAQ-08;TR-12;Grasa;EP2 litio (pasadores);;0.5;kg;6565;3282;624;3906;Verificado
+MAQ-08-R10;MAQ-08;TR-25;Aceite de transmisión;TO-4 10W;;32;L;5086;162752;30923;193675;Estimado
+MAQ-08-R11;MAQ-08;TR-25;Filtro de transmisión;;Consultar OEM;1;un;42008;42008;7982;49990;Estimado
+MAQ-08-R12;MAQ-08;TR-21;Aceite de mandos finales / giro;TO-4 50 o 80W-90 según manual (se usa precio 80W-90);;48;L;3825;183600;34884;218484;Verificado
+MAQ-09-R01;MAQ-09;TR-01;Aceite de motor;15W-40 Cat DEO;;13;L;4378;56914;10814;67728;Verificado
+MAQ-09-R02;MAQ-09;TR-01;Filtro de aceite motor;Original o equivalente;Consultar OEM;1;un;25202;25202;4788;29990;Estimado
+MAQ-09-R03;MAQ-09;TR-03;Filtro de combustible / separador;Primario y secundario según modelo;Consultar OEM;2;un;29403;58806;11173;69979;Estimado
+MAQ-09-R04;MAQ-09;TR-02;Filtro de aire primario;;Consultar OEM;1;un;67218;67218;12771;79989;Estimado
+MAQ-09-R05;MAQ-09;TR-02;Filtro de aire de seguridad;Cada 3 cambios del primario;Consultar OEM;1;un;37807;37807;7183;44990;Estimado
+MAQ-09-R06;MAQ-09;TR-20;Filtro hidráulico de retorno;;Consultar OEM;1;un;84025;84025;15965;99990;Estimado
+MAQ-09-R07;MAQ-09;TR-19;Aceite hidráulico;ISO 46/68 o 10W según manual (se usa precio ISO 68);;50;L;2609;130450;24786;155236;Verificado
+MAQ-09-R08;MAQ-09;TR-09;Refrigerante;Larga vida HD, premezcla 50/50;;22;L;1638;36036;6847;42883;Verificado
+MAQ-09-R09;MAQ-09;TR-12;Grasa;EP2 litio (pasadores);;0.5;kg;6565;3282;624;3906;Verificado
+MAQ-09-R10;MAQ-09;TR-11;Aceite de ejes / tándem / planetarios;TO-4 50 o 80W-90 según manual (se usa precio 80W-90);;15;L;3825;57375;10901;68276;Verificado
+MAQ-09-R11;MAQ-09;TR-28;Aceite de excitador / tambor;Según manual (se usa precio 15W-40);;10;L;4378;43780;8318;52098;Verificado
+MAQ-10-R01;MAQ-10;TR-01;Aceite de motor;10W-30 (gasolina/GLP);;4;L;9032;36128;6864;42992;Verificado
+MAQ-10-R02;MAQ-10;TR-01;Filtro de aceite;;Consultar OEM;1;un;7555;7555;1435;8990;Estimado
+MAQ-10-R03;MAQ-10;TR-02;Filtro de aire;;Consultar OEM;1;un;16798;16798;3192;19990;Estimado
+MAQ-10-R04;MAQ-10;TR-16;Bujías;Cobre;Consultar OEM;4;un;5034;20136;3826;23962;Estimado
+MAQ-10-R05;MAQ-10;TR-20;Filtro hidráulico;;Consultar OEM;1;un;21000;21000;3990;24990;Estimado
+MAQ-10-R06;MAQ-10;TR-19;Aceite hidráulico;ISO 32/46 según manual (se usa precio ISO 68);;30;L;2609;78270;14871;93141;Verificado
+MAQ-10-R07;MAQ-10;TR-25;Aceite de transmisión;ATF según manual;;6;L;8395;50370;9570;59940;Estimado
+MAQ-10-R08;MAQ-10;TR-11;Aceite de diferencial;80W-90 GL-5;;2;L;3825;7650;1454;9104;Verificado
+MAQ-10-R09;MAQ-10;TR-09;Refrigerante;Premezcla 50/50;;7;L;1638;11466;2179;13645;Verificado
+MAQ-10-R10;MAQ-10;TR-12;Grasa;EP2 litio;;0.3;kg;6565;1970;374;2344;Verificado

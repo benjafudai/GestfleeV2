@@ -43,6 +43,15 @@
           </div>
           <div class="form-text">Cada cuántos días se debe realizar si no se alcanza el kilometraje.</div>
         </div>
+
+        <div class="col-md-6">
+          <%= form.label :interval_hours, "Intervalo (Horas de uso)", class: "form-label fw-medium" %>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-hourglass-split"></i></span>
+            <%= form.number_field :interval_hours, class: "form-control", placeholder: "Ej. 500" %>
+          </div>
+          <div class="form-text">Para maquinaria que se mide con horómetro.</div>
+        </div>
       </div>
     </div>
   </div>
