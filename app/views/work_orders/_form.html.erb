@@ -1,70 +1,61 @@
 <%= form_with(model: work_order, class: "needs-validation") do |form| %>
-  <% if work_order.errors.any? %>
-    <div class="alert alert-danger shadow-sm rounded-3">
-      <h5 class="alert-heading fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i>Errores al guardar la Orden de Trabajo:</h5>
-      <ul class="mb-0">
-        <% work_order.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
+  <%= render "shared/form_errors", object: work_order, subject: "la orden de trabajo" %>
+
+  <div class="card mb-4">
+    <div class="card-header bg-white">
+      <%= maintenance_card_title("Datos de la orden", icon: "bi-card-text") %>
     </div>
-  <% end %>
-
-  <div class="row g-4">
-    <div class="col-md-8">
-      <div class="card shadow-sm border-0 h-100">
-        <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
-          <h5 class="fw-bold mb-0">Información Principal</h5>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-6 col-xl-4">
+          <%= form.label :vehicle_id, class: "form-label" do %>Vehículo <span class="text-danger">*</span><% end %>
+          <%= form.collection_select :vehicle_id, Vehicle.all, :id, ->(v) { work_order_vehicle_label(v) }, { prompt: "Selecciona un vehículo" }, { class: ["form-select", ("is-invalid" if work_order.errors.include?(:vehicle))], required: true } %>
+          <div class="invalid-feedback">Selecciona el vehículo de la orden.</div>
         </div>
-        <div class="card-body">
-          <div class="row g-3">
-            <div class="col-md-6">
-              <%= form.label :vehicle_id, "Vehículo", class: "form-label fw-medium" %>
-              <%= form.collection_select :vehicle_id, Vehicle.all, :id, ->(v){ "#{v.plate} - #{v.brand} #{v.model}" }, { prompt: "Seleccione un vehículo" }, { class: "form-select", required: true } %>
-            </div>
 
-            <div class="col-md-6">
-              <%= form.label :maintenance_plan_id, "Plan de Mantenimiento", class: "form-label fw-medium" %>
-              <%= form.collection_select :maintenance_plan_id, MaintenancePlan.all, :id, :name, { prompt: "Mantenimiento Correctivo (Sin Plan)" }, { class: "form-select" } %>
-              <div class="form-text">Opcional. Si se deja en blanco, será un mantenimiento correctivo.</div>
-            </div>
+        <div class="col-md-6 col-xl-4">
+          <%= form.label :maintenance_plan_id, "Plan de mantención", class: "form-label" %>
+          <%= form.collection_select :maintenance_plan_id, MaintenancePlan.all, :id, :name, { include_blank: "Ninguno (mantención correctiva)" }, { class: "form-select" } %>
+          <div class="form-text">Opcional. Sin plan, la orden queda como mantención correctiva.</div>
+        </div>
 
-            <div class="col-md-6">
-              <%= form.label :start_date, "Fecha de Inicio", class: "form-label fw-medium" %>
-              <%= form.date_field :start_date, class: "form-control", required: true %>
-            </div>
+        <div class="col-md-6 col-xl-4">
+          <%= form.label :status, "Estado", class: "form-label" %>
+          <%= form.select :status, WorkOrder.statuses.keys.map { |s| [work_order_status_label(s), s] }, {}, { class: "form-select" } %>
+        </div>
 
-            <div class="col-md-6">
-              <%= form.label :end_date, "Fecha de Finalización", class: "form-label fw-medium" %>
-              <%= form.date_field :end_date, class: "form-control" %>
-            </div>
+        <div class="col-md-6 col-xl-4">
+          <%= form.label :mechanic_id, "Mecánico asignado", class: "form-label" %>
+          <%= form.collection_select :mechanic_id, (Current.company || work_order.vehicle&.company)&.users&.where(role: [:mecanico, :admin]) || User.where(role: [:mecanico, :admin]), :id, :email, { include_blank: "Sin asignar" }, { class: "form-select" } %>
+        </div>
 
-            <div class="col-md-6">
-              <%= form.label :mechanic_id, "Mecánico Asignado", class: "form-label fw-medium" %>
-              <%= form.collection_select :mechanic_id, (Current.company || work_order.vehicle&.company)&.users&.where(role: [:mecanico, :admin]) || User.where(role: [:mecanico, :admin]), :id, :email, { prompt: "Seleccione un mecánico" }, { class: "form-select" } %>
-            </div>
+        <div class="col-md-6 col-xl-4">
+          <%= form.label :start_date, class: "form-label" do %>Fecha de inicio <span class="text-danger">*</span><% end %>
+          <%= form.date_field :start_date, class: "form-control", required: true %>
+        </div>
 
-            <div class="col-md-6">
-              <%= form.label :status, "Estado de la Orden", class: "form-label fw-medium" %>
-              <%= form.select :status, WorkOrder.statuses.keys.map { |s| [work_order_status_label(s), s] }, {}, { class: "form-select" } %>
-            </div>
+        <div class="col-md-6 col-xl-4">
+          <%= form.label :end_date, "Fecha de término", class: "form-label" %>
+          <%= form.date_field :end_date, class: "form-control" %>
+        </div>
 
-            <div class="col-12">
-              <%= form.label :notes, "Notas y Observaciones", class: "form-label fw-medium" %>
-              <%= form.text_area :notes, class: "form-control", rows: 4, placeholder: "Detalles adicionales, recomendaciones, etc." %>
-            </div>
-          </div>
+        <div class="col-12">
+          <%= form.label :notes, "Notas y observaciones", class: "form-label" %>
+          <%= form.text_area :notes, class: "form-control", rows: 3, placeholder: "Detalles adicionales, hallazgos o recomendaciones" %>
         </div>
       </div>
     </div>
+  </div>
 
-    <div class="col-md-4">
-      <div class="card shadow-sm border-0 mb-4">
-        <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
-          <h5 class="fw-bold mb-0">Tareas Realizadas</h5>
+  <div class="row g-4">
+    <div class="col-lg-6">
+      <div class="card h-100">
+        <div class="card-header bg-white">
+          <%= maintenance_card_title("Tareas", icon: "bi-list-check") %>
         </div>
         <div class="card-body">
-          <% 
+          <p class="form-text mt-0 mb-3">Escribe una tarea en cada campo y marca las que ya se hicieron. Los campos vacíos no se guardan.</p>
+          <%
             tasks = work_order.work_order_tasks
             if tasks.empty?
               2.times { work_order.work_order_tasks.build }
@@ -72,22 +63,29 @@
               work_order.work_order_tasks.build
             end
           %>
-          
+
+          <% tasks_removable = work_order.work_order_tasks.any?(&:persisted?) %>
           <%= form.fields_for :work_order_tasks do |task_form| %>
-            <div class="mb-3 border p-2 rounded bg-light">
-              <%= task_form.label :description, "Descripción", class: "form-label small mb-1" %>
-              <%= task_form.text_field :description, class: "form-control form-control-sm mb-2" %>
-              
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="form-check">
-                  <%= task_form.check_box :completed, class: "form-check-input" %>
-                  <%= task_form.label :completed, "Completada", class: "form-check-label small" %>
+            <div class="p-2 mb-2 rounded-3 border bg-light">
+              <div class="row g-2 align-items-center">
+                <div class="col-12 col-sm">
+                  <%= task_form.label :description, "Descripción de la tarea", class: "visually-hidden" %>
+                  <%= task_form.text_field :description, class: "form-control", placeholder: "Ej.: cambio de aceite del motor" %>
                 </div>
-                
+                <div class="col-auto">
+                  <div class="form-check mb-0 text-nowrap">
+                    <%= task_form.check_box :completed, class: "form-check-input" %>
+                    <%= task_form.label :completed, "Completada", class: "form-check-label" %>
+                  </div>
+                </div>
                 <% if task_form.object&.persisted? %>
-                  <div class="form-check text-danger">
-                    <%= task_form.check_box :_destroy, class: "form-check-input" %>
-                    <%= task_form.label :_destroy, "Quitar", class: "form-check-label small" %>
+                  <div class="col-auto ms-auto">
+                    <%= task_form.check_box :_destroy, class: "btn-check", autocomplete: "off" %>
+                    <%= task_form.label :_destroy, class: "btn btn-outline-danger text-nowrap", title: "Quitar esta tarea al guardar" do %><i class="bi bi-trash3 me-1"></i>Quitar<% end %>
+                  </div>
+                <% elsif tasks_removable %>
+                  <div class="col-auto d-none d-sm-block invisible" aria-hidden="true">
+                    <span class="btn btn-outline-danger text-nowrap"><i class="bi bi-trash3 me-1"></i>Quitar</span>
                   </div>
                 <% end %>
               </div>
@@ -95,13 +93,16 @@
           <% end %>
         </div>
       </div>
+    </div>
 
-      <div class="card shadow-sm border-0">
-        <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
-          <h5 class="fw-bold mb-0">Repuestos Utilizados</h5>
+    <div class="col-lg-6">
+      <div class="card h-100">
+        <div class="card-header bg-white">
+          <%= maintenance_card_title("Repuestos utilizados", icon: "bi-box-seam") %>
         </div>
         <div class="card-body">
-          <% 
+          <p class="form-text mt-0 mb-3">El stock se descuenta del inventario cuando la orden se marca como completada. Las filas sin repuesto no se guardan.</p>
+          <%
             parts_usage = work_order.work_order_part_usages
             if parts_usage.empty?
               2.times { work_order.work_order_part_usages.build }
@@ -109,24 +110,27 @@
               work_order.work_order_part_usages.build
             end
           %>
-          
+
+          <% parts_removable = work_order.work_order_part_usages.any?(&:persisted?) %>
           <%= form.fields_for :work_order_part_usages do |usage_form| %>
-            <div class="mb-3 border p-2 rounded bg-light">
-              <div class="mb-2">
-                <%= usage_form.label :part_id, "Repuesto", class: "form-label small mb-1" %>
-                <%= usage_form.collection_select :part_id, Part.all, :id, ->(p){ "#{p.sku} - #{p.name} (Stock: #{p.stock})" }, { prompt: "Seleccione" }, { class: "form-select form-select-sm" } %>
-              </div>
-              
-              <div class="d-flex gap-2 align-items-end">
-                <div class="flex-grow-1">
-                  <%= usage_form.label :quantity, "Cantidad", class: "form-label small mb-1" %>
-                  <%= usage_form.number_field :quantity, class: "form-control form-control-sm", step: "0.01", min: "0" %>
+            <div class="p-2 mb-2 rounded-3 border bg-light">
+              <div class="row g-2 align-items-end">
+                <div class="col-12 col-sm">
+                  <%= usage_form.label :part_id, "Repuesto", class: "form-label" %>
+                  <%= usage_form.collection_select :part_id, Part.all, :id, ->(p) { work_order_part_option_label(p) }, { prompt: "Selecciona un repuesto" }, { class: "form-select" } %>
                 </div>
-                
+                <div class="col-6 col-sm-3">
+                  <%= usage_form.label :quantity, "Cantidad", class: "form-label" %>
+                  <%= usage_form.number_field :quantity, value: work_order_quantity_input(usage_form.object&.quantity), class: "form-control", step: "0.01", min: "0" %>
+                </div>
                 <% if usage_form.object&.persisted? %>
-                  <div class="form-check text-danger ms-2 pb-1">
-                    <%= usage_form.check_box :_destroy, class: "form-check-input" %>
-                    <%= usage_form.label :_destroy, "Quitar", class: "form-check-label small" %>
+                  <div class="col-auto ms-auto">
+                    <%= usage_form.check_box :_destroy, class: "btn-check", autocomplete: "off" %>
+                    <%= usage_form.label :_destroy, class: "btn btn-outline-danger text-nowrap", title: "Quitar este repuesto al guardar" do %><i class="bi bi-trash3 me-1"></i>Quitar<% end %>
+                  </div>
+                <% elsif parts_removable %>
+                  <div class="col-auto d-none d-sm-block invisible" aria-hidden="true">
+                    <span class="btn btn-outline-danger text-nowrap"><i class="bi bi-trash3 me-1"></i>Quitar</span>
                   </div>
                 <% end %>
               </div>
@@ -138,7 +142,7 @@
   </div>
 
   <div class="d-flex justify-content-end gap-2 mt-4">
-    <%= link_to "Cancelar", work_orders_path, class: "btn btn-light shadow-sm px-3" %>
-    <%= form.submit "Guardar Orden de Trabajo", class: "btn btn-primary shadow-sm px-4 fw-medium" %>
+    <%= link_to "Cancelar", (work_order.persisted? ? work_order_path(work_order) : work_orders_path), class: "btn btn-outline-secondary" %>
+    <%= form.submit "Guardar orden", class: "btn btn-primary" %>
   </div>
 <% end %>

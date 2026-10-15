@@ -1,193 +1,229 @@
+<% vehicle = @work_order.vehicle %>
+<% plan = @work_order.maintenance_plan %>
+<% tasks = @work_order.work_order_tasks.to_a %>
+<% done_tasks = tasks.count(&:completed?) %>
+<% part_usages = @work_order.work_order_part_usages.includes(:part).to_a %>
+<% terminal = work_order_terminal?(@work_order) %>
 <div class="container mt-4">
-  <div class="row mb-4 align-items-center">
-    <div class="col">
-      <nav aria-label="breadcrumb">
-        <ol class="breadcrumb mb-1">
-          <li class="breadcrumb-item"><%= link_to "Órdenes de Trabajo", work_orders_path, class: "text-decoration-none" %></li>
-          <li class="breadcrumb-item active" aria-current="page">Orden #<%= @work_order.id %></li>
-        </ol>
-      </nav>
-      <div class="d-flex align-items-center gap-3">
-        <h1 class="h3 mb-0"><i class="bi bi-tools me-2"></i> Orden de Trabajo #<%= @work_order.id %></h1>
-        <% case @work_order.status %>
-        <% when 'pending' %>
-          <span class="badge bg-warning text-dark px-3 py-2 fs-6"><i class="bi bi-hourglass-split me-1"></i> Pendiente</span>
-        <% when 'in_progress' %>
-          <span class="badge bg-primary px-3 py-2 fs-6"><i class="bi bi-play-circle me-1"></i> En Progreso</span>
-        <% when 'completed' %>
-          <span class="badge bg-success px-3 py-2 fs-6"><i class="bi bi-check-circle me-1"></i> Completada</span>
-        <% when 'cancelled' %>
-          <span class="badge bg-danger px-3 py-2 fs-6"><i class="bi bi-x-circle me-1"></i> Cancelada</span>
-        <% end %>
-      </div>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="h3 mb-0"><i class="bi bi-tools me-2"></i>Orden de trabajo #<%= @work_order.id %></h1>
+      <p class="text-muted mb-0"><%= work_order_vehicle_label(vehicle) %> · Mantención <%= work_order_kind_label(@work_order).downcase %></p>
     </div>
-    <div class="col-auto d-flex gap-2">
-      <%= link_to work_orders_path, class: "btn btn-outline-secondary shadow-sm" do %>
-        <i class="bi bi-arrow-left me-1"></i> Volver
-      <% end %>
-      
-      <% if policy(@work_order).edit? && !['completed', 'cancelled'].include?(@work_order.status) %>
-        <%= link_to edit_work_order_path(@work_order), class: "btn btn-primary shadow-sm" do %>
-          <i class="bi bi-pencil me-1"></i> Editar
+    <div class="d-flex flex-wrap gap-2">
+      <% if policy(@work_order).edit? && !terminal %>
+        <%= link_to edit_work_order_path(@work_order), class: "btn btn-primary text-nowrap" do %>
+          <i class="bi bi-pencil me-1"></i>Editar
         <% end %>
+      <% end %>
+      <%= link_to work_orders_path, class: "btn btn-outline-secondary text-nowrap" do %>
+        <i class="bi bi-arrow-left me-1"></i>Volver
       <% end %>
     </div>
   </div>
 
-  <% if policy(@work_order).change_status? && !['completed', 'cancelled'].include?(@work_order.status) %>
-    <div class="alert bg-light border border-secondary border-opacity-25 shadow-sm d-flex align-items-center mb-4">
-      <div class="me-auto">
-        <i class="bi bi-arrow-right-circle fs-4 text-primary me-2 align-middle"></i>
-        <strong class="align-middle">Actualizar Estado:</strong>
-      </div>
-      <div class="d-flex gap-2">
-        <% if @work_order.status == 'pending' %>
-          <%= button_to change_status_work_order_path(@work_order, status: 'in_progress'), method: :patch, class: "btn btn-outline-primary shadow-sm", data: { turbo_confirm: "¿Iniciar trabajo?" } do %>
-            <i class="bi bi-play-fill me-1"></i> Iniciar Progreso
-          <% end %>
-        <% end %>
-
-        <% if @work_order.status == 'in_progress' %>
-          <%= button_to change_status_work_order_path(@work_order, status: 'completed'), method: :patch, class: "btn btn-outline-success shadow-sm", data: { turbo_confirm: "Al completar, el inventario se descontará. ¿Proceder?" } do %>
-            <i class="bi bi-check-lg me-1"></i> Marcar Completada
-          <% end %>
-        <% end %>
-
-        <%= button_to change_status_work_order_path(@work_order, status: 'cancelled'), method: :patch, class: "btn btn-outline-danger shadow-sm", data: { turbo_confirm: "¿Cancelar esta orden?" } do %>
-          <i class="bi bi-x-lg me-1"></i> Cancelar
-        <% end %>
-      </div>
-    </div>
-  <% end %>
-
-  <div class="row">
-    <!-- Información General -->
-    <div class="col-md-5">
-      <div class="card shadow-sm border-0 mb-4">
-        <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
-          <h5 class="fw-bold mb-0">Detalles de la Orden</h5>
+  <div class="card mb-4">
+    <div class="card-body d-flex flex-wrap align-items-center gap-3">
+      <div class="d-flex align-items-center gap-3 flex-grow-1 min-w-0">
+        <%= work_order_status_icon_circle(@work_order.status) %>
+        <div class="min-w-0">
+          <div class="d-flex flex-wrap align-items-center gap-2">
+            <span class="fw-bold">Estado</span>
+            <%= status_badge(work_order_status_label(@work_order.status), @work_order.status) %>
+          </div>
+          <div class="small text-muted mt-1"><%= work_order_status_hint(@work_order.status, parts_used: part_usages.any?) %></div>
         </div>
-        <div class="card-body">
-          <dl class="row mb-0">
-            <dt class="col-sm-5 text-muted fw-normal">Vehículo</dt>
-            <dd class="col-sm-7 fw-medium"><%= @work_order.vehicle&.plate %> (<%= @work_order.vehicle&.brand %> <%= @work_order.vehicle&.model %>)</dd>
+      </div>
+      <% if policy(@work_order).change_status? && !terminal %>
+        <div class="col-12 col-md-auto d-flex flex-wrap gap-2">
+          <% if @work_order.pending? %>
+            <%= button_to change_status_work_order_path(@work_order, status: 'in_progress'), method: :patch, form_class: "button_to flex-fill", class: "btn btn-outline-primary text-nowrap w-100", data: { turbo_confirm: "¿Iniciar el trabajo de esta orden?" } do %>
+              <i class="bi bi-play-fill me-1"></i>Iniciar trabajo
+            <% end %>
+          <% end %>
+          <% if @work_order.in_progress? %>
+            <%= button_to change_status_work_order_path(@work_order, status: 'completed'), method: :patch, form_class: "button_to flex-fill", class: "btn btn-outline-success text-nowrap w-100", data: { turbo_confirm: "Al completar la orden se descontarán del inventario los repuestos utilizados. ¿Continuar?" } do %>
+              <i class="bi bi-check-lg me-1"></i>Marcar como completada
+            <% end %>
+          <% end %>
+          <%= button_to change_status_work_order_path(@work_order, status: 'cancelled'), method: :patch, form_class: "button_to flex-fill", class: "btn btn-outline-danger text-nowrap w-100", data: { turbo_confirm: "¿Cancelar esta orden de trabajo? Después no se podrá modificar." } do %>
+            <i class="bi bi-x-lg me-1"></i>Cancelar orden
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
 
-            <dt class="col-sm-5 text-muted fw-normal">Plan</dt>
-            <dd class="col-sm-7">
-              <% if @work_order.maintenance_plan %>
-                <%= link_to @work_order.maintenance_plan.name, @work_order.maintenance_plan, class: "text-decoration-none fw-medium" %>
+  <div class="row g-4">
+    <div class="col-lg-5">
+      <div class="card">
+        <div class="card-header bg-white">
+          <%= maintenance_card_title("Detalles de la orden", icon: "bi-info-circle") %>
+        </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item d-flex justify-content-between gap-3">
+            <span class="text-muted">Vehículo</span>
+            <span class="text-end">
+              <% if vehicle %>
+                <% if policy(vehicle).show? %>
+                  <%= link_to vehicle.plate, vehicle_path(vehicle), class: "fw-bold" %>
+                <% else %>
+                  <span class="fw-bold"><%= vehicle.plate %></span>
+                <% end %>
+                <span class="d-block small text-muted"><%= [vehicle.brand, vehicle.model].compact_blank.join(" ") %></span>
               <% else %>
-                <span class="text-muted fst-italic">Correctivo (Sin Plan)</span>
+                <span class="text-muted">Sin vehículo</span>
               <% end %>
-            </dd>
-
-            <dt class="col-sm-5 text-muted fw-normal">Asignado A</dt>
-            <dd class="col-sm-7">
+            </span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between gap-3">
+            <span class="text-muted">Tipo</span>
+            <span class="text-end"><i class="bi <%= work_order_kind_icon(@work_order) %> text-muted me-1"></i><%= work_order_kind_label(@work_order) %></span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between gap-3">
+            <span class="text-muted">Plan</span>
+            <span class="text-end">
+              <% if plan %>
+                <%= link_to plan.name, plan %>
+              <% else %>
+                <span class="text-muted">Sin plan</span>
+              <% end %>
+            </span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between gap-3">
+            <span class="text-muted">Mecánico</span>
+            <span class="text-end text-break">
               <% if @work_order.mechanic %>
-                <div class="d-flex align-items-center">
-                  <i class="bi bi-person-circle text-secondary me-2"></i> <%= @work_order.mechanic.email %>
-                </div>
+                <i class="bi bi-person-badge text-muted me-1"></i><%= @work_order.mechanic.email %>
               <% else %>
-                <span class="text-muted fst-italic">No Asignado</span>
+                <span class="text-muted">Sin asignar</span>
               <% end %>
-            </dd>
-
-            <dt class="col-sm-5 text-muted fw-normal mt-3">Fecha Inicio</dt>
-            <dd class="col-sm-7 mt-3"><i class="bi bi-calendar-event me-1 text-secondary"></i> <%= @work_order.start_date&.strftime("%d/%m/%Y") || "-" %></dd>
-
-            <dt class="col-sm-5 text-muted fw-normal">Fecha Fin</dt>
-            <dd class="col-sm-7"><i class="bi bi-calendar-check me-1 text-secondary"></i> <%= @work_order.end_date&.strftime("%d/%m/%Y") || "-" %></dd>
-
-            <dt class="col-sm-12 text-muted fw-normal mt-3">Notas Generales</dt>
-            <dd class="col-sm-12 mt-1 p-3 bg-light rounded text-break">
-              <%= @work_order.notes.presence || "Sin notas u observaciones adicionales." %>
-            </dd>
-          </dl>
-        </div>
+            </span>
+          </li>
+          <% if @work_order.odometer_at_maintenance.present? %>
+            <li class="list-group-item d-flex justify-content-between gap-3">
+              <span class="text-muted">Odómetro</span>
+              <span class="text-end"><%= number_with_delimiter(@work_order.odometer_at_maintenance) %> km</span>
+            </li>
+          <% end %>
+          <li class="list-group-item d-flex justify-content-between gap-3">
+            <span class="text-muted">Inicio</span>
+            <span class="text-end"><%= @work_order.start_date ? l(@work_order.start_date.to_date, format: :long) : tag.span("Sin fecha", class: "text-muted") %></span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between gap-3">
+            <span class="text-muted">Término</span>
+            <span class="text-end"><%= @work_order.end_date ? l(@work_order.end_date.to_date, format: :long) : tag.span("Sin fecha", class: "text-muted") %></span>
+          </li>
+          <li class="list-group-item">
+            <div class="text-muted mb-2">Notas</div>
+            <% if @work_order.notes.present? %>
+              <div class="p-3 bg-light rounded-3 text-break"><%= simple_format(@work_order.notes, {}, wrapper_tag: "div") %></div>
+            <% else %>
+              <div class="text-muted fst-italic">Sin notas ni observaciones.</div>
+            <% end %>
+          </li>
+        </ul>
       </div>
     </div>
 
-    <!-- Tareas y Repuestos -->
-    <div class="col-md-7">
-      <div class="card shadow-sm border-0 mb-4">
-        <div class="card-header bg-white border-bottom-0 pt-4 pb-0 d-flex justify-content-between align-items-center">
-          <h5 class="fw-bold mb-0">Tareas (<%= @work_order.work_order_tasks.count %>)</h5>
-        </div>
-        <div class="card-body">
-          <% if @work_order.work_order_tasks.any? %>
-            <ul class="list-group list-group-flush border rounded-3 overflow-hidden shadow-sm">
-              <% @work_order.work_order_tasks.each do |task| %>
-                <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                  <div class="d-flex align-items-center">
-                    <% if task.completed? %>
-                      <i class="bi bi-check-circle-fill fs-4 text-success me-3"></i>
-                      <span class="text-decoration-line-through text-muted"><%= task.description %></span>
-                    <% else %>
-                      <i class="bi bi-circle fs-4 text-secondary me-3"></i>
-                      <span class="fw-medium"><%= task.description %></span>
-                    <% end %>
-                  </div>
-                </li>
-              <% end %>
-            </ul>
-          <% else %>
-            <div class="text-center py-4 bg-light rounded text-muted small">No hay tareas registradas.</div>
+    <div class="col-lg-7 d-flex flex-column gap-4">
+      <div class="card">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center gap-2">
+          <%= maintenance_card_title("Tareas", icon: "bi-list-check") %>
+          <% if tasks.any? %>
+            <span class="small text-muted text-nowrap"><%= work_order_tasks_progress(done_tasks, tasks.size) %></span>
           <% end %>
         </div>
+        <% if tasks.any? %>
+          <div class="px-3 pt-3">
+            <div class="progress" role="progressbar" aria-label="Avance de las tareas" aria-valuenow="<%= done_tasks %>" aria-valuemin="0" aria-valuemax="<%= tasks.size %>" style="height: 6px;">
+              <div class="progress-bar bg-success" style="width: <%= (done_tasks * 100.0 / tasks.size).round %>%"></div>
+            </div>
+          </div>
+          <ul class="list-group list-group-flush mt-2">
+            <% tasks.each do |task| %>
+              <li class="list-group-item d-flex align-items-start gap-2">
+                <% if task.completed? %>
+                  <i class="bi bi-check-circle-fill text-success fs-5 lh-1" title="Completada"></i>
+                  <span class="text-muted"><%= task.description %></span>
+                <% else %>
+                  <i class="bi bi-circle text-secondary fs-5 lh-1" title="Pendiente"></i>
+                  <span><%= task.description %></span>
+                <% end %>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <div class="card-body">
+            <div class="text-center py-4 text-muted">
+              <i class="bi bi-list-check d-block opacity-50"></i>
+              <p class="mb-1 fw-bold text-body">No hay tareas registradas</p>
+              <p class="small mb-0"><%= terminal ? "La orden se cerró sin tareas registradas." : "Las tareas se agregan al editar la orden." %></p>
+            </div>
+          </div>
+        <% end %>
       </div>
 
-      <% guided = @work_order.maintenance_plan&.maintenance_task_templates&.select(&:maintenance_task) || [] %>
+      <% guided = plan&.maintenance_task_templates&.select(&:maintenance_task) || [] %>
       <% if guided.any? %>
-        <div class="card shadow-sm border-0 mb-4">
-          <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
-            <h5 class="fw-bold mb-0">Guía del plan</h5>
+        <div class="card">
+          <div class="card-header bg-white">
+            <%= maintenance_card_title("Guía del plan", icon: "bi-journal-text") %>
           </div>
-          <div class="card-body">
-            <ul class="list-group list-group-flush border rounded-3 overflow-hidden">
-              <% guided.each do |template| %>
-                <li class="list-group-item p-3">
-                  <div class="fw-medium"><%= template.description %></div>
-                  <%= render "maintenance_plans/task_guide", template: template, vehicle_model: @work_order.maintenance_plan.vehicle_model %>
-                </li>
-              <% end %>
-            </ul>
-          </div>
+          <ul class="list-group list-group-flush">
+            <% guided.each do |template| %>
+              <li class="list-group-item">
+                <div class="fw-bold"><%= template.description %></div>
+                <%= render "maintenance_plans/task_guide", template: template, vehicle_model: plan.vehicle_model %>
+              </li>
+            <% end %>
+          </ul>
         </div>
       <% end %>
 
-      <div class="card shadow-sm border-0 mb-4">
-        <div class="card-header bg-white border-bottom-0 pt-4 pb-0 d-flex justify-content-between align-items-center">
-          <h5 class="fw-bold mb-0">Repuestos Utilizados (<%= @work_order.work_order_part_usages.count %>)</h5>
-        </div>
-        <div class="card-body">
-          <% if @work_order.work_order_part_usages.any? %>
-            <div class="table-responsive border rounded-3 shadow-sm">
-              <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                  <tr>
-                    <th>Repuesto</th>
-                    <th class="text-end">Cantidad</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% @work_order.work_order_part_usages.each do |usage| %>
-                    <tr>
-                      <td>
-                        <div class="fw-medium"><%= usage.part&.name %></div>
-                        <div class="small text-muted">SKU: <%= usage.part&.sku %></div>
-                      </td>
-                      <td class="text-end fw-bold">
-                        <%= usage.quantity %> <span class="fw-normal text-muted small"><%= usage.part&.unit_of_measure %></span>
-                      </td>
-                    </tr>
-                  <% end %>
-                </tbody>
-              </table>
-            </div>
-          <% else %>
-            <div class="text-center py-4 bg-light rounded text-muted small">No se han registrado repuestos.</div>
+      <div class="card">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center gap-2">
+          <%= maintenance_card_title("Repuestos utilizados", icon: "bi-box-seam") %>
+          <% if part_usages.any? %>
+            <span class="small text-muted text-nowrap"><%= part_usages.size == 1 ? "1 repuesto" : "#{part_usages.size} repuestos" %></span>
           <% end %>
         </div>
+        <% if part_usages.any? %>
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Repuesto</th>
+                  <th class="text-end">Cantidad</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% part_usages.each do |usage| %>
+                  <tr>
+                    <td>
+                      <div class="fw-bold"><%= usage.part&.name || "Repuesto eliminado" %></div>
+                      <% if usage.part&.sku.present? %>
+                        <div class="small text-muted">SKU <%= usage.part.sku %></div>
+                      <% end %>
+                    </td>
+                    <td class="text-end text-nowrap">
+                      <span class="fw-bold"><%= work_order_quantity(usage.quantity) %></span>
+                      <span class="small text-muted"><%= unit_of_measure_label(usage.quantity, usage.part&.unit_of_measure) %></span>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        <% else %>
+          <div class="card-body">
+            <div class="text-center py-4 text-muted">
+              <i class="bi bi-box-seam d-block opacity-50"></i>
+              <p class="mb-1 fw-bold text-body">No se registraron repuestos</p>
+              <p class="small mb-0"><%= terminal ? "La orden se cerró sin repuestos registrados." : "Los repuestos usados se descuentan del inventario al completar la orden." %></p>
+            </div>
+          </div>
+        <% end %>
       </div>
     </div>
   </div>

@@ -26,7 +26,7 @@ class CompaniesController < ApplicationController
     @company.users.each { |user| user.role = :admin }
 
     if @company.save
-      redirect_to companies_path, notice: "Empresa creada exitosamente junto con su Administrador."
+      redirect_to companies_path, notice: "Empresa creada correctamente junto con su administrador."
     else
       render :new, status: :unprocessable_entity
     end
@@ -85,7 +85,7 @@ class CompaniesController < ApplicationController
   end
 
   def ensure_superadmin!
-    redirect_to root_path, alert: "Acceso denegado" unless current_user&.superadmin?
+    redirect_to root_path, alert: "No tienes permisos para acceder a esta página." unless current_user&.superadmin?
   end
 
   # Solo al crear una empresa se admite el usuario administrador anidado -

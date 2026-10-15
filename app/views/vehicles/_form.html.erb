@@ -1,65 +1,65 @@
 <%= form_with(model: vehicle, class: "needs-validation") do |form| %>
-  <% if vehicle.errors.any? %>
-    <div class="alert alert-danger">
-      <h4 class="alert-heading"><%= pluralize(vehicle.errors.count, "error", "errores") %> impidieron guardar este vehículo:</h4>
-      <ul>
-        <% vehicle.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <%= render "shared/form_errors", object: vehicle, subject: "el vehículo" %>
 
+  <h2 class="h6 mb-3"><i class="bi bi-info-circle me-2 text-primary"></i>Datos del vehículo</h2>
   <div class="row g-3">
     <div class="col-12">
-      <%= form.label :vehicle_model_id, "Modelo de la biblioteca (opcional)", class: "form-label" %>
+      <%= form.label :vehicle_model_id, class: "form-label" do %>Modelo de la biblioteca <span class="text-muted fw-normal">(opcional)</span><% end %>
       <%= form.grouped_collection_select :vehicle_model_id,
             VehicleModel.order(:category, :brand, :model).group_by(&:category).map { |category, models| [category, models] },
             :last, :first, :id, :name, { include_blank: "Sin modelo" }, class: "form-select" %>
-      <div class="form-text">Con el modelo, GestFlee sabe qué plan de mantención y qué repuestos le corresponden.</div>
+      <div class="form-text">Con el modelo, GestFlee sabe qué plan de mantención y qué repuestos le corresponden. Si dejas marca y modelo vacíos, se completan con los del modelo elegido.</div>
     </div>
 
-    <div class="col-md-6">
-      <%= form.label :plate, "Patente", class: "form-label" %>
-      <%= form.text_field :plate, class: "form-control", placeholder: "ABCD-12", required: true,
+    <div class="col-sm-6">
+      <%= form.label :plate, class: "form-label" do %>Patente <span class="text-danger">*</span><% end %>
+      <%= form.text_field :plate, class: "form-control", placeholder: "Ej.: ABCD-12", required: true,
           data: { controller: "mask", action: "input->mask#mask", mask_format: "####-99" } %>
     </div>
 
-    <div class="col-md-6">
-      <%= form.label :brand, "Marca", class: "form-label" %>
-      <%= form.text_field :brand, class: "form-control", placeholder: "Volvo" %>
-    </div>
-
-    <div class="col-md-6">
-      <%= form.label :model, "Modelo", class: "form-label" %>
-      <%= form.text_field :model, class: "form-control", placeholder: "FH16" %>
-    </div>
-
-    <div class="col-md-6">
+    <div class="col-sm-6">
       <%= form.label :year, "Año", class: "form-label" %>
-      <%= form.number_field :year, class: "form-control", min: 1950, max: Date.today.year + 1 %>
+      <%= form.number_field :year, class: "form-control", placeholder: "Ej.: #{Date.current.year}", min: 1950, max: Date.current.year + 1 %>
     </div>
 
-    <div class="col-md-6">
-      <%= form.label :odometer, "Odómetro (km)", class: "form-label" %>
-      <%= form.number_field :odometer, class: "form-control" %>
+    <div class="col-sm-6">
+      <%= form.label :brand, "Marca", class: "form-label" %>
+      <%= form.text_field :brand, class: "form-control", placeholder: "Ej.: Volvo" %>
     </div>
 
-    <div class="col-md-6">
-      <%= form.label :hour_meter, "Horómetro (horas)", class: "form-label" %>
-      <%= form.number_field :hour_meter, class: "form-control", min: 0 %>
-      <div class="form-text">Para maquinaria que se mide en horas de uso.</div>
+    <div class="col-sm-6">
+      <%= form.label :model, "Modelo", class: "form-label" %>
+      <%= form.text_field :model, class: "form-control", placeholder: "Ej.: FH16" %>
     </div>
-
-    <div class="col-md-6">
-      <%= form.label :status, "Estado", class: "form-label" %>
-      <%= form.select :status, Vehicle.statuses.keys.map { |s| [s.humanize, s] }, {}, class: "form-select" %>
-    </div>
-  
   </div>
 
-  <div class="mt-4 d-flex justify-content-end gap-2">
-    <%= link_to "Cancelar", vehicles_path, class: "btn btn-outline-secondary" %>
-    <%= form.submit "Guardar Vehículo", class: "btn btn-primary" %>
+  <h2 class="h6 mt-4 mb-3"><i class="bi bi-speedometer2 me-2 text-primary"></i>Uso y estado</h2>
+  <div class="row g-3">
+    <div class="col-sm-6 col-md-4">
+      <%= form.label :odometer, "Odómetro", class: "form-label" %>
+      <div class="input-group">
+        <%= form.number_field :odometer, class: "form-control", min: 0 %>
+        <span class="input-group-text">km</span>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-md-4">
+      <%= form.label :hour_meter, "Horómetro", class: "form-label" %>
+      <div class="input-group">
+        <%= form.number_field :hour_meter, class: "form-control", min: 0 %>
+        <span class="input-group-text">h</span>
+      </div>
+      <div class="form-text">Solo para maquinaria (horas de uso).</div>
+    </div>
+
+    <div class="col-md-4">
+      <%= form.label :status, "Estado", class: "form-label" %>
+      <%= form.select :status, vehicle_status_options, {}, class: "form-select" %>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-end gap-2 mt-4">
+    <%= link_to "Cancelar", vehicle.persisted? ? vehicle_path(vehicle) : vehicles_path, class: "btn btn-outline-secondary" %>
+    <%= form.submit "Guardar vehículo", class: "btn btn-primary" %>
   </div>
 <% end %>

@@ -1,60 +1,84 @@
+<%
+  # Valores numéricos limpios al editar ("250" en vez de "250.0"); si el usuario
+  # escribió algo (y falló la validación) se respeta lo que escribió.
+  number_value = lambda do |attr|
+    value = @fuel_fill.public_send(attr)
+    if value.nil? || @fuel_fill.attribute_changed?(attr)
+      @fuel_fill.read_attribute_before_type_cast(attr)
+    else
+      value.to_d.frac.zero? ? value.to_i : value.to_d.to_s("F")
+    end
+  end
+  current_ticket = @fuel_fill.persisted? && @fuel_fill.ticket.attached? && @fuel_fill.ticket.blob.persisted?
+  required = tag.span("*", class: "text-danger")
+%>
 <%= form_with(model: [@vehicle, @fuel_fill]) do |form| %>
-  <% if @fuel_fill.errors.any? %>
-    <div class="alert alert-danger">
-      <h6 class="alert-heading fw-semibold mb-2"><%= pluralize(@fuel_fill.errors.count, "error", "errores") %> impidieron guardar el registro:</h6>
-      <ul class="mb-0 small">
-        <% @fuel_fill.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
+  <%= render "shared/form_errors", object: @fuel_fill, subject: "la carga" %>
+
+  <% if @fuel_fill.new_record? && @fuel_fill.errors[:ticket].none? %>
+    <div class="alert alert-info d-flex align-items-start gap-2">
+      <i class="bi bi-camera-fill flex-shrink-0 mt-1"></i>
+      <div><strong>Requerido:</strong> debes subir una fotografía de la boleta para registrar la carga.</div>
     </div>
   <% end %>
 
-  <div class="alert alert-info d-flex align-items-center gap-2">
-    <i class="bi bi-info-circle-fill"></i>
-    <div><strong>Requerido:</strong> debes subir una fotografía de la boleta para registrar la carga.</div>
-  </div>
   <div class="row g-3">
     <div class="col-md-6">
-      <%= form.label :date, "Fecha de Carga", class: "form-label" %>
+      <%= form.label :date, class: "form-label" do %>Fecha de carga <%= required %><% end %>
       <%= form.date_field :date, class: "form-control" %>
     </div>
 
     <div class="col-md-6">
-      <%= form.label :odometer, "Odómetro (km)", class: "form-label" %>
-      <%= form.number_field :odometer, class: "form-control", min: (@vehicle ? @vehicle.odometer : 0) %>
+      <%= form.label :odometer, class: "form-label" do %>Odómetro <%= required %><% end %>
+      <div class="input-group flex-nowrap">
+        <%= form.number_field :odometer, class: "form-control min-w-0 rounded-end-0", min: (@vehicle ? @vehicle.odometer : 0) %>
+        <span class="input-group-text">km</span>
+      </div>
       <div class="form-text">Lectura actual del tablero.</div>
     </div>
 
     <div class="col-md-6">
-      <%= form.label :liters, "Litros Cargados", class: "form-label" %>
-      <div class="input-group">
-        <%= form.number_field :liters, step: "0.01", class: "form-control" %>
+      <%= form.label :liters, class: "form-label" do %>Litros cargados <%= required %><% end %>
+      <div class="input-group flex-nowrap">
+        <%= form.number_field :liters, value: number_value.(:liters), step: "0.01", class: "form-control min-w-0 rounded-end-0" %>
         <span class="input-group-text">L</span>
       </div>
     </div>
 
     <div class="col-md-6">
-      <%= form.label :cost, "Costo Total", class: "form-label" %>
-      <div class="input-group">
+      <%= form.label :cost, class: "form-label" do %>Costo total <%= required %><% end %>
+      <div class="input-group flex-nowrap">
         <span class="input-group-text">$</span>
-        <%= form.number_field :cost, step: "0.01", class: "form-control" %>
+        <%= form.number_field :cost, value: number_value.(:cost), step: "0.01", class: "form-control min-w-0 rounded-start-0" %>
       </div>
     </div>
 
     <div class="col-12">
-      <%= form.label :ticket, "Subir Boleta/Factura (Foto)", class: "form-label" %>
+      <%= form.label :ticket, class: "form-label" do %>
+        Foto de la boleta o factura <%= required unless current_ticket %>
+      <% end %>
+      <% if current_ticket %>
+        <div class="d-flex flex-wrap align-items-center gap-2 small mb-2">
+          <span class="badge text-bg-success"><i class="bi bi-check2"></i> Boleta adjunta</span>
+          <%= link_to rails_blob_path(@fuel_fill.ticket, disposition: "inline"), target: "_blank", rel: "noopener" do %>
+            Ver boleta actual <i class="bi bi-box-arrow-up-right"></i>
+          <% end %>
+        </div>
+      <% end %>
       <%= form.file_field :ticket, accept: "image/*", capture: "environment", class: "form-control" %>
+      <div class="form-text">
+        <%= current_ticket ? "Sube una nueva foto solo si quieres reemplazar la actual." : "Toma la foto con la cámara del celular o elige una imagen (JPG, PNG)." %>
+      </div>
     </div>
 
     <div class="col-12">
-      <%= form.label :notes, "Notas u Observaciones", class: "form-label" %>
-      <%= form.text_area :notes, rows: 2, class: "form-control" %>
+      <%= form.label :notes, class: "form-label" do %>Notas <span class="text-muted fw-normal">(opcional)</span><% end %>
+      <%= form.text_area :notes, rows: 2, class: "form-control", placeholder: "Ej.: estación, ruta o cualquier detalle útil." %>
     </div>
   </div>
 
-  <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
-    <%= link_to "Cancelar", @vehicle ? vehicle_path(@vehicle) : root_path, class: "btn btn-outline-secondary" %>
-    <%= form.submit "Guardar Carga", class: "btn btn-primary" %>
+  <div class="d-flex justify-content-end gap-2 mt-4">
+    <%= link_to "Cancelar", @fuel_fill.persisted? ? fuel_fill_path(@fuel_fill) : vehicle_fuel_fills_path(@vehicle), class: "btn btn-outline-secondary" %>
+    <%= form.submit "Guardar carga", class: "btn btn-primary" %>
   </div>
 <% end %>

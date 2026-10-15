@@ -1,70 +1,110 @@
+<% summary = parts_summary(policy_scope(Part)) %>
 <div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3"><i class="bi bi-boxes me-2"></i> Catálogo de Repuestos</h1>
+    <div>
+      <h1 class="h3 mb-0"><i class="bi bi-boxes me-2"></i>Catálogo de repuestos</h1>
+      <p class="text-muted mb-0">Stock, costos y vehículos compatibles de cada repuesto.</p>
+    </div>
     <% if policy(Part).create? %>
-      <%= link_to new_part_path, class: "btn btn-primary shadow-sm" do %>
-        <i class="bi bi-plus-lg me-1"></i> Añadir Repuesto
+      <%= link_to new_part_path, class: "btn btn-primary" do %>
+        <i class="bi bi-plus-lg me-1"></i>Nuevo repuesto
       <% end %>
     <% end %>
   </div>
 
-  <div class="card shadow-sm border-0">
-    <div class="card-body p-0">
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-lg-4">
+      <div class="card h-100">
+        <div class="card-body d-flex align-items-center gap-3">
+          <span class="gf-action-icon is-primary"><i class="bi bi-box-seam"></i></span>
+          <div class="min-w-0">
+            <div class="small text-muted">Repuestos<span class="d-none d-sm-inline"> en catálogo</span></div>
+            <div class="h4 mb-0"><%= number_with_delimiter(summary[:total]) %></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-lg-4">
+      <div class="card h-100">
+        <div class="card-body d-flex align-items-center gap-3">
+          <% if summary[:out_of_stock].positive? %>
+            <span class="gf-action-icon is-warning"><i class="bi bi-exclamation-triangle"></i></span>
+          <% else %>
+            <span class="gf-action-icon is-success"><i class="bi bi-check2-circle"></i></span>
+          <% end %>
+          <div class="min-w-0">
+            <div class="small text-muted">Sin stock</div>
+            <div class="h4 mb-0"><%= number_with_delimiter(summary[:out_of_stock]) %></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-lg-4">
+      <div class="card h-100">
+        <div class="card-body d-flex align-items-center gap-3">
+          <span class="gf-action-icon is-success"><i class="bi bi-cash-stack"></i></span>
+          <div class="min-w-0">
+            <div class="small text-muted">Valor en bodega</div>
+            <div class="h4 mb-0"><%= format_money(summary[:stock_value], "CLP") %></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <% if @parts.any? %>
       <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
           <thead class="table-light">
             <tr>
-              <th>SKU</th>
-              <th>Nombre</th>
-              <th>Unidad</th>
-              <th>Stock</th>
-              <th>Costo</th>
-              <th class="text-end" style="min-width: 150px;">Acciones</th>
+              <th>Repuesto</th>
+              <th class="d-none d-md-table-cell">Unidad</th>
+              <th class="text-end">Stock</th>
+              <th class="text-end">Costo<span class="d-none d-md-inline"> unitario</span></th>
+              <th class="text-end">Acciones</th>
             </tr>
           </thead>
           <tbody>
-            <% if @parts.any? %>
-              <% @parts.each do |part| %>
-                <tr>
-                  <td class="fw-medium text-muted"><%= part.sku %></td>
-                  <td class="fw-bold"><%= part.name %></td>
-                  <td><span class="badge bg-secondary opacity-75"><%= part.unit_of_measure %></span></td>
-                  <td>
-                    <span class="badge <%= part.stock > 0 ? 'text-bg-success' : 'text-bg-danger' %> rounded-pill px-3 py-2 shadow-sm">
-                      <i class="bi <%= part.stock > 0 ? 'bi-check-circle' : 'bi-exclamation-circle' %> me-1"></i>
-                      <%= number_with_precision(part.stock, precision: 2, strip_insignificant_zeros: true) %>
-                    </span>
-                  </td>
-                  <td>
-                    <%= format_money(part.cost, part.currency) %>
-                    <% if part.currency == 'USD' %>
-                      <div class="small fw-normal text-muted mt-1"><%= format_money(converted_to_clp(part.cost, 'USD'), 'CLP') %></div>
-                    <% end %>
-                  </td>
-                  <td class="text-end">
-                    <%= link_to part, class: "btn btn-sm btn-outline-primary shadow-sm me-1", title: "Ver detalles" do %>
+            <% @parts.each do |part| %>
+              <tr>
+                <td>
+                  <%= link_to part.name, part, class: "fw-bold text-body" %>
+                  <div class="small text-muted">SKU <%= part.sku %></div>
+                </td>
+                <td class="d-none d-md-table-cell text-muted"><%= part.unit_of_measure %></td>
+                <td class="text-end"><%= part_stock_badge(part.stock) %></td>
+                <td class="text-end"><%= part_cost_with_clp(part.cost, part.currency) %></td>
+                <td class="text-end">
+                  <div class="gf-row-actions">
+                    <%= link_to part, class: "btn btn-sm btn-outline-primary", title: "Ver", "aria-label": "Ver" do %>
                       <i class="bi bi-eye"></i>
                     <% end %>
                     <% if policy(part).edit? %>
-                      <%= link_to edit_part_path(part), class: "btn btn-sm btn-outline-secondary shadow-sm", title: "Editar" do %>
+                      <%= link_to edit_part_path(part), class: "btn btn-sm btn-outline-secondary", title: "Editar", "aria-label": "Editar" do %>
                         <i class="bi bi-pencil"></i>
                       <% end %>
                     <% end %>
-                  </td>
-                </tr>
-              <% end %>
-            <% else %>
-              <tr>
-                <td colspan="6" class="text-center py-5 text-muted">
-                  <i class="bi bi-inbox display-4 d-block mb-3 opacity-50"></i>
-                  No hay repuestos registrados en el inventario.
+                  </div>
                 </td>
               </tr>
             <% end %>
           </tbody>
         </table>
       </div>
-    </div>
+    <% else %>
+      <div class="text-center py-5 px-3 text-muted">
+        <i class="bi bi-boxes d-block opacity-50"></i>
+        <p class="mb-1 fw-bold text-body">No hay repuestos en el catálogo</p>
+        <p class="small mb-0">
+          <% if policy(Part).create? %>
+            Agrega el primero con el botón «Nuevo repuesto».
+          <% else %>
+            Cuando bodega registre repuestos, aparecerán aquí.
+          <% end %>
+        </p>
+      </div>
+    <% end %>
   </div>
   <%= render "shared/pagination", pagy: @pagy %>
 </div>

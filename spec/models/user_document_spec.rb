@@ -17,7 +17,7 @@ RSpec.describe UserDocument, type: :model do
     record = document
 
     expect(record).not_to be_valid
-    expect(record.errors[:file]).to include("debe adjuntar un archivo")
+    expect(record.errors[:file]).to include("es obligatorio: adjunta un PDF o una imagen")
   end
 
   it "rejects other kinds of files" do

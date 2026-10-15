@@ -1,13 +1,33 @@
 module ApplicationHelper
+  # Color de la etiqueta según el estado, igual en todas las pantallas.
+  STATUS_TONES = {
+    "ok" => "success", "active" => "success", "approved" => "success", "resolved" => "success",
+    "completed" => "success", "delivered" => "success",
+    "pending" => "warning", "expiring" => "warning", "maintenance" => "warning",
+    "in_review" => "primary", "in_progress" => "primary", "purchasing" => "info", "requested" => "info", "received" => "primary",
+    "expired" => "danger", "rejected" => "danger", "cancelled" => "danger",
+    "inactive" => "secondary"
+  }.freeze
+
+  def status_tone(status)
+    STATUS_TONES.fetch(status.to_s, "secondary")
+  end
+
+  # Etiqueta de estado en píldora. label: texto ya traducido.
+  def status_badge(label, status, **options)
+    classes = ["badge", "text-bg-#{status_tone(status)}", options.delete(:class)].compact.join(" ")
+    tag.span(label, class: classes, **options)
+  end
+
   DOCUMENT_STATUS_LABELS = {
     "ok"       => "Vigente",
-    "expiring" => "Por Vencer",
+    "expiring" => "Por vencer",
     "expired"  => "Vencido"
   }.freeze
 
   VEHICLE_STATUS_LABELS = {
     "active"      => "Activo",
-    "maintenance" => "Mantenimiento",
+    "maintenance" => "En mantención",
     "inactive"    => "Inactivo"
   }.freeze
 
@@ -28,7 +48,7 @@ module ApplicationHelper
 
   INCIDENT_STATUS_LABELS = {
     "pending"   => "Pendiente",
-    "in_review" => "En Revisión",
+    "in_review" => "En revisión",
     "resolved"  => "Resuelto"
   }.freeze
 
@@ -46,7 +66,7 @@ module ApplicationHelper
 
   WORK_ORDER_STATUS_LABELS = {
     "pending"     => "Pendiente",
-    "in_progress" => "En Progreso",
+    "in_progress" => "En progreso",
     "completed"   => "Completada",
     "cancelled"   => "Cancelada"
   }.freeze
@@ -69,17 +89,17 @@ module ApplicationHelper
   end
 
   VEHICLE_DOC_TYPE_LABELS = {
-    "permiso_circulacion" => "Permiso de Circulación",
-    "revision_tecnica"    => "Revisión Técnica",
+    "permiso_circulacion" => "Permiso de circulación",
+    "revision_tecnica"    => "Revisión técnica",
     "seguro"              => "Seguro",
     "padron"              => "Padrón",
     "otro"                => "Otro"
   }.freeze
 
   USER_DOC_TYPE_LABELS = {
-    "licencia_conducir"     => "Licencia de Conducir",
-    "carnet_identidad"      => "Carnet de Identidad",
-    "examen_preocupacional" => "Examen Preocupacional",
+    "licencia_conducir"     => "Licencia de conducir",
+    "carnet_identidad"      => "Carnet de identidad",
+    "examen_preocupacional" => "Examen preocupacional",
     "contrato"               => "Contrato",
     "otro"                   => "Otro"
   }.freeze

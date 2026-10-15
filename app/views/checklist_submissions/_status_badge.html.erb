@@ -1,0 +1,4 @@
+<%# locals: (status:, css: nil) %>
+<%# Etiqueta de estado de un checklist, con el mismo color que en el resto de la aplicación. %>
+<% labels = { "pending" => "Pendiente", "approved" => "Aprobado", "rejected" => "Rechazado" } %>
+<%= status_badge(labels.fetch(status.to_s, status.to_s.humanize), status, class: css) %>

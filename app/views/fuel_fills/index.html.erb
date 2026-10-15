@@ -1,92 +1,136 @@
+<%
+  fill_vehicle = @vehicle || (current_user.chofer? ? current_user.active_assignment&.vehicle : nil)
+  can_register = fill_vehicle && policy(FuelFill).new?
+  show_driver_column = !current_user.chofer?
+  # El chofer casi siempre ve su mismo vehículo: en el celular se prioriza litros, costo y rendimiento.
+  # En pantallas angostas la patente pasa bajo la fecha (como en la flota) y se ocultan columnas secundarias,
+  # para que fecha, costo, rendimiento y acciones siempre queden a la vista sin desplazarse hacia el lado.
+  show_vehicle_column = @vehicle.nil?
+
+  page_title = if @vehicle
+    "Combustible de #{@vehicle.plate}"
+  elsif current_user.chofer?
+    "Mis cargas de combustible"
+  else
+    "Panel de combustible"
+  end
+  page_subtitle = if @vehicle
+    [vehicle_name(@vehicle), "historial de cargas, gasto y rendimiento."].compact.join(" · ").upcase_first
+  elsif current_user.chofer?
+    "Registra cada carga con la foto de la boleta."
+  else
+    "Historial de cargas, gasto y rendimiento de la flota."
+  end
+%>
 <div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-      <h1 class="h3 fw-bold mb-1">
-        <i class="bi bi-fuel-pump-fill me-2 text-primary"></i>
-        <%= @vehicle ? "Registro de Combustible: #{@vehicle.plate}" : "Dashboard de Combustible" %>
-      </h1>
-      <p class="text-muted mb-0">Historial de cargas y eficiencia.</p>
+      <h1 class="h3 mb-0"><i class="bi bi-fuel-pump me-2"></i><%= page_title %></h1>
+      <p class="text-muted mb-0"><%= page_subtitle %></p>
     </div>
-    <% fill_vehicle = @vehicle || (current_user.chofer? ? current_user.active_assignment&.vehicle : nil) %>
-    <% if fill_vehicle && policy(FuelFill).new? %>
-      <%= link_to new_vehicle_fuel_fill_path(fill_vehicle), class: "btn btn-primary" do %>
-        <i class="bi bi-plus-lg me-1"></i> Nueva Carga
+    <% if can_register %>
+      <%= link_to new_vehicle_fuel_fill_path(fill_vehicle), class: "btn btn-primary text-nowrap" do %>
+        <i class="bi bi-plus-lg me-1"></i>Nueva carga
       <% end %>
     <% elsif current_user.chofer? %>
-      <span class="text-muted small">No tienes un vehículo asignado para registrar carga de combustible.</span>
+      <span class="text-muted small d-inline-flex align-items-center gap-2">
+        <i class="bi bi-info-circle" aria-hidden="true"></i>No tienes un vehículo asignado para registrar cargas.
+      </span>
     <% end %>
   </div>
 
   <% if @vehicles %>
-    <div class="card shadow-sm mb-4">
-      <div class="card-body d-flex align-items-center gap-3 flex-wrap">
-        <label for="vehicle_selector" class="form-label fw-semibold mb-0 text-nowrap">
-          <i class="bi bi-truck-front me-1"></i> Ver gasto de combustible por vehículo
+    <div class="card mb-4">
+      <div class="card-body py-3 d-flex flex-column flex-sm-row align-items-sm-center gap-2 gap-sm-3">
+        <label for="vehicle_selector" class="form-label mb-0 text-nowrap">
+          <i class="bi bi-funnel me-1"></i>Ver por vehículo
         </label>
-        <select id="vehicle_selector" class="form-select" style="max-width: 320px;"
+        <select id="vehicle_selector" class="form-select" style="max-width: 360px;"
                 onchange="if (this.value) { window.location.href = this.value }">
           <option value="<%= fuel_fills_path %>" <%= "selected" if @vehicle.nil? %>>Todos los vehículos</option>
           <% @vehicles.each do |v| %>
             <option value="<%= vehicle_fuel_fills_path(v) %>" <%= "selected" if @vehicle == v %>>
-              <%= v.plate %> — <%= v.brand %> <%= v.model %>
+              <%= [v.plate, vehicle_name(v)].compact.join(" — ") %>
             </option>
           <% end %>
         </select>
+        <% if @vehicle && policy(@vehicle).show? %>
+          <%= link_to vehicle_path(@vehicle), class: "btn btn-link btn-sm px-0 ms-sm-auto align-self-start align-self-sm-center text-nowrap" do %>
+            Ver ficha del vehículo <i class="bi bi-arrow-right"></i>
+          <% end %>
+        <% end %>
       </div>
     </div>
   <% end %>
 
   <% if @fuel_fills.any? %>
+    <%
+      kpis = [
+        { icon: "bi-droplet-half", tone: "primary", label: "Litros cargados", short: "Litros",
+          value: "#{number_with_precision(@total_liters, precision: 1, strip_insignificant_zeros: true, delimiter: ".")} L" },
+        { icon: "bi-cash-stack", tone: "success", label: "Gasto total",
+          value: format_money(@total_cost, "CLP") },
+        { icon: "bi-tag", tone: "warning", label: "Precio promedio por litro", short: "Precio por litro",
+          value: format_money(@avg_price_per_liter, "CLP") }
+      ]
+      # Cuarto indicador en celeste (info) para no repetir el azul de "Litros cargados".
+      if @vehicle || current_user.chofer?
+        kpis << { icon: "bi-speedometer2", tone: "info", label: "Rendimiento promedio", short: "Rendimiento",
+                  value: @avg_km_per_liter ? "#{number_with_precision(@avg_km_per_liter, precision: 2)} km/l" : "—",
+                  note: ("Se calcula desde la segunda carga" unless @avg_km_per_liter) }
+      else
+        kpis << { icon: "bi-truck-front", tone: "info", label: "Vehículo con mayor gasto", short: "Mayor gasto",
+                  value: @top_vehicle ? @top_vehicle.first : "—",
+                  note: (format_money(@top_vehicle.last, "CLP") if @top_vehicle) }
+      end
+    %>
     <div class="row g-3 mb-4">
-      <div class="col-6 col-lg-3">
-        <div class="card shadow-sm h-100">
-          <div class="card-body">
-            <div class="text-muted small text-uppercase fw-semibold mb-1">Litros Totales</div>
-            <div class="h4 fw-bold mb-0"><%= number_with_delimiter @total_liters.round(1) %> L</div>
-          </div>
-        </div>
-      </div>
-      <div class="col-6 col-lg-3">
-        <div class="card shadow-sm h-100">
-          <div class="card-body">
-            <div class="text-muted small text-uppercase fw-semibold mb-1">Gasto Total</div>
-            <div class="h4 fw-bold mb-0"><%= number_to_currency(@total_cost, unit: "$", precision: 0) %></div>
-          </div>
-        </div>
-      </div>
-      <div class="col-6 col-lg-3">
-        <div class="card shadow-sm h-100">
-          <div class="card-body">
-            <div class="text-muted small text-uppercase fw-semibold mb-1">Precio Promedio / Litro</div>
-            <div class="h4 fw-bold mb-0"><%= number_to_currency(@avg_price_per_liter, unit: "$", precision: 0) %></div>
-          </div>
-        </div>
-      </div>
-      <div class="col-6 col-lg-3">
-        <div class="card shadow-sm h-100">
-          <div class="card-body">
-            <div class="text-muted small text-uppercase fw-semibold mb-1">
-              <%= @vehicle ? "Rendimiento Promedio" : "Vehículo con Mayor Gasto" %>
-            </div>
-            <div class="h4 fw-bold mb-0">
-              <% if @vehicle %>
-                <%= @avg_km_per_liter ? "#{@avg_km_per_liter} km/l" : "--" %>
-              <% else %>
-                <%= @top_vehicle ? @top_vehicle.first : "--" %>
-              <% end %>
+      <% kpis.each do |kpi| %>
+        <%# Mismo diseño de tarjeta que el resumen de la flota: ícono compacto al lado en el celular.
+            La etiqueta corta se usa donde la tarjeta es angosta (celular y cuatro columnas en xl). %>
+        <div class="col-6 col-xl-3">
+          <div class="card h-100">
+            <div class="card-body d-flex align-items-center gap-2 gap-sm-3">
+              <%= vehicle_kpi_icon(kpi[:icon], kpi[:tone]) %>
+              <div class="min-w-0">
+                <% if kpi[:short] %>
+                  <div class="small text-muted"><span class="d-sm-none d-xl-inline d-xxl-none"><%= kpi[:short] %></span><span class="d-none d-sm-inline d-xl-none d-xxl-inline"><%= kpi[:label] %></span></div>
+                <% else %>
+                  <div class="small text-muted"><%= kpi[:label] %></div>
+                <% end %>
+                <div class="h4 mb-0 text-nowrap"><%= kpi[:value] %></div>
+                <% if kpi[:note] %>
+                  <div class="small text-muted"><%= kpi[:note] %></div>
+                <% end %>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      <% end %>
     </div>
 
-    <div class="card shadow-sm mb-4">
-      <div class="card-header bg-white">
-        <h6 class="mb-0">Litros y Costo por Mes (últimos 6 meses)</h6>
+    <%
+      # El gráfico recibe "Septiembre 2026" (título del tooltip) y abrevia solo el eje ("Sep").
+      # Rango en español natural: "de mayo a octubre de 2026" o "de noviembre de 2025 a abril de 2026".
+      first_month, first_year = @chart_labels.first.to_s.downcase.split(" ", 2)
+      last_month, last_year = @chart_labels.last.to_s.downcase.split(" ", 2)
+      chart_range = if first_month.blank? || last_month.blank?
+        nil
+      elsif first_year == last_year
+        "de #{first_month} a #{last_month} de #{last_year}"
+      else
+        "de #{first_month} de #{first_year} a #{last_month} de #{last_year}"
+      end
+    %>
+    <div class="card mb-4">
+      <div class="card-header bg-white d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <h2 class="h6 mb-0">Litros y costo por mes</h2>
+        <span class="small text-muted fw-normal">Últimos 6 meses<%= ", #{chart_range}" if chart_range.present? %></span>
       </div>
       <div class="card-body">
         <div style="height: 300px;">
-          <canvas data-controller="fuel-chart"
+          <canvas role="img" aria-label="Gráfico de litros y costo por mes"
+                  data-controller="fuel-chart"
                   data-fuel-chart-labels-value="<%= @chart_labels.to_json %>"
                   data-fuel-chart-liters-value="<%= @chart_liters.to_json %>"
                   data-fuel-chart-costs-value="<%= @chart_costs.to_json %>"></canvas>
@@ -95,87 +139,137 @@
     </div>
   <% end %>
 
-  <div class="card shadow-sm">
-    <div class="card-header bg-white">
-      <h6 class="mb-0">Historial de Cargas</h6>
-    </div>
-    <div class="card-body p-0">
+  <div class="card">
+    <div class="card-header bg-white d-flex flex-wrap justify-content-between align-items-center gap-2">
+      <h2 class="h6 mb-0">Historial de cargas</h2>
       <% if @fuel_fills.any? %>
-        <div class="table-responsive">
-          <table class="table table-hover align-middle mb-0">
-            <thead class="table-light">
-              <tr>
-                <th>Fecha</th>
-                <% unless @vehicle %>
-                  <th>Vehículo</th>
-                <% end %>
-                <th>Chofer</th>
-                <th>Odómetro</th>
-                <th>Litros / Costo</th>
-                <th>Rendimiento (km/l)</th>
-                <th class="text-end">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% @fuel_fills.each do |fill| %>
-                <tr>
-                  <td class="small"><%= l fill.date, format: :short %></td>
-                  <% unless @vehicle %>
-                    <td class="small">
-                      <%= link_to fill.vehicle.plate, vehicle_fuel_fills_path(fill.vehicle) %>
-                    </td>
-                  <% end %>
-                  <td class="small text-muted"><%= fill.user.email %></td>
-                  <td class="small"><%= number_with_delimiter fill.odometer %> km</td>
-                  <td class="small">
-                    <%= fill.liters %>L
-                    <span class="text-muted d-block"><%= fill.currency %> <%= number_to_currency(fill.cost, unit: "$", precision: fill.currency == 'CLP' ? 0 : 2) %></span>
-                  </td>
-                  <td>
-                    <% if fill.km_per_liter.present? %>
-                      <%
-                        avg = FuelFill.where(vehicle: fill.vehicle).where.not(km_per_liter: nil).average(:km_per_liter).to_f
-                        avg = fill.km_per_liter if avg == 0
-                        threshold = (fill.company.anomaly_threshold.to_f / 100.0) rescue 0.2
-                        lower_limit = avg * (1.0 - threshold)
-                        upper_limit = avg * (1.0 + threshold)
-
-                        badge_class = if fill.km_per_liter < lower_limit
-                          "text-bg-danger"
-                        elsif fill.km_per_liter > upper_limit
-                          "text-bg-primary"
-                        else
-                          "text-bg-success"
-                        end
-                      %>
-                      <span class="badge <%= badge_class %> rounded-pill"><%= fill.km_per_liter.round(2) %> km/l</span>
-                    <% else %>
-                      <span class="text-muted">--</span>
-                    <% end %>
-                  </td>
-                  <td class="text-end">
-                    <% if fill.ticket.attached? %>
-                      <%= link_to "Boleta", rails_blob_path(fill.ticket, disposition: "inline"), target: "_blank", class: "btn btn-sm btn-outline-secondary" %>
-                    <% end %>
-                    <% if policy(fill).edit? %>
-                      <%= link_to "Editar", edit_fuel_fill_path(fill), class: "btn btn-sm btn-outline-primary" %>
-                    <% end %>
-                    <% if policy(fill).destroy? %>
-                      <%= button_to "Eliminar", fuel_fill_path(fill), method: :delete, data: { turbo_confirm: "¿Estás seguro?" }, class: "btn btn-sm btn-outline-danger", form_class: "d-inline" %>
-                    <% end %>
-                  </td>
-                </tr>
-              <% end %>
-            </tbody>
-          </table>
-        </div>
-        <%= render "shared/pagination", pagy: @pagy %>
-      <% else %>
-        <div class="text-center py-5 text-muted">
-          <i class="bi bi-fuel-pump d-block mb-2 fs-3 opacity-50"></i>
-          No hay registros de combustible aún.
+        <div class="small text-muted d-flex flex-wrap align-items-center gap-2 fw-normal">
+          <span class="d-none d-sm-inline">Rendimiento vs. promedio del vehículo:</span>
+          <span class="d-sm-none">Rendimiento:</span>
+          <span class="badge text-bg-danger">Bajo</span>
+          <span class="badge text-bg-success">Normal</span>
+          <span class="badge text-bg-primary">Sobre</span>
         </div>
       <% end %>
     </div>
+    <% if @fuel_fills.any? %>
+      <%
+        # Promedio histórico de km/l por vehículo (una sola consulta para toda la página).
+        rated_vehicle_ids = @fuel_fills.select { |f| f.km_per_liter.present? }.map(&:vehicle_id).uniq
+        avg_by_vehicle = if rated_vehicle_ids.any?
+          FuelFill.where(vehicle_id: rated_vehicle_ids).where.not(km_per_liter: nil).group(:vehicle_id).average(:km_per_liter)
+        else
+          {}
+        end
+        thresholds = {}
+      %>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Fecha</th>
+              <% if show_vehicle_column %>
+                <th class="d-none d-md-table-cell">Vehículo</th>
+              <% end %>
+              <% if show_driver_column %>
+                <th class="d-none d-xl-table-cell">Chofer</th>
+              <% end %>
+              <th class="text-end d-none d-xl-table-cell">Odómetro</th>
+              <th class="text-end d-none d-sm-table-cell">Litros</th>
+              <th class="text-end">Costo</th>
+              <th><span class="d-none d-sm-inline">Rendimiento</span><span class="d-sm-none" title="Rendimiento">km/l</span></th>
+              <th class="text-end">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @fuel_fills.each do |fill| %>
+              <%
+                threshold = thresholds[fill.company_id] ||= ((fill.company.anomaly_threshold.to_f / 100.0) rescue 0.2)
+                liters_text = "#{number_with_precision(fill.liters, precision: 2, strip_insignificant_zeros: true, delimiter: ".")} L"
+              %>
+              <tr>
+                <td class="text-nowrap">
+                  <% if policy(fill).show? %>
+                    <%= link_to l(fill.date), fuel_fill_path(fill), class: "text-body" %>
+                  <% else %>
+                    <%= l fill.date %>
+                  <% end %>
+                  <% if show_vehicle_column %>
+                    <div class="small d-md-none">
+                      <%= link_to fill.vehicle.plate, vehicle_fuel_fills_path(fill.vehicle), class: "fw-bold" %>
+                    </div>
+                  <% end %>
+                </td>
+                <% if show_vehicle_column %>
+                  <td class="text-nowrap d-none d-md-table-cell">
+                    <%= link_to fill.vehicle.plate, vehicle_fuel_fills_path(fill.vehicle), class: "fw-bold" %>
+                  </td>
+                <% end %>
+                <% if show_driver_column %>
+                  <td class="d-none d-xl-table-cell text-muted small"><%= fill.user.email %></td>
+                <% end %>
+                <td class="text-end text-nowrap d-none d-xl-table-cell"><%= number_with_delimiter fill.odometer %> km</td>
+                <td class="text-end text-nowrap d-none d-sm-table-cell"><%= liters_text %></td>
+                <td class="text-end text-nowrap">
+                  <span class="fw-bold"><%= format_money(fill.cost, fill.currency) %></span>
+                  <div class="small text-muted d-sm-none"><%= liters_text %></div>
+                </td>
+                <td class="text-nowrap">
+                  <%= render "fuel_fills/efficiency", fill: fill, average: avg_by_vehicle[fill.vehicle_id], threshold: threshold %>
+                </td>
+                <td class="text-end">
+                  <div class="gf-row-actions">
+                    <% if policy(fill).show? %>
+                      <%= link_to fuel_fill_path(fill), class: "btn btn-sm btn-outline-primary", title: "Ver", "aria-label": "Ver" do %>
+                        <i class="bi bi-eye"></i>
+                      <% end %>
+                    <% end %>
+                    <% if fill.ticket.attached? %>
+                      <%= link_to rails_blob_path(fill.ticket, disposition: "inline"), target: "_blank", rel: "noopener",
+                            class: "btn btn-sm btn-outline-secondary", title: "Boleta", "aria-label": "Boleta" do %>
+                        <i class="bi bi-receipt"></i>
+                      <% end %>
+                    <% end %>
+                    <% if policy(fill).edit? %>
+                      <%= link_to edit_fuel_fill_path(fill), class: "btn btn-sm btn-outline-secondary", title: "Editar", "aria-label": "Editar" do %>
+                        <i class="bi bi-pencil"></i>
+                      <% end %>
+                    <% end %>
+                    <% if policy(fill).destroy? %>
+                      <%= button_to fuel_fill_path(fill), method: :delete, class: "btn btn-sm btn-outline-danger",
+                            title: "Eliminar", "aria-label": "Eliminar", form: { data: { turbo_confirm: "¿Eliminar la carga del #{l fill.date} de #{fill.vehicle.plate}? También se borrará su gasto asociado." } } do %>
+                        <i class="bi bi-trash"></i>
+                      <% end %>
+                    <% end %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+      <%= render "shared/pagination", pagy: @pagy %>
+    <% else %>
+      <div class="text-center py-5 px-3 text-muted">
+        <i class="bi bi-fuel-pump d-block opacity-50"></i>
+        <p class="mb-1 fw-bold text-body">No hay cargas de combustible</p>
+        <p class="small mb-0">
+          <% if can_register %>
+            Registra la primera carga con la foto de la boleta.
+          <% elsif @vehicle %>
+            Este vehículo aún no tiene cargas registradas.
+          <% elsif current_user.chofer? %>
+            Cuando tengas un vehículo asignado, podrás registrar tus cargas desde aquí.
+          <% else %>
+            Cuando los choferes registren cargas, aparecerán aquí.
+          <% end %>
+        </p>
+        <% if can_register %>
+          <%= link_to new_vehicle_fuel_fill_path(fill_vehicle), class: "btn btn-primary btn-sm mt-3" do %>
+            <i class="bi bi-plus-lg me-1"></i>Nueva carga
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
   </div>
 </div>

@@ -1,37 +1,43 @@
+<% current_file = user_document.file if user_document.file.attached? && user_document.file.blob.persisted? %>
 <%= form_with(model: [@user, user_document]) do |form| %>
-  <% if user_document.errors.any? %>
-    <div class="alert alert-danger">
-      <h6 class="alert-heading fw-semibold mb-2"><%= pluralize(user_document.errors.count, "error", "errores") %> impidieron guardar este documento:</h6>
-      <ul class="mb-0 small">
-        <% user_document.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
+  <%= render "shared/form_errors", object: user_document, subject: "el documento" %>
+
+  <div class="row g-3">
+    <div class="col-md-7">
+      <%= form.label :doc_type, class: "form-label" do %>Tipo de documento <span class="text-danger">*</span><% end %>
+      <%= form.select :doc_type, UserDocument.doc_types.keys.map { |k| [user_doc_type_label(k), k] }, { prompt: "Selecciona un tipo" }, class: "form-select", required: true %>
     </div>
-  <% end %>
 
-  <div class="mb-3">
-    <%= form.label :doc_type, "Tipo de Documento", class: "form-label" %>
-    <%= form.select :doc_type, UserDocument.doc_types.keys.map { |k| [user_doc_type_label(k), k] }, { prompt: "Seleccione un tipo" }, class: "form-select" %>
+    <div class="col-md-5">
+      <%= form.label :due_on, class: "form-label" do %>Fecha de vencimiento <span class="text-danger">*</span><% end %>
+      <%= form.date_field :due_on, class: "form-control", required: true %>
+    </div>
+
+    <div class="col-12">
+      <%= form.label :file, class: "form-label" do %>Archivo<% unless current_file %> <span class="text-danger">*</span><% end %><% end %>
+      <% if current_file %>
+        <div class="d-flex align-items-center gap-2 border rounded-3 px-3 py-2 mb-2 small">
+          <i class="bi <%= user_document_file_icon(current_file, colored: true) %>"></i>
+          <span class="text-truncate min-w-0 flex-grow-1"><%= current_file.filename %> <span class="text-muted">(<%= number_to_human_size(current_file.byte_size) %>)</span></span>
+          <%= link_to rails_blob_path(current_file, disposition: "inline"), target: "_blank", rel: "noopener", class: "text-nowrap fw-bold text-decoration-none" do %>
+            Ver<i class="bi bi-box-arrow-up-right ms-1"></i>
+          <% end %>
+        </div>
+      <% end %>
+      <%= form.file_field :file, accept: "application/pdf,image/*", class: "form-control", required: current_file.nil? %>
+      <div class="form-text">
+        PDF o imagen (JPG, PNG).<%= " Sube uno nuevo solo si quieres reemplazar el actual." if current_file %>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <%= form.label :notes, class: "form-label" do %>Notas <span class="text-muted fw-normal">(opcional)</span><% end %>
+      <%= form.text_area :notes, rows: 3, class: "form-control", placeholder: "Ej.: clase de licencia, renovación en trámite…" %>
+    </div>
   </div>
 
-  <div class="mb-3">
-    <%= form.label :due_on, "Fecha de Vencimiento", class: "form-label" %>
-    <%= form.date_field :due_on, class: "form-control" %>
-  </div>
-
-  <div class="mb-3">
-    <%= form.label :file, "Archivo (PDF/Imagen)", class: "form-label" %>
-    <%= form.file_field :file, accept: "application/pdf,image/*", class: "form-control" %>
-  </div>
-
-  <div class="mb-4">
-    <%= form.label :notes, "Notas Adicionales", class: "form-label" %>
-    <%= form.text_area :notes, rows: 3, class: "form-control" %>
-  </div>
-
-  <div class="d-flex justify-content-end gap-2">
+  <div class="d-flex justify-content-end gap-2 mt-4">
     <%= link_to "Cancelar", user_path(@user), class: "btn btn-outline-secondary" %>
-    <%= form.submit "Guardar Documento", class: "btn btn-primary" %>
+    <%= form.submit user_document.persisted? ? "Guardar cambios" : "Guardar documento", class: "btn btn-primary" %>
   </div>
 <% end %>

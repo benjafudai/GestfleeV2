@@ -1,53 +1,46 @@
 <%= form_with(model: expense, class: "needs-validation", multipart: true) do |form| %>
-  <% if expense.errors.any? %>
-    <div class="alert alert-danger shadow-sm rounded-3">
-      <h5 class="alert-heading fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i>Por favor corrija los siguientes errores:</h5>
-      <ul class="mb-0">
-        <% expense.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <%= render "shared/form_errors", object: expense, subject: "el gasto" %>
 
   <div class="row g-4">
-    <div class="col-md-8">
-      <div class="card shadow-sm border-0 h-100">
-        <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
-          <h5 class="fw-bold mb-0">Detalles del Gasto</h5>
+    <div class="col-lg-8">
+      <div class="card h-100">
+        <div class="card-header bg-white">
+          <h2 class="h6 mb-0"><i class="bi bi-receipt text-primary me-2"></i>Datos del gasto</h2>
         </div>
         <div class="card-body">
           <div class="row g-3">
             <div class="col-md-6">
-              <%= form.label :vehicle_id, "Vehículo Asociado", class: "form-label fw-medium" %>
-              <%= form.collection_select :vehicle_id, Vehicle.all, :id, ->(v){ "#{v.plate} - #{v.brand}" }, { prompt: "Gasto General (Sin Vehículo)" }, { class: "form-select" } %>
+              <%= form.label :vehicle_id, "Vehículo", class: "form-label" %>
+              <%= form.collection_select :vehicle_id, Vehicle.all.order(:plate), :id, ->(v) { expense_vehicle_option_label(v) },
+                    { prompt: "Gasto general (sin vehículo)" }, { class: "form-select" } %>
             </div>
 
             <div class="col-md-6">
-              <%= form.label :category, "Categoría", class: "form-label fw-medium" %>
+              <%= form.label :category, class: "form-label" do %>Categoría <span class="text-danger">*</span><% end %>
               <%= form.select :category, Expense.categories.keys.map { |c| [expense_category_label(c), c] }, {}, { class: "form-select", required: true } %>
             </div>
 
             <div class="col-md-6">
-              <%= form.label :date, "Fecha", class: "form-label fw-medium" %>
+              <%= form.label :date, class: "form-label" do %>Fecha <span class="text-danger">*</span><% end %>
               <%= form.date_field :date, class: "form-control", required: true %>
             </div>
 
             <div class="col-md-6">
-              <%= form.label :amount, "Monto Total", class: "form-label fw-medium" %>
+              <%= form.label :amount, class: "form-label" do %>Monto total <span class="text-danger">*</span><% end %>
               <div class="input-group">
-                <%= form.select :currency, ['CLP', 'USD'], {}, { class: "form-select", style: "max-width: 100px;" } %>
-                <%= form.number_field :amount, step: "any", class: "form-control", required: true, placeholder: "0.00" %>
+                <%= form.select :currency, ['CLP', 'USD'], {}, { class: "form-select flex-grow-0", style: "width: 96px;", "aria-label": "Moneda" } %>
+                <%= form.number_field :amount, value: expense_amount_field_value(expense), step: "any", min: 0, inputmode: "decimal",
+                      class: "form-control", required: true, placeholder: "0" %>
               </div>
             </div>
 
-            <div class="col-md-12">
-              <%= form.label :provider, "Proveedor", class: "form-label fw-medium" %>
-              <%= form.text_field :provider, class: "form-control", placeholder: "Nombre de la empresa, rut, etc." %>
+            <div class="col-12">
+              <%= form.label :provider, "Proveedor", class: "form-label" %>
+              <%= form.text_field :provider, class: "form-control", placeholder: "Nombre o RUT del proveedor" %>
             </div>
 
-            <div class="col-md-12">
-              <%= form.label :description, "Descripción u Observaciones", class: "form-label fw-medium" %>
+            <div class="col-12">
+              <%= form.label :description, "Descripción u observaciones", class: "form-label" %>
               <%= form.text_area :description, class: "form-control", rows: 3, placeholder: "Detalle del servicio o ítem adquirido" %>
             </div>
           </div>
@@ -55,28 +48,29 @@
       </div>
     </div>
 
-    <div class="col-md-4">
-      <div class="card shadow-sm border-0 mb-4">
-        <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
-          <h5 class="fw-bold mb-0">Facturas y Documentos</h5>
+    <div class="col-lg-4 d-flex flex-column gap-4">
+      <div class="card">
+        <div class="card-header bg-white">
+          <h2 class="h6 mb-0"><i class="bi bi-paperclip text-primary me-2"></i>Boletas y facturas</h2>
         </div>
         <div class="card-body">
-          <div class="mb-3">
-            <%= form.label :documents, "Adjuntar Archivos", class: "form-label fw-medium" %>
-            <%= form.file_field :documents, multiple: true, class: "form-control" %>
-            <div class="form-text"><i class="bi bi-info-circle me-1"></i> Puedes seleccionar varios archivos (imágenes, PDF).</div>
-          </div>
+          <%= form.label :documents, "Adjuntar archivos", class: "form-label" %>
+          <%= form.file_field :documents, multiple: true, accept: "image/*,application/pdf", class: "form-control" %>
+          <div class="form-text">Puedes seleccionar varios archivos (imágenes o PDF).</div>
 
           <%# Solo los ya guardados: un archivo recién subido que no pasó la validación aún no tiene enlace. %>
           <% saved_documents = expense.documents.select(&:persisted?) %>
           <% if saved_documents.any? %>
-            <div class="mt-3 border-top pt-3">
-              <h6 class="small text-muted text-uppercase mb-2">Archivos Actuales</h6>
-              <ul class="list-group list-group-flush small">
+            <div class="mt-3 pt-3 border-top">
+              <div class="small text-muted mb-2">Archivos ya adjuntos (los nuevos se suman a estos)</div>
+              <ul class="list-unstyled mb-0 d-grid gap-2">
                 <% saved_documents.each do |doc| %>
-                  <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
-                    <span class="text-truncate" style="max-width: 200px;"><i class="bi bi-file-earmark-text me-2"></i><%= doc.filename %></span>
-                    <%= link_to "Ver", rails_blob_path(doc, disposition: "preview"), target: "_blank", class: "btn btn-sm btn-link py-0" %>
+                  <li class="d-flex align-items-center justify-content-between gap-2">
+                    <span class="d-flex align-items-center gap-2 min-w-0">
+                      <i class="bi bi-file-earmark-text text-muted flex-shrink-0"></i>
+                      <span class="text-truncate" title="<%= doc.filename %>"><%= doc.filename %></span>
+                    </span>
+                    <%= link_to "Ver", rails_blob_path(doc, disposition: "preview"), target: "_blank", rel: "noopener", class: "btn btn-sm btn-link py-0 flex-shrink-0" %>
                   </li>
                 <% end %>
               </ul>
@@ -85,21 +79,23 @@
         </div>
       </div>
 
-      <div class="card bg-light border-warning border-opacity-50 shadow-sm">
+      <div class="card">
+        <div class="card-header bg-white">
+          <h2 class="h6 mb-0"><i class="bi bi-shield-lock text-warning-emphasis me-2"></i>Visibilidad</h2>
+        </div>
         <div class="card-body">
-          <h6 class="text-warning-emphasis fw-bold"><i class="bi bi-shield-lock me-1"></i> Resguardo Administrativo</h6>
-          <div class="form-check mt-3">
-            <%= form.check_box :restricted_access, class: "form-check-input" %>
-            <%= form.label :restricted_access, "Solo visible para Administradores", class: "form-check-label fw-medium" %>
-            <div class="form-text small">Los Analistas no podrán ver este registro en sus auditorías de lectura.</div>
+          <div class="form-check form-switch mb-1">
+            <%= form.check_box :restricted_access, class: "form-check-input", role: "switch" %>
+            <%= form.label :restricted_access, "Solo visible para administradores", class: "form-check-label fw-semibold" %>
           </div>
+          <div class="form-text">Los analistas no verán este gasto en el listado ni en los totales.</div>
         </div>
       </div>
     </div>
   </div>
 
   <div class="d-flex justify-content-end gap-2 mt-4">
-    <%= link_to "Cancelar", expenses_path, class: "btn btn-light shadow-sm" %>
-    <%= form.submit "Guardar Gasto", class: "btn btn-primary shadow-sm px-4 fw-medium" %>
+    <%= link_to "Cancelar", expense.persisted? ? expense_path(expense) : expenses_path, class: "btn btn-outline-secondary" %>
+    <%= form.submit "Guardar gasto", class: "btn btn-primary" %>
   </div>
 <% end %>

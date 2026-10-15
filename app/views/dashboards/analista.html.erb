@@ -1,110 +1,84 @@
 <div class="container mt-4">
-  <%= render "dashboards/welcome", icon: "bi-graph-up-arrow", title: "Bienvenido, #{current_user.email}", tag: "Analista" %>
+  <%= render "dashboards/welcome", icon: "bi-graph-up", title: "Panel de análisis",
+        subtitle: dashboard_greeting(current_user) %>
 
   <div class="row g-3 mb-4">
-    <div class="col-6 col-lg-3">
-      <div class="card shadow-sm h-100">
-        <div class="card-body">
-          <div class="text-muted small text-uppercase fw-semibold mb-1">Gasto Total del Mes</div>
-          <div class="h4 fw-bold mb-0"><%= number_to_currency(@total_month_cost, unit: "$", precision: 0) %></div>
-        </div>
-      </div>
+    <div class="col-6 col-xl-3">
+      <%= dashboard_stat "Gasto total del mes", format_money(@total_month_cost, "CLP"),
+            icon: "bi-wallet2", tone: :primary %>
     </div>
-    <div class="col-6 col-lg-3">
-      <div class="card shadow-sm h-100">
-        <div class="card-body">
-          <div class="text-muted small text-uppercase fw-semibold mb-1">Gasto en Combustible</div>
-          <div class="h4 fw-bold mb-0"><%= number_to_currency(@fuel_month_cost, unit: "$", precision: 0) %></div>
-        </div>
-      </div>
+    <div class="col-6 col-xl-3">
+      <%= dashboard_stat "Gasto en combustible", format_money(@fuel_month_cost, "CLP"),
+            icon: "bi-fuel-pump", tone: :warning %>
     </div>
-    <div class="col-6 col-lg-3">
-      <div class="card shadow-sm h-100">
-        <div class="card-body">
-          <div class="text-muted small text-uppercase fw-semibold mb-1">Gasto en Mantenimiento</div>
-          <div class="h4 fw-bold mb-0"><%= number_to_currency(@maintenance_month_cost, unit: "$", precision: 0) %></div>
-        </div>
-      </div>
+    <div class="col-6 col-xl-3">
+      <%= dashboard_stat "Gasto en mantención", format_money(@maintenance_month_cost, "CLP"),
+            icon: "bi-tools", tone: :info %>
     </div>
-    <div class="col-6 col-lg-3">
-      <div class="card shadow-sm h-100">
-        <div class="card-body">
-          <div class="text-muted small text-uppercase fw-semibold mb-1">Solicitudes Pendientes</div>
-          <div class="h4 fw-bold mb-0"><%= @pending_supply_requests_count %></div>
-        </div>
-      </div>
+    <div class="col-6 col-xl-3">
+      <%= dashboard_stat "Suministros pendientes", number_with_delimiter(@pending_supply_requests_count),
+            icon: "bi-inboxes", tone: :secondary %>
     </div>
   </div>
 
-  <div class="row g-4 mb-4">
-    <div class="col-md-3">
-      <div class="card shadow-sm h-100 border-start border-4 border-primary">
-        <div class="card-body">
-          <h5 class="card-title"><i class="bi bi-coins me-2"></i> Costos</h5>
-          <p class="card-text text-muted small">Analiza los gastos registrados por unidad y período.</p>
-          <%= link_to "Ver Costos", expenses_path, class: "btn btn-outline-primary btn-sm" %>
-        </div>
-      </div>
+  <div class="row g-3 mb-4">
+    <div class="col-md-6 col-xl-4">
+      <%= dashboard_action_card "Costos", "Analiza los gastos registrados por vehículo y período.",
+            path: expenses_path, link_text: "Ver costos", icon: "bi-wallet2" %>
     </div>
-    <div class="col-md-3">
-      <div class="card shadow-sm h-100 border-start border-4 border-primary">
-        <div class="card-body">
-          <h5 class="card-title"><i class="bi bi-fuel-pump-fill me-2"></i> Combustible</h5>
-          <p class="card-text text-muted small">Rendimiento y consumo de la flota.</p>
-          <%= link_to "Ver Combustible", fuel_fills_path, class: "btn btn-outline-primary btn-sm" %>
-        </div>
-      </div>
+    <div class="col-md-6 col-xl-4">
+      <%= dashboard_action_card "Combustible", "Rendimiento y consumo de combustible de la flota.",
+            path: fuel_fills_path, link_text: "Ver combustible", icon: "bi-fuel-pump", tone: :warning %>
     </div>
-    <div class="col-md-3">
-      <div class="card shadow-sm h-100 border-start border-4 border-primary">
-        <div class="card-body">
-          <h5 class="card-title"><i class="bi bi-boxes me-2"></i> Inventario</h5>
-          <p class="card-text text-muted small">Stock y valorización de repuestos.</p>
-          <%= link_to "Ver Inventario", parts_path, class: "btn btn-outline-primary btn-sm" %>
-        </div>
-      </div>
+    <div class="col-md-6 col-xl-4">
+      <%= dashboard_action_card "Inventario", "Stock y valorización de los repuestos en bodega.",
+            path: parts_path, link_text: "Ver inventario", icon: "bi-boxes", tone: :success %>
     </div>
-    <div class="col-md-3">
-      <div class="card shadow-sm h-100 border-start border-4 border-danger">
-        <div class="card-body">
-          <h5 class="card-title"><i class="bi bi-shield-exclamation me-2"></i> Alertas</h5>
-          <p class="card-text text-muted small">Documentos vencidos o próximos a vencer.</p>
-          <%= link_to "Ver Alertas", alerts_path, class: "btn btn-outline-danger btn-sm" %>
-        </div>
-      </div>
+    <div class="col-md-6 col-xl-6">
+      <%= dashboard_action_card "Alertas", "Documentos vencidos o próximos a vencer.",
+            path: alerts_path, link_text: "Ver alertas", icon: "bi-shield-exclamation", tone: :danger %>
     </div>
-    <div class="col-md-3">
-      <div class="card shadow-sm h-100 border-start border-4 border-primary">
-        <div class="card-body">
-          <h5 class="card-title"><i class="bi bi-clipboard2-pulse me-2"></i> Fallas y Mantención</h5>
-          <p class="card-text text-muted small">Fallas, costo de repuestos y tiempo fuera de servicio.</p>
-          <%= link_to "Ver Análisis", failure_analytics_path, class: "btn btn-outline-primary btn-sm" %>
-        </div>
-      </div>
+    <div class="col-md-12 col-xl-6">
+      <%= dashboard_action_card "Fallas y mantención", "Fallas, costo de repuestos y tiempo fuera de servicio.",
+            path: failure_analytics_path, link_text: "Ver análisis", icon: "bi-clipboard2-pulse", tone: :info %>
     </div>
   </div>
 
-  <div class="row">
-    <div class="col-12">
-      <div class="card shadow-sm">
-        <div class="card-header bg-white">
-          <h6 class="mb-0">Gasto del Mes por Categoría</h6>
-        </div>
-        <div class="card-body p-0">
-          <% if @expenses_by_category.any? %>
-            <ul class="list-group list-group-flush">
-              <% @expenses_by_category.sort_by { |_cat, amount| -amount }.each do |category, amount| %>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                  <span><%= expense_category_label(category) %></span>
-                  <span class="fw-medium"><%= number_to_currency(amount, unit: "$", precision: 0) %></span>
-                </li>
-              <% end %>
-            </ul>
-          <% else %>
-            <div class="text-center py-4 text-muted">No hay gastos registrados este mes.</div>
-          <% end %>
-        </div>
-      </div>
+  <div class="card">
+    <div class="card-header bg-white d-flex flex-wrap justify-content-between align-items-center gap-2">
+      <h2 class="h6 mb-0">Gasto del mes por categoría</h2>
+      <span class="small text-muted"><%= dashboard_month_label.upcase_first %></span>
     </div>
+    <% if @expenses_by_category.any? %>
+      <ul class="list-group list-group-flush">
+        <% @expenses_by_category.sort_by { |_cat, amount| -amount }.each do |category, amount| %>
+          <% share = @total_month_cost.to_d.positive? ? (amount.to_d * 100 / @total_month_cost.to_d).round : 0 %>
+          <li class="list-group-item">
+            <div class="d-flex align-items-center gap-3">
+              <%= expense_category_icon_circle(category, style: "width: 38px; height: 38px; font-size: 1rem;") %>
+              <div class="min-w-0 flex-grow-1">
+                <div class="d-flex justify-content-between align-items-center gap-3 mb-2">
+                  <span class="text-body text-truncate"><%= expense_category_label(category) %></span>
+                  <span class="text-nowrap">
+                    <span class="fw-bold text-body"><%= format_money(amount, "CLP") %></span>
+                    <span class="small text-muted ms-1"><%= share %>%</span>
+                  </span>
+                </div>
+                <div class="progress" role="progressbar" aria-label="<%= expense_category_label(category) %>"
+                     aria-valuenow="<%= share %>" aria-valuemin="0" aria-valuemax="100" style="height: 6px;">
+                  <div class="progress-bar <%= expense_category_bar_class(category) %>" style="width: <%= share %>%;"></div>
+                </div>
+              </div>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <div class="text-center py-5 px-3 text-muted">
+        <i class="bi bi-receipt d-block opacity-50"></i>
+        <p class="mb-1 fw-bold text-body">No hay gastos registrados este mes</p>
+        <p class="small mb-0">Los gastos y las cargas de combustible del mes aparecerán aquí por categoría.</p>
+      </div>
+    <% end %>
   </div>
 </div>

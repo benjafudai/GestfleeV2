@@ -1,98 +1,167 @@
+<% vehicle = @incident.vehicle %>
+<% photos = @incident.photos.attachments.to_a %>
+<% located = @incident.latitude.present? && @incident.longitude.present? %>
 <div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3">Detalle del Incidente #<%= @incident.id %></h1>
     <div>
-      <%= link_to "Volver a Incidentes", incidents_path, class: "btn btn-outline-secondary me-2" %>
+      <h1 class="h3 mb-0"><i class="bi bi-exclamation-triangle me-2"></i>Incidente #<%= @incident.id %></h1>
+      <p class="text-muted mb-0"><%= incident_vehicle_label(vehicle) %> · reportado hace <%= time_ago_in_words(@incident.created_at) %></p>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+      <%= link_to incidents_path, class: "btn btn-outline-secondary text-nowrap" do %>
+        <i class="bi bi-arrow-left me-1"></i>Volver
+      <% end %>
       <% if policy(@incident).edit? %>
-        <%= link_to "Editar", edit_incident_path(@incident), class: "btn btn-primary" %>
+        <%= link_to edit_incident_path(@incident), class: "btn btn-primary text-nowrap" do %>
+          <i class="bi bi-pencil me-1"></i>Editar
+        <% end %>
       <% end %>
     </div>
   </div>
 
-  <div class="row">
-    <div class="col-md-8">
-      <div class="card shadow-sm mb-4">
-        <div class="card-header bg-white fw-bold">
-          Información del Incidente
-        </div>
-        <div class="card-body">
-          <p><strong>Vehículo:</strong> <%= link_to @incident.vehicle.plate, vehicle_path(@incident.vehicle) %></p>
-          <p><strong>Reportado por:</strong> <%= @incident.reporter&.email %></p>
-          <p><strong>Fecha y Hora:</strong> <%= @incident.created_at.strftime("%d/%m/%Y %H:%M") %></p>
-          
-          <p>
-            <strong>Severidad:</strong>
-            <% severity_class = case @incident.severity
-               when 'low' then 'text-bg-info'
-               when 'medium' then 'text-bg-warning'
-               when 'high' then 'text-bg-danger'
-               when 'critical' then 'text-bg-dark'
-               else 'text-bg-light'
-               end %>
-            <span class="badge <%= severity_class %>"><%= incident_severity_label(@incident.severity) %></span>
-          </p>
-          
-          <p>
-            <strong>Estado:</strong>
-            <% status_class = case @incident.status
-               when 'pending' then 'text-bg-secondary'
-               when 'in_review' then 'text-bg-primary'
-               when 'resolved' then 'text-bg-success'
-               else 'text-bg-light'
-               end %>
-            <span class="badge <%= status_class %>"><%= incident_status_label(@incident.status) %></span>
-          </p>
-
-          <hr>
-          
-          <p><strong>Descripción:</strong></p>
-          <div class="p-3 bg-light rounded mb-4">
-            <%= simple_format(@incident.description) %>
-          </div>
-
-          <% if @incident.latitude.present? && @incident.longitude.present? %>
-            <hr>
-            <p><strong>Ubicación del Incidente:</strong> <span class="text-muted ms-2 small">(Lat: <%= @incident.latitude.round(4) rescue @incident.latitude %>, Lng: <%= @incident.longitude.round(4) rescue @incident.longitude %>)</span></p>
-            
-            <div style="width: 100%; height: 300px; border-radius: 8px; overflow: hidden; border: 1px solid #dee2e6;">
-              <iframe 
-                width="100%" 
-                height="100%" 
-                frameborder="0" 
-                style="border:0;" 
-                allowfullscreen="" 
-                aria-hidden="false" 
-                tabindex="0"
-                src="https://maps.google.com/maps?q=<%= @incident.latitude %>,<%= @incident.longitude %>&z=15&output=embed">
-              </iframe>
+  <div class="row g-3 mb-4">
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-body d-flex align-items-center gap-3">
+          <%= incident_status_icon_circle(@incident.status) %>
+          <div class="min-w-0">
+            <div class="d-flex flex-wrap align-items-center gap-2">
+              <span class="small text-muted">Estado</span>
+              <%= status_badge(incident_status_label(@incident.status), @incident.status) %>
             </div>
-          <% end %>
+            <div class="small mt-1"><%= incident_status_hint(@incident.status) %></div>
+          </div>
         </div>
       </div>
     </div>
-    
-    <div class="col-md-4">
-      <div class="card shadow-sm mb-4">
-        <div class="card-header bg-white fw-bold">
-          Evidencias Fotográficas
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-body d-flex align-items-center gap-3">
+          <%= incident_severity_icon_circle(@incident.severity) %>
+          <div class="min-w-0">
+            <div class="d-flex flex-wrap align-items-center gap-2">
+              <span class="small text-muted">Gravedad</span>
+              <%= incident_severity_badge(@incident.severity) %>
+            </div>
+            <div class="small mt-1"><%= incident_severity_hint(@incident.severity) %></div>
+          </div>
         </div>
-        <div class="card-body p-0">
-          <% if @incident.photos.attached? %>
-            <div class="list-group list-group-flush">
-              <% @incident.photos.each do |photo| %>
-                <div class="list-group-item text-center p-3">
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-5">
+      <div class="card">
+        <div class="card-header bg-white">
+          <%= incident_card_title("Detalles del incidente", icon: "bi-info-circle") %>
+        </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item d-flex justify-content-between gap-3">
+            <span class="text-muted">Vehículo</span>
+            <span class="text-end">
+              <%= incident_vehicle_link(vehicle, class: "fw-bold") %>
+              <% if (model = incident_vehicle_model(vehicle)).present? %>
+                <span class="d-block small text-muted"><%= model %></span>
+              <% end %>
+            </span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between gap-3">
+            <span class="text-muted text-nowrap">Reportado por</span>
+            <span class="text-end text-break">
+              <% if @incident.reporter %>
+                <i class="bi bi-person text-muted me-1"></i><%= @incident.reporter.email %>
+              <% else %>
+                <span class="text-muted">—</span>
+              <% end %>
+            </span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between gap-3">
+            <span class="text-muted text-nowrap">Fecha y hora</span>
+            <span class="text-end"><%= l(@incident.created_at, format: :long) %></span>
+          </li>
+          <% if @incident.updated_at > @incident.created_at + 1.minute %>
+            <li class="list-group-item d-flex justify-content-between gap-3">
+              <span class="text-muted text-nowrap">Última actualización</span>
+              <span class="text-end">hace <%= time_ago_in_words(@incident.updated_at) %></span>
+            </li>
+          <% end %>
+          <li class="list-group-item">
+            <div class="text-muted mb-2">Descripción</div>
+            <div class="p-3 bg-light rounded-3 text-break"><%= simple_format(@incident.description, {}, wrapper_tag: "div") %></div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-lg-7 d-flex flex-column gap-4">
+      <div class="card">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center gap-2">
+          <%= incident_card_title("Evidencias fotográficas", icon: "bi-images") %>
+          <% if photos.any? %>
+            <span class="small text-muted text-nowrap"><%= photos.size == 1 ? "1 foto" : "#{photos.size} fotos" %></span>
+          <% end %>
+        </div>
+        <div class="card-body">
+          <% if photos.any? %>
+            <div class="row g-3">
+              <% photos.each_with_index do |photo, index| %>
+                <div class="col-6 col-md-4">
                   <% if photo.image? %>
-                    <%= image_tag photo, class: "img-fluid border rounded rounded-3 mb-2", style: "max-width: 100%; max-height: 400px; object-fit: contain;" %>
-                    <br>
+                    <%= link_to rails_blob_path(photo), target: "_blank", rel: "noopener", class: "d-block ratio ratio-4x3 rounded-3 overflow-hidden border bg-light", title: "Abrir foto #{index + 1}" do %>
+                      <%= image_tag photo, alt: "Foto #{index + 1} del incidente ##{@incident.id}", class: "w-100 h-100 object-fit-cover", loading: "lazy" %>
+                    <% end %>
+                  <% else %>
+                    <div class="ratio ratio-4x3 rounded-3 border bg-light">
+                      <div class="d-flex flex-column align-items-center justify-content-center text-muted small p-2 text-center">
+                        <i class="bi bi-file-earmark fs-3"></i>
+                        <span class="text-truncate w-100"><%= photo.filename %></span>
+                      </div>
+                    </div>
                   <% end %>
-                  <%= link_to "Descargar Imagen", rails_blob_path(photo, disposition: "attachment"), class: "btn btn-sm btn-outline-secondary mt-2" %>
+                  <%= link_to rails_blob_path(photo, disposition: "attachment"), class: "btn btn-sm btn-outline-secondary w-100 mt-2 text-nowrap" do %>
+                    <i class="bi bi-download me-1"></i>Descargar
+                  <% end %>
                 </div>
               <% end %>
             </div>
           <% else %>
-            <div class="p-4 text-center text-muted">
-              <i class="bi bi-image" style="font-size: 2rem;"></i>
-              <p class="mt-2 mb-0">No se adjuntaron fotos.</p>
+            <div class="text-center py-4 text-muted">
+              <i class="bi bi-camera d-block opacity-50"></i>
+              <p class="mb-1 fw-bold text-body">No se adjuntaron fotos</p>
+              <p class="small mb-0">
+                <%= policy(@incident).edit? ? "Puedes agregar fotos al editar el incidente." : "Este reporte no incluye evidencias fotográficas." %>
+              </p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center gap-2">
+          <%= incident_card_title("Ubicación", icon: "bi-geo-alt") %>
+          <% if located %>
+            <%= link_to incident_map_url(@incident), target: "_blank", rel: "noopener", class: "small fw-bold text-nowrap" do %>
+              Abrir en Google Maps<i class="bi bi-box-arrow-up-right ms-1"></i>
+            <% end %>
+          <% end %>
+        </div>
+        <div class="card-body">
+          <% if located %>
+            <div class="rounded-3 overflow-hidden border bg-light" style="height: 280px;">
+              <iframe
+                src="<%= incident_map_embed_url(@incident) %>"
+                title="Mapa de la ubicación del incidente"
+                class="d-block w-100 h-100 border-0"
+                loading="lazy"
+                allowfullscreen=""></iframe>
+            </div>
+            <p class="small text-muted mb-0 mt-2"><i class="bi bi-geo-alt-fill me-1"></i>Coordenadas: <%= incident_coordinates(@incident) %></p>
+          <% else %>
+            <div class="text-center py-4 text-muted">
+              <i class="bi bi-geo-alt d-block opacity-50"></i>
+              <p class="mb-1 fw-bold text-body">Sin ubicación registrada</p>
+              <p class="small mb-0">El reporte se envió sin la ubicación del vehículo.</p>
             </div>
           <% end %>
         </div>

@@ -3,9 +3,9 @@ module CurrencyHelper
     return "-" unless amount.present?
 
     if currency == 'USD'
-      number_to_currency(amount, unit: "USD $", precision: 2)
+      number_to_currency(amount, unit: "US$", precision: 2, separator: ",", delimiter: ".")
     else
-      number_to_currency(amount, unit: "CLP $", precision: 0, delimiter: ".")
+      number_to_currency(amount, unit: "$", precision: 0, delimiter: ".")
     end
   end
 

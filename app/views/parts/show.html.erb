@@ -1,71 +1,110 @@
+<% best = @part.best_quote %>
+<% vehicles = @part.vehicles.sort_by(&:plate) %>
 <div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-      <h1 class="h3 mb-0"><i class="bi bi-box-seam me-2 text-primary"></i> <%= @part.name %></h1>
-      <p class="text-muted mb-0 mt-1"><i class="bi bi-upc-scan me-1"></i> SKU: <strong><%= @part.sku %></strong></p>
+    <div class="min-w-0">
+      <h1 class="h3 mb-0"><i class="bi bi-box-seam me-2"></i><%= @part.name %></h1>
+      <p class="text-muted mb-0">SKU <strong class="text-body"><%= @part.sku %></strong> · Unidad de medida: <%= @part.unit_of_measure %></p>
     </div>
-    <div class="d-flex gap-2">
-      <%= link_to "Volver al Catálogo", parts_path, class: "btn btn-outline-secondary btn-sm shadow-sm" %>
+    <div class="d-flex flex-wrap gap-2">
       <% if policy(@part).edit? %>
-        <%= link_to "Editar", edit_part_path(@part), class: "btn btn-outline-primary btn-sm shadow-sm" %>
+        <%= link_to edit_part_path(@part), class: "btn btn-primary" do %>
+          <i class="bi bi-pencil me-1"></i>Editar
+        <% end %>
+      <% end %>
+      <%= link_to parts_path, class: "btn btn-outline-secondary" do %>
+        <i class="bi bi-arrow-left me-1"></i>Volver
       <% end %>
     </div>
   </div>
 
-  <div class="row g-4">
-    <div class="col-md-5">
-      <div class="card shadow-sm border-0 h-100">
-        <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
-          <h5 class="mb-0 fw-bold">Detalles del Repuesto</h5>
-        </div>
-        <div class="card-body">
-          <ul class="list-group list-group-flush mt-3">
-            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-              <span class="text-muted"><i class="bi bi-boxes me-2"></i>Stock Actual</span>
-              <span class="badge <%= @part.stock > 0 ? 'text-bg-success' : 'text-bg-danger' %> px-3 py-2 rounded-pill fs-6 shadow-sm">
-                <%= number_with_precision(@part.stock, precision: 2, strip_insignificant_zeros: true) %> <%= @part.unit_of_measure %>
-              </span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-              <h6 class="text-uppercase text-muted fw-bold mb-1" style="font-size: 0.8rem; letter-spacing: 0.5px;">Costo Unitario</h6>
-            <div>
-              <span class="fw-bold fs-5 text-success"><%= format_money(@part.cost, @part.currency) %></span>
-              <% if @part.currency == 'USD' %>
-                <div class="small fw-normal text-muted mt-1"><%= format_money(converted_to_clp(@part.cost, 'USD'), 'CLP') %></div>
-              <% end %>
-            </div>
-          </ul>
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-lg-4">
+      <div class="card h-100">
+        <div class="card-body d-flex align-items-center gap-3">
+          <% if @part.stock.positive? %>
+            <span class="gf-action-icon is-success"><i class="bi bi-box-seam"></i></span>
+          <% else %>
+            <span class="gf-action-icon is-warning"><i class="bi bi-exclamation-triangle"></i></span>
+          <% end %>
+          <div class="min-w-0">
+            <div class="small text-muted">Stock actual</div>
+            <% if @part.stock.positive? %>
+              <div class="h4 mb-0"><%= format_quantity(@part.stock) %> <span class="d-block d-sm-inline fs-6 fw-normal text-muted"><%= unit_of_measure_label(@part.stock, @part.unit_of_measure) %></span></div>
+            <% else %>
+              <div class="h4 mb-0 text-danger">Sin stock</div>
+            <% end %>
+          </div>
         </div>
       </div>
     </div>
-
-    <div class="col-md-7">
-      <div class="card shadow-sm border-0 h-100">
-        <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
-          <h5 class="mb-0 fw-bold"><i class="bi bi-truck me-2 text-primary"></i> Vehículos Compatibles</h5>
+    <div class="col-6 col-lg-4">
+      <div class="card h-100">
+        <div class="card-body d-flex align-items-center gap-3">
+          <span class="gf-action-icon is-primary"><i class="bi bi-cash-coin"></i></span>
+          <div class="min-w-0">
+            <div class="small text-muted">Costo<span class="d-none d-sm-inline"> unitario</span></div>
+            <div class="h4 mb-0"><%= format_money(@part.cost, @part.currency) %></div>
+            <% if @part.currency == "USD" %>
+              <div class="small text-muted">≈ <%= format_money(converted_to_clp(@part.cost, "USD"), "CLP") %></div>
+            <% end %>
+          </div>
         </div>
-        <div class="card-body">
-          <% if @part.vehicles.any? %>
-            <div class="row g-3 mt-1">
-              <% @part.vehicles.each do |vehicle| %>
-                <div class="col-sm-6 col-md-4">
-                  <div class="p-3 border rounded text-center bg-light shadow-sm">
-                    <i class="bi bi-check-circle-fill text-success mb-2 fs-4 d-block"></i>
-                    <span class="fw-bold"><%= vehicle.plate %></span>
-                  </div>
-                </div>
-              <% end %>
-            </div>
-          <% else %>
-            <div class="p-5 text-center text-muted bg-light rounded mt-3">
-              <i class="bi bi-exclamation-triangle display-6 d-block mb-3 opacity-50"></i>
-              Este repuesto no tiene vehículos compatibles asignados.
-            </div>
-          <% end %>
+      </div>
+    </div>
+    <div class="col-12 col-lg-4">
+      <div class="card h-100">
+        <div class="card-body d-flex align-items-center gap-3">
+          <span class="gf-action-icon is-warning"><i class="bi bi-tags"></i></span>
+          <div class="min-w-0">
+            <div class="small text-muted">Mejor precio (últimos 90 días)</div>
+            <% if best %>
+              <div class="h4 mb-0"><%= format_money(best.price, best.currency) %></div>
+              <div class="small text-muted text-truncate"><%= best.supplier %> · <%= l(best.quoted_on) %></div>
+            <% else %>
+              <div class="h4 mb-0 text-muted">—</div>
+              <div class="small text-muted">Sin cotizaciones recientes</div>
+            <% end %>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <%= render "quotes", part: @part %>
+  <div class="card mb-4">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center gap-2">
+      <%= inventory_card_title("Vehículos compatibles", icon: "bi-truck") %>
+      <% if vehicles.any? %>
+        <span class="badge text-bg-secondary"><%= vehicles.size %></span>
+      <% end %>
+    </div>
+    <div class="card-body">
+      <% if vehicles.any? %>
+        <div class="d-flex flex-wrap gap-2">
+          <% vehicles.each do |vehicle| %>
+            <span class="d-inline-flex align-items-center gap-2 border rounded-pill px-3 py-2">
+              <i class="bi bi-truck text-primary"></i>
+              <span class="fw-bold"><%= vehicle.plate %></span>
+              <% model = [vehicle.brand, vehicle.model].compact_blank.join(" ") %>
+              <% if model.present? %><span class="small text-muted"><%= model %></span><% end %>
+            </span>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="text-center py-3 px-3 text-muted">
+          <i class="bi bi-truck d-block opacity-50"></i>
+          <p class="mb-1 fw-bold text-body">Sin vehículos compatibles</p>
+          <p class="small mb-0">
+            <% if policy(@part).edit? %>
+              Asígnalos con el botón «Editar» para que el repuesto aparezca en las solicitudes de esos vehículos.
+            <% else %>
+              Este repuesto todavía no tiene vehículos asignados.
+            <% end %>
+          </p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <%= render "quotes", part: @part, best: best %>
 </div>

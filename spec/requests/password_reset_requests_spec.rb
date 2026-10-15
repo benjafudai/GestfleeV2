@@ -179,7 +179,7 @@ RSpec.describe "Password reset requests", type: :request do
         get password_reset_request_path(reset_request)
 
         expect(response.body).to include("Rechazada", "por super@gestflee.cl")
-        expect(response.body).not_to include("Nueva Contraseña Temporal", "Rechazar solicitud")
+        expect(response.body).not_to include("Nueva contraseña temporal", "Rechazar solicitud")
       end
 
       it "can't set a password on a rejected request" do

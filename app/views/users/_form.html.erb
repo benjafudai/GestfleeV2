@@ -1,0 +1,81 @@
+<%# locals: (user:, available_roles:) %>
+<% saved_role = user.persisted? ? user.role_was : nil %>
+<% role_locked = saved_role.present? && !available_roles.map(&:to_s).include?(saved_role.to_s) %>
+<%= form_with(model: user, local: true, data: { turbo: false }) do |f| %>
+  <%= render "shared/form_errors", object: user, subject: "el usuario" %>
+
+  <h2 class="h6 mb-3"><i class="bi bi-person-vcard me-2 text-primary"></i>Datos de la cuenta</h2>
+  <div class="row g-3">
+    <div class="col-12">
+      <%= f.label :email, class: "form-label" do %>Correo electrónico <span class="text-danger">*</span><% end %>
+      <%= f.email_field :email, class: "form-control", autofocus: true, required: true, placeholder: "usuario@empresa.cl" %>
+    </div>
+
+    <div class="<%= current_user.superadmin? ? "col-md-6" : "col-12" %>">
+      <%= f.label :role, class: "form-label", for: "user_role_select" do %>Rol <span class="text-danger">*</span><% end %>
+      <%= f.select :role, role_options(available_roles, saved_role), {}, class: "form-select", id: "user_role_select" %>
+      <% if role_locked %>
+        <div class="form-text">Solo un superadministrador puede modificar una cuenta con rol <%= role_label(saved_role) %>.</div>
+      <% end %>
+    </div>
+
+    <% if current_user.superadmin? %>
+      <%# La validación es sobre :company, así que Rails no marca el campo :company_id: se marca a mano igual que los demás. %>
+      <% company_error = user.errors[:company].any? && user.errors[:company_id].none? %>
+      <div class="col-md-6" id="company_field_wrapper">
+        <%= tag.div(class: ("field_with_errors" if company_error)) do %>
+          <%= f.label :company_id, class: "form-label" do %>Empresa <span class="text-danger">*</span><% end %>
+          <%= f.collection_select :company_id, Company.order(:name), :id, :name, { prompt: "Selecciona una empresa" }, class: "form-select", "aria-invalid": (true if company_error) %>
+        <% end %>
+        <div class="form-text">Obligatoria, salvo para superadministradores.</div>
+      </div>
+    <% end %>
+  </div>
+
+  <% if user.new_record? %>
+    <h2 class="h6 mt-4 mb-3"><i class="bi bi-key me-2 text-primary"></i>Contraseña temporal</h2>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <%= f.label :password, class: "form-label" do %>Contraseña <span class="text-danger">*</span><% end %>
+        <%= f.password_field :password, class: "form-control", required: true, minlength: 10, autocomplete: "new-password" %>
+        <div class="form-text">Mínimo 10 caracteres.</div>
+      </div>
+      <div class="col-md-6">
+        <%= f.label :password_confirmation, class: "form-label" do %>Confirmar contraseña <span class="text-danger">*</span><% end %>
+        <%= f.password_field :password_confirmation, class: "form-control", required: true, autocomplete: "new-password" %>
+      </div>
+    </div>
+  <% else %>
+    <div class="alert alert-info d-flex gap-2 small mt-4 mb-0">
+      <i class="bi bi-info-circle-fill flex-shrink-0 mt-1"></i>
+      <div>La contraseña no se cambia desde aquí. Si el usuario la olvidó, puede pedir una nueva con «¿Olvidaste tu contraseña?» en la pantalla de inicio de sesión.</div>
+    </div>
+  <% end %>
+
+  <div class="d-flex justify-content-end gap-2 mt-4">
+    <%= link_to "Cancelar", (user.persisted? ? user_path(user) : users_path), class: "btn btn-outline-secondary" %>
+    <%= f.submit (user.new_record? ? "Crear usuario" : "Guardar cambios"), class: "btn btn-primary" %>
+  </div>
+<% end %>
+
+<% if current_user.superadmin? %>
+  <script>
+    function setupRoleCompanyToggle() {
+      var roleSelect = document.getElementById('user_role_select');
+      var companyWrapper = document.getElementById('company_field_wrapper');
+      if (!roleSelect || !companyWrapper) return;
+
+      function toggle() {
+        var isSuperadmin = roleSelect.value === 'superadmin';
+        companyWrapper.style.display = isSuperadmin ? 'none' : '';
+      }
+
+      roleSelect.addEventListener('change', toggle);
+      toggle();
+    }
+
+    // Ejecutar tanto en carga normal como con Turbo
+    document.addEventListener('DOMContentLoaded', setupRoleCompanyToggle);
+    document.addEventListener('turbo:load', setupRoleCompanyToggle);
+  </script>
+<% end %>

@@ -1,64 +1,148 @@
-<div class="container mt-4" style="max-width: 720px;">
+<%
+  fill = @fuel_fill
+  vehicle = fill.vehicle
+  vehicle_average = FuelFill.where(vehicle: vehicle).where.not(km_per_liter: nil).average(:km_per_liter)
+  threshold = (fill.company.anomaly_threshold.to_f / 100.0) rescue 0.2
+  price_per_liter = fill.liters.to_f.positive? ? fill.cost / fill.liters : nil
+  ticket_ready = fill.ticket.attached?
+  vehicle_label = vehicle_name(vehicle)
+%>
+<div class="container mt-4" style="max-width: 1080px;">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3 fw-bold mb-0"><i class="bi bi-fuel-pump-fill me-2 text-primary"></i>Detalle de Carga de Combustible</h1>
-    <%= link_to vehicle_fuel_fills_path(@fuel_fill.vehicle), class: "btn btn-outline-secondary btn-sm" do %>
-      <i class="bi bi-arrow-left me-1"></i> Volver al Historial
-    <% end %>
-  </div>
-
-  <div class="card shadow-sm">
-    <div class="card-header bg-white d-flex justify-content-between align-items-center">
-      <h6 class="mb-0">Información de Carga</h6>
-      <% if policy(@fuel_fill).edit? %>
-        <%= link_to "Editar", edit_fuel_fill_path(@fuel_fill), class: "btn btn-sm btn-outline-primary" %>
+    <div class="min-w-0">
+      <h1 class="h3 mb-0"><i class="bi bi-fuel-pump me-2"></i>Carga de combustible #<%= fill.id %></h1>
+      <p class="text-muted mb-0"><%= vehicle_identity(vehicle, extra: l(fill.date, format: :long)) %></p>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+      <% if policy(fill).edit? %>
+        <%= link_to edit_fuel_fill_path(fill), class: "btn btn-primary text-nowrap" do %>
+          <i class="bi bi-pencil me-1"></i>Editar
+        <% end %>
+      <% end %>
+      <%= link_to vehicle_fuel_fills_path(vehicle), class: "btn btn-outline-secondary text-nowrap" do %>
+        <i class="bi bi-arrow-left me-1"></i>Volver al historial
       <% end %>
     </div>
-    <ul class="list-group list-group-flush">
-      <li class="list-group-item d-flex justify-content-between align-items-center">
-        <span class="text-muted">Vehículo</span>
-        <span class="fw-medium"><%= @fuel_fill.vehicle.plate %> (<%= @fuel_fill.vehicle.model %>)</span>
-      </li>
-      <li class="list-group-item d-flex justify-content-between align-items-center">
-        <span class="text-muted">Chofer</span>
-        <span class="fw-medium"><%= @fuel_fill.user.email %></span>
-      </li>
-      <li class="list-group-item d-flex justify-content-between align-items-center">
-        <span class="text-muted">Fecha de Carga</span>
-        <span class="fw-medium"><%= l @fuel_fill.date, format: :long %></span>
-      </li>
-      <li class="list-group-item d-flex justify-content-between align-items-center">
-        <span class="text-muted">Odómetro</span>
-        <span class="fw-medium"><%= number_with_delimiter @fuel_fill.odometer %> km</span>
-      </li>
-      <li class="list-group-item d-flex justify-content-between align-items-center">
-        <span class="text-muted">Cantidad y Costo</span>
-        <span class="fw-medium">
-          <%= @fuel_fill.liters %>L | <%= @fuel_fill.currency %> <%= number_to_currency(@fuel_fill.cost, unit: "$", precision: @fuel_fill.currency == 'CLP' ? 0 : 2) %>
-        </span>
-      </li>
-      <li class="list-group-item d-flex justify-content-between align-items-center">
-        <span class="text-muted">Rendimiento Estimado</span>
-        <span class="fw-medium">
-          <%= @fuel_fill.km_per_liter.present? ? "#{@fuel_fill.km_per_liter.round(2)} km/l" : "Dato insuficiente (primera carga)" %>
-        </span>
-      </li>
-      <% if @fuel_fill.notes.present? %>
-        <li class="list-group-item">
-          <div class="text-muted small mb-1">Notas Adicionales</div>
-          <div><%= @fuel_fill.notes %></div>
-        </li>
-      <% end %>
-      <% if @fuel_fill.ticket.attached? %>
-        <li class="list-group-item">
-          <div class="text-muted small mb-2">Boleta / Respaldo</div>
-          <%= link_to "Ver Archivo Adjunto", rails_blob_path(@fuel_fill.ticket, disposition: "inline"), target: "_blank", class: "btn btn-sm btn-outline-primary mb-2" %>
-          <% if @fuel_fill.ticket.image? %>
-            <div>
-              <%= image_tag @fuel_fill.ticket, class: "img-fluid rounded border" %>
+  </div>
+
+  <%# Mismo diseño de tarjeta que el panel de combustible y la flota: ícono al lado, compacto en el celular. %>
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-4">
+      <div class="card h-100">
+        <div class="card-body d-flex align-items-center gap-2 gap-sm-3">
+          <%= vehicle_kpi_icon("bi-droplet-half", "primary") %>
+          <div class="min-w-0">
+            <div class="small text-muted">Litros<span class="d-none d-sm-inline"> cargados</span></div>
+            <div class="h4 mb-0 text-nowrap"><%= number_with_precision(fill.liters, precision: 2, strip_insignificant_zeros: true, delimiter: ".") %> L</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-4">
+      <div class="card h-100">
+        <div class="card-body d-flex align-items-center gap-2 gap-sm-3">
+          <%= vehicle_kpi_icon("bi-cash-stack", "success") %>
+          <div class="min-w-0">
+            <div class="small text-muted">Costo total</div>
+            <div class="h4 mb-0 text-nowrap"><%= format_money(fill.cost, fill.currency) %></div>
+            <% if price_per_liter %>
+              <div class="small text-muted"><%= format_money(price_per_liter, fill.currency) %> por litro</div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="card h-100">
+        <div class="card-body d-flex align-items-center gap-2 gap-sm-3">
+          <%= vehicle_kpi_icon("bi-speedometer2", "info") %>
+          <div class="min-w-0">
+            <div class="small text-muted">Rendimiento estimado</div>
+            <div class="h4 mb-1 text-nowrap">
+              <%= fill.km_per_liter.present? ? "#{number_with_precision(fill.km_per_liter, precision: 2)} km/l" : "—" %>
+            </div>
+            <%= render "fuel_fills/efficiency", fill: fill, average: vehicle_average, threshold: threshold, variant: :hint %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4 align-items-start">
+    <div class="col-lg-6">
+      <div class="card">
+        <div class="card-header bg-white">
+          <h2 class="h6 mb-0">Datos de la carga</h2>
+        </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item d-flex justify-content-between align-items-center gap-3">
+            <span class="text-muted text-nowrap">Vehículo</span>
+            <span class="text-end">
+              <%= link_to vehicle.plate, vehicle_fuel_fills_path(vehicle), class: "fw-bold" %>
+              <% if vehicle_label %>
+                <span class="text-muted">· <%= vehicle_label %></span>
+              <% end %>
+            </span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center gap-3">
+            <span class="text-muted text-nowrap">Chofer</span>
+            <span class="text-end text-break"><%= fill.user.email %></span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center gap-3">
+            <span class="text-muted text-nowrap">Fecha de carga</span>
+            <span class="text-end"><%= l fill.date, format: :long %></span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center gap-3">
+            <span class="text-muted text-nowrap">Odómetro</span>
+            <span class="text-end"><%= number_with_delimiter fill.odometer %> km</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center gap-3">
+            <span class="text-muted text-nowrap">Registrada el</span>
+            <span class="text-end"><%= l fill.created_at, format: "%-d de %B de %Y, %H:%M" %></span>
+          </li>
+          <li class="list-group-item">
+            <div class="text-muted mb-1">Notas</div>
+            <% if fill.notes.present? %>
+              <div class="text-break"><%= simple_format(fill.notes, class: "mb-0") %></div>
+            <% else %>
+              <div class="text-muted small">Sin notas.</div>
+            <% end %>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card">
+        <div class="card-header bg-white d-flex flex-wrap justify-content-between align-items-center gap-2">
+          <h2 class="h6 mb-0">Boleta</h2>
+          <% if ticket_ready %>
+            <%= link_to rails_blob_path(fill.ticket, disposition: "inline"), target: "_blank", rel: "noopener",
+                  class: "btn btn-sm btn-outline-primary text-nowrap" do %>
+              <i class="bi bi-box-arrow-up-right me-1"></i>Ver archivo adjunto
+            <% end %>
+          <% end %>
+        </div>
+        <div class="card-body">
+          <% if ticket_ready && fill.ticket.image? %>
+            <%= link_to rails_blob_path(fill.ticket, disposition: "inline"), target: "_blank", rel: "noopener", title: "Abrir la boleta en tamaño completo" do %>
+              <%= image_tag fill.ticket, alt: "Boleta de la carga ##{fill.id}", class: "d-block mx-auto img-fluid rounded border", style: "max-height: 520px;" %>
+            <% end %>
+          <% elsif ticket_ready %>
+            <div class="text-center py-4 text-muted">
+              <i class="bi bi-file-earmark-text d-block opacity-50"></i>
+              <p class="mb-1 fw-bold text-body">Archivo adjunto</p>
+              <p class="small mb-0">Ábrelo con el botón «Ver archivo adjunto».</p>
+            </div>
+          <% else %>
+            <div class="text-center py-4 text-muted">
+              <i class="bi bi-receipt d-block opacity-50"></i>
+              <p class="mb-1 fw-bold text-body">Sin boleta adjunta</p>
+              <p class="small mb-0">Esta carga no tiene una foto de respaldo.</p>
             </div>
           <% end %>
-        </li>
-      <% end %>
-    </ul>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

@@ -1,66 +1,126 @@
+<% vehicle_docs = @vehicle_documents.to_a %>
+<% user_docs = @user_documents.to_a %>
+<% all_docs = vehicle_docs + user_docs %>
+<% can_see_vehicles = policy(Vehicle).show? %>
+<% can_see_users = current_user.admin? || current_user.superadmin? %>
 <div class="container mt-4">
-  <div class="mb-4">
-    <h1 class="h3 fw-bold mb-1"><i class="bi bi-shield-exclamation me-2 text-warning"></i>Tablero de Cumplimiento y Alertas</h1>
-    <p class="text-muted mb-0">Revisa los documentos vencidos o próximos a vencer de los vehículos y del personal.</p>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="h3 mb-0"><i class="bi bi-shield-exclamation me-2"></i>Alertas de cumplimiento</h1>
+      <p class="text-muted mb-0">Documentos vencidos o por vencer de los vehículos y del personal.</p>
+    </div>
   </div>
 
-  <div class="card shadow-sm mb-4">
-    <div class="card-header bg-white">
-      <h6 class="mb-0"><i class="bi bi-truck-front me-1"></i> Alertas de Vehículos</h6>
-    </div>
-    <% if @vehicle_documents.any? %>
-      <ul class="list-group list-group-flush">
-        <% @vehicle_documents.each do |doc| %>
-          <li class="list-group-item d-flex align-items-center justify-content-between flex-wrap gap-2">
-            <div>
-              <p class="fw-medium mb-0">Patente: <%= doc.vehicle.plate %> (<%= doc.vehicle.model %>)</p>
-              <p class="text-muted small mb-0"><%= vehicle_doc_type_label(doc.doc_type) %></p>
+  <div class="row g-3 mb-4">
+    <%# [singular, plural]: "1 Vencido" / "3 Vencidos" %>
+    <% [
+         [%w[Vencido Vencidos], all_docs.count { |d| d.status.to_s == "expired" }, "bi-exclamation-octagon", "danger"],
+         [["Por vencer", "Por vencer"], all_docs.count { |d| d.status.to_s == "expiring" }, "bi-hourglass-split", "warning"],
+         [["Vehículo con alertas", "Vehículos con alertas"], vehicle_docs.map(&:vehicle_id).uniq.size, "bi-truck-front", "primary"],
+         [["Persona con alertas", "Personas con alertas"], user_docs.map(&:user_id).uniq.size, "bi-person-badge", "primary"]
+       ].each do |(singular, plural), count, icon, tone| %>
+      <div class="col-6 col-lg-3">
+        <div class="card h-100">
+          <div class="card-body d-flex align-items-center gap-3 p-3">
+            <%= incident_icon_circle(icon, count.positive? ? tone : "secondary") %>
+            <div class="min-w-0">
+              <div class="fs-4 fw-bold lh-1"><%= number_with_delimiter(count) %></div>
+              <div class="small text-muted mt-1"><%= count == 1 ? singular : plural %></div>
             </div>
-            <div class="d-flex align-items-center gap-3">
-              <span class="text-muted small">Vence: <%= l doc.due_on, format: :short %></span>
-              <% badge_class = case doc.status
-                   when 'ok'       then 'text-bg-success'
-                   when 'expiring' then 'text-bg-warning'
-                   else 'text-bg-danger'
-                   end %>
-              <span class="badge <%= badge_class %> rounded-pill"><%= document_status_label(doc.status) %></span>
-              <%= link_to "Ver Vehículo", vehicle_path(doc.vehicle), class: "btn btn-sm btn-outline-primary" %>
-            </div>
-          </li>
-        <% end %>
-      </ul>
-    <% else %>
-      <div class="text-center py-4 text-muted">No hay alertas pendientes para vehículos.</div>
+          </div>
+        </div>
+      </div>
     <% end %>
   </div>
 
-  <div class="card shadow-sm">
-    <div class="card-header bg-white">
-      <h6 class="mb-0"><i class="bi bi-person-badge me-1"></i> Alertas de Personal</h6>
+  <div class="card mb-4">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center gap-2">
+      <%= incident_card_title("Vehículos", icon: "bi-truck-front") %>
+      <% if vehicle_docs.any? %>
+        <span class="small text-muted text-nowrap"><%= vehicle_docs.size == 1 ? "1 documento" : "#{vehicle_docs.size} documentos" %></span>
+      <% end %>
     </div>
-    <% if @user_documents.any? %>
+    <% if vehicle_docs.any? %>
       <ul class="list-group list-group-flush">
-        <% @user_documents.each do |doc| %>
-          <li class="list-group-item d-flex align-items-center justify-content-between flex-wrap gap-2">
-            <div>
-              <p class="fw-medium mb-0">Usuario: <%= doc.user.email %> (<%= role_label(doc.user.role) %>)</p>
-              <p class="text-muted small mb-0"><%= user_doc_type_label(doc.doc_type) %></p>
-            </div>
+        <% vehicle_docs.each do |doc| %>
+          <% vehicle = doc.vehicle %>
+          <li class="list-group-item py-3">
             <div class="d-flex align-items-center gap-3">
-              <span class="text-muted small">Vence: <%= l doc.due_on, format: :short %></span>
-              <% badge_class = case doc.status
-                   when 'ok'       then 'text-bg-success'
-                   when 'expiring' then 'text-bg-warning'
-                   else 'text-bg-danger'
-                   end %>
-              <span class="badge <%= badge_class %> rounded-pill"><%= document_status_label(doc.status) %></span>
-              <%= link_to "Ver Perfil", user_path(doc.user), class: "btn btn-sm btn-outline-primary" %>
+              <%= alert_document_icon_circle(doc.status, class: "d-none d-sm-grid") %>
+              <div class="flex-grow-1 min-w-0">
+                <div class="d-flex flex-wrap align-items-baseline column-gap-2">
+                  <span class="fw-bold"><%= vehicle.plate %></span>
+                  <% if (model = incident_vehicle_model(vehicle)).present? %>
+                    <span class="small text-muted"><%= model %></span>
+                  <% end %>
+                </div>
+                <div><%= vehicle_doc_type_label(doc.doc_type) %></div>
+                <div class="small text-muted"><%= alert_due_text(doc.due_on) %></div>
+              </div>
+              <div class="d-flex flex-column flex-sm-row align-items-end align-items-sm-center gap-2 flex-shrink-0">
+                <%= status_badge(document_status_label(doc.status), doc.status) %>
+                <% if can_see_vehicles %>
+                  <%= link_to vehicle_path(vehicle), class: "btn btn-sm btn-outline-primary text-nowrap" do %>
+                    <i class="bi bi-truck-front me-1"></i>Ver vehículo
+                  <% end %>
+                <% end %>
+              </div>
             </div>
           </li>
         <% end %>
       </ul>
     <% else %>
-      <div class="text-center py-4 text-muted">No hay alertas pendientes para el personal.</div>
+      <div class="card-body">
+        <div class="text-center py-4 text-muted">
+          <i class="bi bi-shield-check d-block opacity-50"></i>
+          <p class="mb-1 fw-bold text-body">No hay alertas de vehículos</p>
+          <p class="small mb-0">Todos los documentos de la flota están vigentes.</p>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="card">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center gap-2">
+      <%= incident_card_title("Personal", icon: "bi-person-badge") %>
+      <% if user_docs.any? %>
+        <span class="small text-muted text-nowrap"><%= user_docs.size == 1 ? "1 documento" : "#{user_docs.size} documentos" %></span>
+      <% end %>
+    </div>
+    <% if user_docs.any? %>
+      <ul class="list-group list-group-flush">
+        <% user_docs.each do |doc| %>
+          <li class="list-group-item py-3">
+            <div class="d-flex align-items-center gap-3">
+              <%= alert_document_icon_circle(doc.status, class: "d-none d-sm-grid") %>
+              <div class="flex-grow-1 min-w-0">
+                <div class="d-flex flex-wrap align-items-baseline column-gap-2">
+                  <span class="fw-bold text-break"><%= doc.user.email %></span>
+                  <span class="small text-muted"><%= role_label(doc.user.role) %></span>
+                </div>
+                <div><%= user_doc_type_label(doc.doc_type) %></div>
+                <div class="small text-muted"><%= alert_due_text(doc.due_on) %></div>
+              </div>
+              <div class="d-flex flex-column flex-sm-row align-items-end align-items-sm-center gap-2 flex-shrink-0">
+                <%= status_badge(document_status_label(doc.status), doc.status) %>
+                <% if can_see_users %>
+                  <%= link_to user_path(doc.user), class: "btn btn-sm btn-outline-primary text-nowrap" do %>
+                    <i class="bi bi-person me-1"></i>Ver perfil
+                  <% end %>
+                <% end %>
+              </div>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <div class="card-body">
+        <div class="text-center py-4 text-muted">
+          <i class="bi bi-shield-check d-block opacity-50"></i>
+          <p class="mb-1 fw-bold text-body">No hay alertas del personal</p>
+          <p class="small mb-0">Todos los documentos del personal están vigentes.</p>
+        </div>
+      </div>
     <% end %>
   </div>
 </div>

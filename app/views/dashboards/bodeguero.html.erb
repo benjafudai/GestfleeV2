@@ -1,111 +1,118 @@
 <div class="container mt-4">
-  <%= render "dashboards/welcome", icon: "bi-boxes", title: "Bienvenido, #{current_user.email}", tag: "Bodeguero" %>
+  <%= render "dashboards/welcome", icon: "bi-box-seam", title: "Panel de bodega",
+        subtitle: dashboard_greeting(current_user) %>
 
   <div class="row g-3 mb-4">
-    <div class="col-6 col-lg-3">
-      <div class="card shadow-sm h-100">
-        <div class="card-body">
-          <div class="text-muted small text-uppercase fw-semibold mb-1">Repuestos en Catálogo</div>
-          <div class="h4 fw-bold mb-0"><%= @total_parts %></div>
-        </div>
-      </div>
+    <div class="col-6 col-xl-3">
+      <%= dashboard_stat "Repuestos en catálogo", number_with_delimiter(@total_parts),
+            icon: "bi-boxes", tone: :primary %>
     </div>
-    <div class="col-6 col-lg-3">
-      <div class="card shadow-sm h-100 <%= 'border-start border-4 border-warning' if @low_stock_parts.any? %>">
-        <div class="card-body">
-          <div class="text-muted small text-uppercase fw-semibold mb-1">Repuestos Stock Bajo</div>
-          <div class="h4 fw-bold mb-0"><%= @low_stock_parts.size %></div>
-        </div>
-      </div>
+    <div class="col-6 col-xl-3">
+      <%= dashboard_stat "Repuestos con stock bajo", number_with_delimiter(@low_stock_parts.size),
+            icon: @low_stock_parts.any? ? "bi-exclamation-triangle" : "bi-check2-circle",
+            tone: @low_stock_parts.any? ? :warning : :success %>
     </div>
-    <div class="col-6 col-lg-3">
-      <div class="card shadow-sm h-100">
-        <div class="card-body">
-          <div class="text-muted small text-uppercase fw-semibold mb-1">Valor Total del Stock</div>
-          <div class="h4 fw-bold mb-0"><%= number_to_currency(@total_stock_value, unit: "$", precision: 0) %></div>
-        </div>
-      </div>
+    <div class="col-6 col-xl-3">
+      <%= dashboard_stat "Valor del stock", format_money(@total_stock_value, "CLP"),
+            icon: "bi-cash-stack", tone: :success %>
     </div>
-    <div class="col-6 col-lg-3">
-      <div class="card shadow-sm h-100">
-        <div class="card-body">
-          <div class="text-muted small text-uppercase fw-semibold mb-1">Solicitudes Pendientes</div>
-          <div class="h4 fw-bold mb-0"><%= @pending_supply_requests.size %></div>
-        </div>
-      </div>
+    <div class="col-6 col-xl-3">
+      <%= dashboard_stat "Solicitudes pendientes", number_with_delimiter(@pending_supply_requests.size),
+            icon: "bi-inboxes", tone: @pending_supply_requests.any? ? :info : :secondary %>
     </div>
   </div>
 
-  <div class="row g-4 mb-4">
+  <div class="row g-3 mb-4">
     <div class="col-md-6">
-      <div class="card shadow-sm h-100 border-start border-4 border-primary">
-        <div class="card-body">
-          <h5 class="card-title"><i class="bi bi-boxes me-2"></i> Inventario</h5>
-          <p class="card-text text-muted small">Gestiona el catálogo de repuestos, stock y costos.</p>
-          <%= link_to "Ver Inventario", parts_path, class: "btn btn-outline-primary btn-sm" %>
-        </div>
-      </div>
+      <%= dashboard_action_card "Inventario", "Gestiona el catálogo de repuestos, su stock y sus costos.",
+            path: parts_path, link_text: "Ver inventario", icon: "bi-boxes" %>
     </div>
     <div class="col-md-6">
-      <div class="card shadow-sm h-100 border-start border-4 border-primary">
-        <div class="card-body">
-          <h5 class="card-title"><i class="bi bi-cart-plus me-2"></i> Solicitudes de Suministros</h5>
-          <p class="card-text text-muted small">Aprueba y gestiona las solicitudes de repuestos de los mecánicos.</p>
-          <%= link_to "Ir a Suministros", supply_requests_path, class: "btn btn-outline-primary btn-sm" %>
-        </div>
-      </div>
+      <%= dashboard_action_card "Solicitudes de suministros", "Recibe, compra y entrega los repuestos que piden los mecánicos.",
+            path: supply_requests_path, link_text: "Ver solicitudes", icon: "bi-inboxes", tone: :info %>
     </div>
   </div>
 
-  <div class="row">
-    <div class="col-12">
-      <div class="card shadow-sm">
-        <div class="card-header bg-white d-flex justify-content-between align-items-center">
-          <h6 class="mb-0">Solicitudes Recientes</h6>
-          <%= link_to "Ver todas", supply_requests_path, class: "btn btn-sm btn-link text-decoration-none" %>
+  <div class="row g-3 align-items-start">
+    <div class="col-lg-7">
+      <div class="card">
+        <div class="card-header bg-white d-flex flex-wrap justify-content-between align-items-center gap-2">
+          <h2 class="h6 mb-0">Solicitudes recientes</h2>
+          <%= link_to supply_requests_path, class: "btn btn-sm btn-link px-0 text-nowrap" do %>Ver todas <i class="bi bi-arrow-right"></i><% end %>
         </div>
-        <div class="card-body p-0">
-          <% if @recent_supply_requests.any? %>
-            <div class="table-responsive">
-              <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
+        <% if @recent_supply_requests.any? %>
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Folio</th>
+                  <th>Vehículo</th>
+                  <th class="d-none d-md-table-cell">Solicitante</th>
+                  <th class="d-none d-sm-table-cell">Fecha</th>
+                  <th>Estado</th>
+                  <th class="text-end">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @recent_supply_requests.each do |req| %>
                   <tr>
-                    <th>Folio</th>
-                    <th>Vehículo</th>
-                    <th>Solicitante</th>
-                    <th>Fecha</th>
-                    <th>Estado</th>
-                    <th class="text-end">Acciones</th>
+                    <td class="text-muted fw-bold">#<%= req.id %></td>
+                    <td class="fw-bold text-body"><%= req.vehicle.plate %></td>
+                    <td class="d-none d-md-table-cell text-muted"><%= req.user.email %></td>
+                    <td class="d-none d-sm-table-cell text-nowrap"><%= l(req.created_at, format: :short) %></td>
+                    <td><%= status_badge(SupplyRequest.human_status(req.status), req.status) %></td>
+                    <td class="text-end">
+                      <div class="gf-row-actions">
+                        <%= link_to req, class: "btn btn-sm btn-outline-primary", title: "Ver", "aria-label": "Ver" do %>
+                          <i class="bi bi-eye"></i>
+                        <% end %>
+                      </div>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  <% @recent_supply_requests.each do |req| %>
-                    <tr>
-                      <td class="fw-medium text-muted small">#<%= req.id %></td>
-                      <td class="small fw-bold"><%= req.vehicle.plate %></td>
-                      <td class="small text-muted"><%= req.user.email %></td>
-                      <td class="small"><%= l req.created_at.to_date, format: :short %></td>
-                      <td>
-                        <% badge_class = case req.status
-                             when 'requested' then 'text-bg-secondary'
-                             when 'received' then 'text-bg-warning'
-                             when 'purchasing' then 'text-bg-info'
-                             when 'delivered' then 'text-bg-success'
-                             end %>
-                        <span class="badge <%= badge_class %>"><%= SupplyRequest.human_status(req.status) %></span>
-                      </td>
-                      <td class="text-end">
-                        <%= link_to "Ver", req, class: "btn btn-sm btn-outline-primary" %>
-                      </td>
-                    </tr>
-                  <% end %>
-                </tbody>
-              </table>
-            </div>
-          <% else %>
-            <div class="text-center py-4 text-muted">No hay solicitudes registradas.</div>
-          <% end %>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        <% else %>
+          <div class="text-center py-5 px-3 text-muted">
+            <i class="bi bi-inboxes d-block opacity-50"></i>
+            <p class="mb-1 fw-bold text-body">No hay solicitudes registradas</p>
+            <p class="small mb-0">Las solicitudes de repuestos de los mecánicos aparecerán aquí.</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="col-lg-5">
+      <div class="card">
+        <div class="card-header bg-white d-flex flex-wrap justify-content-between align-items-center gap-2">
+          <h2 class="h6 mb-0">Repuestos con stock bajo</h2>
+          <%= link_to parts_path, class: "btn btn-sm btn-link px-0 text-nowrap" do %>Ver inventario <i class="bi bi-arrow-right"></i><% end %>
         </div>
+        <% if @low_stock_parts.any? %>
+          <ul class="list-group list-group-flush">
+            <% @low_stock_parts.first(5).each do |part| %>
+              <li class="list-group-item list-group-item-action position-relative d-flex justify-content-between align-items-center gap-3">
+                <div class="min-w-0">
+                  <%= link_to part.name, part, class: "fw-bold text-body stretched-link d-block text-truncate" %>
+                  <div class="small text-muted text-truncate">SKU <%= part.sku %></div>
+                </div>
+                <%= dashboard_low_stock_badge(part) %>
+              </li>
+            <% end %>
+          </ul>
+          <% if @low_stock_parts.size > 5 %>
+            <div class="card-footer bg-white small text-muted">
+              Hay <%= pluralize(@low_stock_parts.size - 5, "repuesto") %> más con stock bajo.
+            </div>
+          <% end %>
+        <% else %>
+          <div class="text-center py-5 px-3 text-muted">
+            <i class="bi bi-check2-circle d-block opacity-50"></i>
+            <p class="mb-1 fw-bold text-body">Todo el stock está al día</p>
+            <p class="small mb-0">Ningún repuesto tiene un stock de 5 o menos.</p>
+          </div>
+        <% end %>
       </div>
     </div>
   </div>

@@ -1,246 +1,224 @@
+<% name = vehicle_name(@vehicle) %>
+<% documents = @documents.with_attached_file.to_a %>
+<% can_manage_docs = policy(VehicleDocument.new(vehicle: @vehicle)).create? %>
+<% can_assign = policy(VehicleAssignment.new(vehicle: @vehicle)).create? %>
+<% active = @vehicle.active_assignment %>
+<% past = @vehicle.vehicle_assignments.historical.chronological.includes(:user) %>
 <div class="container mt-4">
-  <div class="row">
-    <!-- Detalles del Vehículo -->
-    <div class="col-lg-4 mb-4">
-      <div class="card shadow-sm h-100">
-        <div class="card-body">
-          <div class="d-flex justify-content-between align-items-start mb-3">
-            <h1 class="h3 mb-0"><%= @vehicle.plate %></h1>
-            <% badge_class = case @vehicle.status
-               when 'active' then 'text-bg-success'
-               when 'maintenance' then 'text-bg-warning'
-               when 'inactive' then 'text-bg-secondary'
-               else 'text-bg-light'
-               end %>
-            <span class="badge <%= badge_class %> rounded-pill">
-              <%= vehicle_status_label(@vehicle.status) %>
-            </span>
-          </div>
-          
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item d-flex justify-content-between px-0">
-              <span class="text-muted">Marca</span>
-              <span class="fw-medium"><%= @vehicle.brand %></span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between px-0">
-              <span class="text-muted">Modelo</span>
-              <span class="fw-medium"><%= @vehicle.model %></span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between px-0">
-              <span class="text-muted">Año</span>
-              <span class="fw-medium"><%= @vehicle.year %></span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between px-0">
-              <span class="text-muted">Odómetro</span>
-              <span class="fw-medium"><%= @vehicle.odometer.present? ? "#{number_with_delimiter(@vehicle.odometer)} km" : "—" %></span>
-            </li>
-            <% if @vehicle.hour_meter.present? %>
-              <li class="list-group-item d-flex justify-content-between px-0">
-                <span class="text-muted">Horómetro</span>
-                <span class="fw-medium"><%= number_with_delimiter(@vehicle.hour_meter) %> h</span>
-              </li>
-            <% end %>
-            <% if @vehicle.vehicle_model %>
-              <li class="list-group-item d-flex justify-content-between gap-3 px-0">
-                <span class="text-muted text-nowrap">Modelo de biblioteca</span>
-                <span class="fw-medium text-end"><%= @vehicle.vehicle_model.label %></span>
-              </li>
-            <% end %>
-          </ul>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="min-w-0">
+      <h1 class="h3 mb-0"><i class="bi bi-truck-front me-2"></i><%= @vehicle.plate %></h1>
+      <p class="text-muted mb-0">
+        <%= [name, @vehicle.year].compact_blank.join(" · ").presence || "Sin marca ni modelo registrados" %>
+      </p>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+      <% if policy(@vehicle).edit? %>
+        <%= link_to edit_vehicle_path(@vehicle), class: "btn btn-primary text-nowrap" do %>
+          <i class="bi bi-pencil me-1"></i>Editar
+        <% end %>
+      <% end %>
+      <%= link_to vehicles_path, class: "btn btn-outline-secondary text-nowrap" do %>
+        <i class="bi bi-arrow-left me-1"></i>Volver
+      <% end %>
+    </div>
+  </div>
 
-            <div class="mt-4 d-grid gap-2">
-              <%= link_to "Registro de Combustible", vehicle_fuel_fills_path(@vehicle), class: "btn btn-info text-white" %>
-            <% if policy(@vehicle).edit? %>
-              <%= link_to "Editar Vehículo", edit_vehicle_path(@vehicle), class: "btn btn-primary" %>
+  <div class="row g-4">
+    <%# ─── Ficha del vehículo ─── %>
+    <div class="col-xl-4">
+      <div class="card">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center gap-2">
+          <%= vehicle_card_title("Ficha del vehículo", icon: "bi-truck-front") %>
+          <%= vehicle_status_badge(@vehicle) %>
+        </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item d-flex justify-content-between align-items-center gap-3">
+            <span class="text-muted text-nowrap"><i class="bi bi-tag me-2"></i>Marca</span>
+            <span class="fw-medium text-end"><%= vehicle_value_or_dash(@vehicle.brand) %></span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center gap-3">
+            <span class="text-muted text-nowrap"><i class="bi bi-car-front me-2"></i>Modelo</span>
+            <span class="fw-medium text-end"><%= vehicle_value_or_dash(@vehicle.model) %></span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center gap-3">
+            <span class="text-muted text-nowrap"><i class="bi bi-calendar3 me-2"></i>Año</span>
+            <span class="fw-medium text-end"><%= vehicle_value_or_dash(@vehicle.year) %></span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center gap-3">
+            <span class="text-muted text-nowrap"><i class="bi bi-speedometer2 me-2"></i>Odómetro</span>
+            <span class="fw-medium text-end"><%= vehicle_value_or_dash(vehicle_odometer(@vehicle)) %></span>
+          </li>
+          <% if @vehicle.hour_meter.present? %>
+            <li class="list-group-item d-flex justify-content-between align-items-center gap-3">
+              <span class="text-muted text-nowrap"><i class="bi bi-clock-history me-2"></i>Horómetro</span>
+              <span class="fw-medium text-end"><%= vehicle_hour_meter(@vehicle) %></span>
+            </li>
+          <% end %>
+          <% if @vehicle.vehicle_model %>
+            <li class="list-group-item d-flex justify-content-between align-items-center gap-3">
+              <span class="text-muted text-nowrap"><i class="bi bi-book me-2"></i>Modelo de la biblioteca</span>
+              <span class="fw-medium text-end"><%= @vehicle.vehicle_model.label %></span>
+            </li>
+          <% end %>
+          <% if current_user.superadmin? && @vehicle.company %>
+            <li class="list-group-item d-flex justify-content-between align-items-center gap-3">
+              <span class="text-muted text-nowrap"><i class="bi bi-building me-2"></i>Empresa</span>
+              <span class="fw-medium text-end"><%= @vehicle.company.name %></span>
+            </li>
+          <% end %>
+        </ul>
+        <%# En columna angosta (xl) los botones quedan uno bajo otro; a todo el ancho, lado a lado. %>
+        <div class="card-body d-flex flex-wrap gap-2 border-top">
+          <%= link_to vehicle_fuel_fills_path(@vehicle), class: "btn btn-outline-primary flex-fill text-nowrap" do %>
+            <i class="bi bi-fuel-pump me-1"></i>Cargas de combustible
+          <% end %>
+          <% if @vehicle.vehicle_model && policy(@vehicle).generate_plan? %>
+            <%= button_to generate_plan_vehicle_path(@vehicle), class: "btn btn-outline-primary w-100 text-nowrap", form_class: "button_to flex-fill",
+                  form: { data: { turbo_confirm: "Se crearán los planes de mantención y los repuestos de #{@vehicle.vehicle_model.name}. Lo que ya exista no se toca. ¿Continuar?" } } do %>
+              <i class="bi bi-magic me-1"></i>Crear plan desde la biblioteca
             <% end %>
-            <% if @vehicle.vehicle_model && policy(@vehicle).generate_plan? %>
-              <%= button_to generate_plan_vehicle_path(@vehicle), class: "btn btn-outline-primary w-100",
-                    form: { data: { turbo_confirm: "Se crearán los planes de mantención y los repuestos de #{@vehicle.vehicle_model.name}. Lo que ya exista no se toca. ¿Continuar?" } } do %>
-                <i class="bi bi-magic me-1"></i> Crear plan desde la biblioteca
-              <% end %>
-            <% end %>
-            <%= link_to "Volver al listado", vehicles_path, class: "btn btn-outline-secondary" %>
-          </div>
+          <% end %>
         </div>
       </div>
     </div>
 
-    <!-- Panel Derecho: Documentos e Historial (Futuro) -->
-    <div class="col-lg-8">
-      <div class="card shadow-sm mb-4">
-        <div class="card-header bg-white d-flex justify-content-between align-items-center">
-          <h5 class="mb-0">Documentación</h5>
-          <% if policy(VehicleDocument.new(vehicle: @vehicle)).create? %>
-            <%= link_to new_vehicle_vehicle_document_path(@vehicle), class: "btn btn-sm btn-primary" do %>
-              <i class="bi bi-plus-lg"></i> Nuevo Documento
+    <div class="col-xl-8 d-flex flex-column gap-4">
+      <%# ─── Documentación ─── %>
+      <div class="card">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center gap-2">
+          <%= vehicle_card_title("Documentación", icon: "bi-folder2-open", count: (documents.size if documents.any?)) %>
+          <% if can_manage_docs %>
+            <%= link_to new_vehicle_vehicle_document_path(@vehicle), class: "btn btn-sm btn-primary text-nowrap" do %>
+              <i class="bi bi-plus-lg me-1"></i>Nuevo<span class="d-none d-sm-inline"> documento</span>
+            <% end %>
+          <% end %>
+        </div>
+
+        <% if documents.any? %>
+          <ul class="list-group list-group-flush">
+            <% documents.each do |doc| %>
+              <li class="list-group-item d-flex align-items-center gap-3 py-3">
+                <%= vehicle_document_icon_circle(doc, extra_class: "d-none d-sm-grid") %>
+                <div class="flex-grow-1 min-w-0">
+                  <div class="d-flex align-items-center flex-wrap gap-2">
+                    <span class="fw-bold text-body"><%= vehicle_doc_type_label(doc.doc_type) %></span>
+                    <%= vehicle_document_status_badge(doc) %>
+                  </div>
+                  <div class="small text-muted mt-1"><%= vehicle_document_due_text(doc) %></div>
+                  <% if doc.notes.present? %>
+                    <div class="small text-muted text-truncate" title="<%= doc.notes %>"><i class="bi bi-chat-left-text me-1"></i><%= doc.notes %></div>
+                  <% end %>
+                </div>
+                <div class="gf-row-actions flex-shrink-0">
+                  <% if doc.file.attached? %>
+                    <%= link_to rails_blob_path(doc.file, disposition: "inline"), target: "_blank", rel: "noopener",
+                                class: "btn btn-sm btn-outline-primary", title: "Ver PDF (#{doc.file.filename})", "aria-label": "Ver PDF" do %>
+                      <i class="bi bi-file-earmark-pdf"></i>
+                    <% end %>
+                  <% end %>
+                  <% if policy(doc).update? %>
+                    <%= link_to edit_vehicle_vehicle_document_path(@vehicle, doc), class: "btn btn-sm btn-outline-secondary", title: "Editar", "aria-label": "Editar" do %>
+                      <i class="bi bi-pencil"></i>
+                    <% end %>
+                  <% end %>
+                  <% if policy(doc).destroy? %>
+                    <%= button_to vehicle_vehicle_document_path(@vehicle, doc), method: :delete, class: "btn btn-sm btn-outline-danger", title: "Eliminar", "aria-label": "Eliminar",
+                                  form: { data: { turbo_confirm: "¿Eliminar el documento «#{vehicle_doc_type_label(doc.doc_type)}»? Esta acción no se puede deshacer." } } do %>
+                      <i class="bi bi-trash"></i>
+                    <% end %>
+                  <% end %>
+                </div>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <div class="card-body">
+            <div class="text-center py-5 text-muted">
+              <i class="bi bi-file-earmark-x d-block opacity-50"></i>
+              <p class="mb-1 fw-bold text-body">No hay documentos registrados</p>
+              <p class="small mb-0">Agrega el permiso de circulación, la revisión técnica o el seguro para controlar sus vencimientos.</p>
+              <% if can_manage_docs %>
+                <%= link_to new_vehicle_vehicle_document_path(@vehicle), class: "btn btn-sm btn-outline-primary mt-3" do %>
+                  <i class="bi bi-plus-lg me-1"></i>Agregar primer documento
+                <% end %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <%# ─── Chofer asignado ─── %>
+      <div class="card">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center gap-2">
+          <%= vehicle_card_title("Chofer asignado", icon: "bi-person-badge", tone: active ? "success" : "primary") %>
+          <% if can_assign && active.nil? %>
+            <%= link_to new_vehicle_vehicle_assignment_path(@vehicle), class: "btn btn-sm btn-primary text-nowrap" do %>
+              <i class="bi bi-person-plus me-1"></i>Asignar chofer
             <% end %>
           <% end %>
         </div>
         <div class="card-body">
-          <% if @documents.any? %>
-            <div class="table-responsive">
-              <table class="table table-hover align-middle">
+          <% if active %>
+            <div class="d-flex flex-wrap align-items-center gap-3 p-3 rounded-3 border border-success-subtle bg-success-subtle">
+              <div class="d-flex align-items-center gap-3 flex-grow-1 min-w-0">
+                <span class="gf-avatar gf-avatar-lg" aria-hidden="true"><%= active.user.email.to_s.first.to_s.upcase %></span>
+                <div class="min-w-0">
+                  <div class="fw-bold text-body text-break"><%= active.user.email %></div>
+                  <div class="small text-muted"><%= vehicle_assignment_since(active.started_on) %></div>
+                  <% if active.notes.present? %>
+                    <div class="small text-muted fst-italic text-break"><i class="bi bi-chat-left-text me-1"></i><%= active.notes %></div>
+                  <% end %>
+                </div>
+              </div>
+              <% if policy(active).destroy? %>
+                <%= button_to vehicle_vehicle_assignment_path(@vehicle, active), method: :delete,
+                      class: "btn btn-sm btn-outline-danger text-nowrap", form_class: "button_to ms-auto",
+                      form: { data: { turbo_confirm: "¿Terminar la asignación de #{active.user.email}?" } } do %>
+                  <i class="bi bi-person-dash me-1"></i>Terminar asignación
+                <% end %>
+              <% end %>
+            </div>
+          <% else %>
+            <div class="text-center py-4 text-muted">
+              <i class="bi bi-person-x d-block opacity-50"></i>
+              <p class="mb-1 fw-bold text-body">Sin chofer asignado</p>
+              <p class="small mb-0">
+                <% if can_assign %>
+                  Usa «Asignar chofer» para entregarle este vehículo a un chofer.
+                <% else %>
+                  Este vehículo no tiene un chofer a cargo en este momento.
+                <% end %>
+              </p>
+            </div>
+          <% end %>
+
+          <%# ─── Historial ─── %>
+          <% if past.any? %>
+            <h3 class="small text-muted text-uppercase fw-semibold mt-4 mb-2">Historial de asignaciones</h3>
+            <div class="table-responsive border rounded-3">
+              <table class="table table-sm align-middle mb-0">
                 <thead class="table-light">
                   <tr>
-                    <th>Tipo</th>
-                    <th>Vence el</th>
-                    <th>Estado</th>
-                    <th>PDF</th>
+                    <th>Chofer</th>
+                    <th>Desde</th>
+                    <th>Hasta</th>
                     <th>Notas</th>
-                    <th class="text-end">Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <% @documents.each do |doc| %>
+                  <% past.each do |a| %>
                     <tr>
-                      <td class="fw-medium">
-                        <%= vehicle_doc_type_label(doc.doc_type) %>
-                      </td>
-                      <td>
-                        <% if doc.due_on %>
-                          <%= l(doc.due_on, format: :long) %>
-                          <% if doc.due_on < Date.today %>
-                            <span class="badge text-bg-danger ms-1">Vencido</span>
-                          <% elsif doc.due_on < Date.today + 30.days %>
-                            <span class="badge text-bg-warning ms-1">Por vencer</span>
-                          <% end %>
-                        <% else %>
-                          <span class="text-muted">-</span>
-                        <% end %>
-                      </td>
-                      <td>
-                        <% status_class = case doc.status
-                             when 'ok'       then 'text-bg-success'
-                             when 'expiring' then 'text-bg-warning'
-                             when 'expired'  then 'text-bg-danger'
-                             else 'text-bg-secondary'
-                             end %>
-                        <span class="badge <%= status_class %>"><%= document_status_label(doc.status) %></span>
-                      </td>
-                      <td>
-                        <% if doc.file.attached? %>
-                          <%= link_to rails_blob_path(doc.file, disposition: "inline"),
-                                target: "_blank",
-                                class: "btn btn-outline-danger btn-sm",
-                                title: doc.file.filename.to_s do %>
-                            <i class="bi bi-file-earmark-pdf-fill"></i> Ver PDF
-                          <% end %>
-                        <% else %>
-                          <span class="text-muted small">Sin archivo</span>
-                        <% end %>
-                      </td>
-                      <td class="small text-muted"><%= doc.notes %></td>
-                      <td class="text-end">
-                        <div class="btn-group btn-group-sm">
-                          <% if policy(doc).update? %>
-                            <%= link_to "Editar",
-                                  edit_vehicle_vehicle_document_path(@vehicle, doc),
-                                  class: "btn btn-outline-secondary" %>
-                          <% end %>
-                          <% if policy(doc).destroy? %>
-                            <%= button_to "Eliminar",
-                                  vehicle_vehicle_document_path(@vehicle, doc),
-                                  method: :delete,
-                                  form: { data: { turbo_confirm: "¿Eliminar este documento?" } },
-                                  class: "btn btn-outline-danger" %>
-                          <% end %>
-                        </div>
-                      </td>
+                      <td><%= a.user.email %></td>
+                      <td class="text-nowrap"><%= l(a.started_on) %></td>
+                      <td class="text-nowrap"><%= a.ended_on ? l(a.ended_on) : "—" %></td>
+                      <td class="text-muted"><%= vehicle_value_or_dash(a.notes) %></td>
                     </tr>
                   <% end %>
                 </tbody>
               </table>
             </div>
-          <% else %>
-            <div class="text-center py-5">
-              <i class="bi bi-file-earmark-x display-4 text-muted opacity-50 d-block mb-3"></i>
-              <p class="text-muted">No hay documentos registrados para este vehículo.</p>
-              <% if policy(VehicleDocument.new(vehicle: @vehicle)).create? %>
-                <%= link_to "Agregar primer documento",
-                      new_vehicle_vehicle_document_path(@vehicle),
-                      class: "btn btn-sm btn-outline-primary mt-1" %>
-              <% end %>
-            </div>
           <% end %>
-        </div>
-      </div>
-
-      <!-- Módulo de Asignación de Choferes -->
-      <div class="card shadow-sm">
-        <div class="card-header bg-white d-flex justify-content-between align-items-center">
-          <h5 class="mb-0">
-            <i class="bi bi-person-badge me-1"></i>
-            Chofer Asignado
-          </h5>
-          <% if policy(VehicleAssignment.new(vehicle: @vehicle)).create? %>
-            <% unless @vehicle.active_assignment %>
-              <%= link_to new_vehicle_vehicle_assignment_path(@vehicle),
-                    class: "btn btn-sm btn-primary" do %>
-                <i class="bi bi-person-plus-fill me-1"></i> Asignar Chofer
-              <% end %>
-            <% end %>
-          <% end %>
-        </div>
-        <div class="card-body">
-
-          <%# ─── Asignación activa ─── %>
-          <% if @vehicle.active_assignment %>
-            <% active = @vehicle.active_assignment %>
-            <div class="d-flex align-items-center justify-content-between p-3 border rounded mb-3 bg-success-subtle">
-              <div class="d-flex align-items-center gap-3">
-                <i class="bi bi-person-circle fs-2 text-success"></i>
-                <div>
-                  <div class="fw-semibold"><%= active.user.email %></div>
-                  <div class="small text-muted">
-                    Desde <%= l(active.started_on, format: :long) %>
-                  </div>
-                  <% if active.notes.present? %>
-                    <div class="small text-muted fst-italic"><%= active.notes %></div>
-                  <% end %>
-                </div>
-              </div>
-              <% if policy(active).destroy? %>
-                <%= button_to "Terminar Asignación",
-                      vehicle_vehicle_assignment_path(@vehicle, active),
-                      method: :delete,
-                      form: { data: { turbo_confirm: "¿Terminar la asignación de #{active.user.email}?" } },
-                      class: "btn btn-sm btn-outline-danger" %>
-              <% end %>
-            </div>
-          <% else %>
-            <div class="text-center py-4 text-muted">
-              <i class="bi bi-person-x display-5 d-block mb-2 opacity-50"></i>
-              <p class="mb-0">Sin chofer asignado actualmente.</p>
-            </div>
-          <% end %>
-
-          <%# ─── Historial ─── %>
-          <% past = @vehicle.vehicle_assignments.historical.chronological.includes(:user) %>
-          <% if past.any? %>
-            <hr class="my-3">
-            <h6 class="text-muted small text-uppercase fw-semibold mb-2">Historial</h6>
-            <table class="table table-sm table-hover align-middle">
-              <thead class="table-light">
-                <tr>
-                  <th>Chofer</th>
-                  <th>Desde</th>
-                  <th>Hasta</th>
-                  <th>Notas</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% past.each do |a| %>
-                  <tr>
-                    <td class="small"><%= a.user.email %></td>
-                    <td class="small"><%= l(a.started_on, format: :long) %></td>
-                    <td class="small"><%= l(a.ended_on, format: :long) %></td>
-                    <td class="small text-muted"><%= a.notes %></td>
-                  </tr>
-                <% end %>
-              </tbody>
-            </table>
-          <% end %>
-
         </div>
       </div>
     </div>

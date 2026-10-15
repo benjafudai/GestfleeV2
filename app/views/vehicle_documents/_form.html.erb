@@ -1,78 +1,49 @@
-<div class="card shadow-sm">
-  <div class="card-header bg-white">
-    <h5 class="mb-0">
-      <i class="bi bi-file-earmark-pdf text-danger me-2"></i>
-      <%= document.persisted? ? "Editar Documento" : "Nuevo Documento" %>
-    </h5>
-  </div>
-  <div class="card-body">
-    <%= form_with(model: [vehicle, document], local: true, html: { enctype: "multipart/form-data" }) do |f| %>
+<% current_file = document.file if document.persisted? && document.file.attached? && document.file.blob.persisted? %>
+<%= form_with(model: [vehicle, document], local: true, html: { enctype: "multipart/form-data" }) do |f| %>
+  <%= render "shared/form_errors", object: document, subject: "el documento" %>
 
-      <% if document.errors.any? %>
-        <div class="alert alert-danger">
-          <ul class="mb-0">
-            <% document.errors.full_messages.each do |msg| %>
-              <li><%= msg %></li>
-            <% end %>
-          </ul>
+  <div class="row g-3">
+    <div class="col-md-7">
+      <%= f.label :doc_type, class: "form-label" do %>Tipo de documento <span class="text-danger">*</span><% end %>
+      <%= f.select :doc_type, vehicle_document_type_options, { prompt: "Selecciona un tipo" }, class: "form-select" %>
+    </div>
+
+    <div class="col-md-5">
+      <%= f.label :due_on, class: "form-label" do %>Fecha de vencimiento <span class="text-danger">*</span><% end %>
+      <%= f.date_field :due_on, class: "form-control" %>
+    </div>
+
+    <div class="col-md-7">
+      <%= f.label :status, "Estado", class: "form-label" %>
+      <%= f.select :status, vehicle_document_status_options, { prompt: "Selecciona un estado" }, class: "form-select" %>
+      <div class="form-text">Se ajusta solo con la fecha de vencimiento: «Por vencer» desde 30 días antes y «Vencido» cuando pasa.</div>
+    </div>
+
+    <div class="col-12">
+      <%= f.label :file, class: "form-label", for: "document_file" do %>Archivo PDF<% unless current_file %> <span class="text-danger">*</span><% end %><% end %>
+      <% if current_file %>
+        <div class="d-flex align-items-center gap-2 border rounded-3 px-3 py-2 mb-2 small">
+          <i class="bi bi-file-earmark-pdf text-danger"></i>
+          <span class="text-truncate min-w-0 flex-grow-1"><%= current_file.filename %> <span class="text-muted">(<%= number_to_human_size(current_file.byte_size) %>)</span></span>
+          <%= link_to rails_blob_path(current_file, disposition: "inline"), target: "_blank", rel: "noopener", class: "text-nowrap fw-bold text-decoration-none" do %>
+            Ver<i class="bi bi-box-arrow-up-right ms-1"></i>
+          <% end %>
         </div>
       <% end %>
-
-      <div class="row g-3">
-        <div class="col-md-6">
-          <%= f.label :doc_type, "Tipo de Documento", class: "form-label fw-medium" %>
-          <%= f.select :doc_type,
-                VehicleDocument.doc_types.keys.map { |k| [vehicle_doc_type_label(k), k] },
-                { prompt: "Selecciona un tipo…" },
-                class: "form-select" %>
-        </div>
-
-        <div class="col-md-6">
-          <%= f.label :due_on, "Fecha de Vencimiento", class: "form-label fw-medium" %>
-          <%= f.date_field :due_on, class: "form-control" %>
-        </div>
-
-        <div class="col-md-6">
-          <%= f.label :status, "Estado", class: "form-label fw-medium" %>
-          <%= f.select :status,
-                VehicleDocument.statuses.keys.map { |k| [document_status_label(k), k] },
-                { prompt: "Selecciona estado…" },
-                class: "form-select" %>
-        </div>
-
-        <div class="col-12">
-          <%= f.label :notes, "Notas (opcional)", class: "form-label fw-medium" %>
-          <%= f.text_area :notes, rows: 3, class: "form-control",
-                placeholder: "Observaciones adicionales…" %>
-        </div>
-
-        <div class="col-12">
-          <%= f.label :file, class: "form-label fw-medium" do %>
-            <i class="bi bi-paperclip me-1"></i>
-            Archivo PDF
-            <% if document.persisted? && document.file.attached? %>
-              <span class="text-muted fw-normal small">(dejar vacío para mantener el actual)</span>
-            <% end %>
-          <% end %>
-          <%= f.file_field :file, accept: "application/pdf",
-                class: "form-control",
-                id: "document_file" %>
-          <% if document.persisted? && document.file.attached? %>
-            <div class="mt-2 small text-muted">
-              <i class="bi bi-file-earmark-pdf text-danger me-1"></i>
-              Archivo actual: <strong><%= document.file.filename %></strong>
-              (<%= number_to_human_size(document.file.byte_size) %>)
-            </div>
-          <% end %>
-          <div class="form-text">Solo se aceptan archivos en formato PDF.</div>
-        </div>
+      <%= f.file_field :file, accept: "application/pdf", class: "form-control", id: "document_file" %>
+      <div class="form-text">
+        Solo archivos PDF.<%= " Sube uno nuevo solo si quieres reemplazar el actual." if current_file %>
       </div>
+    </div>
 
-      <div class="d-flex gap-2 mt-4">
-        <%= f.submit document.persisted? ? "Guardar Cambios" : "Crear Documento",
-              class: "btn btn-primary" %>
-        <%= link_to "Cancelar", vehicle_path(vehicle), class: "btn btn-outline-secondary" %>
-      </div>
-    <% end %>
+    <div class="col-12">
+      <%= f.label :notes, class: "form-label" do %>Notas <span class="text-muted fw-normal">(opcional)</span><% end %>
+      <%= f.text_area :notes, rows: 3, class: "form-control", placeholder: "Ej.: póliza n.º 12345, renovación en trámite…" %>
+    </div>
   </div>
-</div>
+
+  <div class="d-flex justify-content-end gap-2 mt-4">
+    <%= link_to "Cancelar", vehicle_path(vehicle), class: "btn btn-outline-secondary" %>
+    <%= f.submit document.persisted? ? "Guardar cambios" : "Guardar documento", class: "btn btn-primary" %>
+  </div>
+<% end %>

@@ -1,69 +1,71 @@
-<div class="container py-4">
+<div class="container mt-4">
   <div class="row justify-content-center">
-    <div class="col-md-8 col-lg-6">
-      <div class="card shadow">
-        <div class="card-header bg-white">
-          <h1 class="h4 mb-0">Configuración: <%= @company.name %></h1>
+    <div class="col-lg-9 col-xl-8">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+        <div class="min-w-0">
+          <h1 class="h3 mb-0"><i class="bi bi-gear me-2"></i>Configurar empresa</h1>
+          <p class="text-muted mb-0 text-break"><%= @company.name_was.presence || @company.name %> · RUT <%= @company.rut_was.presence || @company.rut %></p>
         </div>
-        <div class="card-body">
+      </div>
+      <div class="card">
+        <div class="card-body p-4">
           <%= form_with(model: @company, local: true) do |f| %>
-            <% if @company.errors.any? %>
-              <div class="alert alert-danger">
-                <ul class="mb-0">
-                  <% @company.errors.full_messages.each do |msg| %>
-                    <li><%= msg %></li>
-                  <% end %>
-                </ul>
+            <%= render "shared/form_errors", object: @company, subject: "la empresa" %>
+
+            <h2 class="h6 mb-3"><i class="bi bi-building me-2 text-primary"></i>Datos de la empresa</h2>
+            <div class="row g-3">
+              <div class="col-md-7">
+                <%= f.label :name, class: "form-label" do %>Nombre de la empresa <span class="text-danger">*</span><% end %>
+                <%= f.text_field :name, class: "form-control" %>
               </div>
-            <% end %>
-
-            <div class="mb-3">
-              <%= f.label :name, "Nombre de la Empresa", class: "form-label" %>
-              <%= f.text_field :name, class: "form-control" %>
-            </div>
-
-            <div class="mb-3">
-              <%= f.label :rut, "RUT", class: "form-label" %>
-              <%= f.text_field :rut, class: "form-control", placeholder: "77.777.777-7",
-                  data: { controller: "mask", action: "input->mask#mask", mask_format: "99.999.999-#" } %>
-            </div>
-
-            <hr class="my-4">
-            
-            <h5 class="mb-3">Módulos Activos</h5>
-            
-            <div class="form-check mb-2">
-              <%= f.check_box :has_mechanic, class: "form-check-input" %>
-              <%= f.label :has_mechanic, "Habilitar Módulo de Mecánico", class: "form-check-label" %>
-              <div class="form-text">Permite asignar roles de mecánico y gestionar mantenimientos.</div>
-            </div>
-
-            <div class="form-check mb-2">
-              <%= f.check_box :has_analyst, class: "form-check-input" %>
-              <%= f.label :has_analyst, "Habilitar Módulo de Analista", class: "form-check-label" %>
-              <div class="form-text">Permite asignar roles de analista y ver reportes avanzados.</div>
-            </div>
-
-            <div class="form-check mb-4">
-              <%= f.check_box :has_bodeguero, class: "form-check-input" %>
-              <%= f.label :has_bodeguero, "Habilitar Módulo de Bodeguero", class: "form-check-label" %>
-              <div class="form-text">Permite asignar roles de bodeguero para gestionar inventario y solicitudes de suministros.</div>
-            </div>
-
-            <h5 class="mb-3">Combustible y Eficiencia</h5>
-
-            <div class="mb-4">
-              <%= f.label :fuel_anomaly_threshold, "Umbral de Alerta de Consumo (%)", class: "form-label" %>
-              <div class="input-group">
-                <%= f.number_field :fuel_anomaly_threshold, value: @company.anomaly_threshold, class: "form-control", min: 1, max: 99 %>
-                <span class="input-group-text">%</span>
+              <div class="col-md-5">
+                <%= f.label :rut, class: "form-label" do %>RUT <span class="text-danger">*</span><% end %>
+                <%= f.text_field :rut, class: "form-control", placeholder: "77.777.777-7",
+                    data: { controller: "mask", action: "input->mask#mask", mask_format: "99.999.999-#" } %>
               </div>
-              <div class="form-text">Se generará una alerta si el rendimiento (km/l) de una carga es inferior a este porcentaje respecto al promedio histórico.</div>
             </div>
 
-            <div class="d-flex justify-content-end gap-2">
-              <%= link_to "Cancelar", companies_path, class: "btn btn-light" %>
-              <%= f.submit "Guardar Cambios", class: "btn btn-primary" %>
+            <h2 class="h6 mt-4 mb-1"><i class="bi bi-puzzle me-2 text-primary"></i>Módulos activos</h2>
+            <p class="form-text mt-0 mb-3">Cada módulo habilita un rol adicional para los usuarios de la empresa.</p>
+            <div class="list-group mb-2">
+              <% CompaniesHelper::COMPANY_MODULES.each do |mod| %>
+                <% role_users = @company.users.where(role: mod[:role]).count %>
+                <div class="list-group-item py-3">
+                  <div class="form-check form-switch mb-0">
+                    <%= f.check_box mod[:attribute], class: "form-check-input", role: "switch" %>
+                    <%= f.label mod[:attribute], class: "form-check-label fw-bold" do %>
+                      Módulo de <%= mod[:label].downcase %>
+                    <% end %>
+                    <div class="form-text mt-1"><%= mod[:hint] %></div>
+                    <% if role_users.positive? %>
+                      <div class="small text-muted mt-1">
+                        <i class="bi bi-people me-1"></i><%= role_users %> <%= role_users == 1 ? "usuario" : "usuarios" %> con este rol
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+            <div class="alert alert-warning d-flex gap-2 small mb-0">
+              <i class="bi bi-exclamation-triangle-fill flex-shrink-0 mt-1"></i>
+              <div>Si desactivas un módulo, se eliminarán los usuarios que tengan ese rol.</div>
+            </div>
+
+            <h2 class="h6 mt-4 mb-3"><i class="bi bi-fuel-pump me-2 text-primary"></i>Combustible y eficiencia</h2>
+            <div class="row g-3">
+              <div class="col-md-7">
+                <%= f.label :fuel_anomaly_threshold, "Umbral de alerta de consumo", class: "form-label" %>
+                <div class="input-group">
+                  <%= f.number_field :fuel_anomaly_threshold, value: @company.anomaly_threshold, class: "form-control", min: 1, max: 99 %>
+                  <span class="input-group-text">%</span>
+                </div>
+                <div class="form-text">Se avisa cuando el rendimiento (km/l) de una carga queda más de este porcentaje bajo el promedio de las últimas cargas del vehículo.</div>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2 mt-4">
+              <%= link_to "Cancelar", companies_path, class: "btn btn-outline-secondary" %>
+              <%= f.submit "Guardar cambios", class: "btn btn-primary" %>
             </div>
           <% end %>
         </div>

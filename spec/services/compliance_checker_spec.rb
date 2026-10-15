@@ -15,7 +15,7 @@ RSpec.describe ComplianceChecker do
     expect { described_class.call }.to change { Notification.where(user: admin).count }.by(1)
 
     expect(document.reload).to be_expired
-    expect(Notification.last.title).to eq("Documento Vencido: AB1234")
+    expect(Notification.last.title).to eq("Documento vencido: AB1234")
   end
 
   it "marks a document due within 30 days as expiring and warns the admins" do

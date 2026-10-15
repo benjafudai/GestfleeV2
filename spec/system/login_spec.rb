@@ -33,7 +33,7 @@ RSpec.describe "Login", type: :system do
       click_button "Ingresar"
 
       expect(page).to have_current_path(new_user_session_path)
-      expect(page).to have_content("inválida")
+      expect(page).to have_content("incorrectos")
     end
 
     it "locks the account after 5 failed attempts" do

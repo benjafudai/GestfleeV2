@@ -2,37 +2,43 @@
 <% task = template.maintenance_task %>
 <% library_parts = vehicle_model ? vehicle_model.parts.select { |part| part.maintenance_task_id == task.id } : [] %>
 <details class="mt-2 small">
-  <summary class="text-primary">Ver paso a paso</summary>
-  <div class="mt-2 p-3 bg-light rounded-3">
+  <summary class="text-primary fw-bold"><i class="bi bi-list-ol me-1"></i>Ver paso a paso</summary>
+  <div class="mt-2 p-3 bg-light border rounded-3">
     <% if task.steps.any? %>
-      <ol class="ps-3 mb-2">
+      <ol class="ps-3 mb-0">
         <% task.steps.each do |step| %>
           <li class="mb-1"><%= step.description %></li>
         <% end %>
       </ol>
     <% end %>
-    <% if task.tools.present? %>
-      <div class="mb-1"><strong>Herramientas:</strong> <%= task.tools %></div>
-    <% end %>
-    <% if task.ppe.present? %>
-      <div class="mb-1"><strong>EPP:</strong> <%= task.ppe %></div>
+    <% if task.tools.present? || task.ppe.present? %>
+      <div class="d-flex flex-column gap-1 <%= 'mt-2 pt-2 border-top' if task.steps.any? %>">
+        <% if task.tools.present? %>
+          <div><i class="bi bi-wrench text-muted me-1"></i><strong>Herramientas:</strong> <%= task.tools %></div>
+        <% end %>
+        <% if task.ppe.present? %>
+          <div><i class="bi bi-shield-check text-muted me-1"></i><strong>EPP:</strong> <%= task.ppe %></div>
+        <% end %>
+      </div>
     <% end %>
     <% if library_parts.any? %>
-      <div class="mt-2"><strong>Repuestos de referencia para esta tarea:</strong></div>
-      <ul class="ps-3 mb-0">
-        <% library_parts.each do |part| %>
-          <li>
-            <%= part.description %><%= " · #{part.specification}" if part.specification.present? %>:
-            <%= number_with_precision(part.quantity, precision: 2, strip_insignificant_zeros: true) %> <%= part.unit %>
-            <% if part.unit_price_net_clp %>
-              a <%= format_money(part.unit_price_net_clp, "CLP") %> neto c/u
-            <% end %>
-            <% if part.price_type == "estimado" %>
-              <span class="badge rounded-pill text-bg-warning">Precio estimado</span>
-            <% end %>
-          </li>
-        <% end %>
-      </ul>
+      <div class="<%= 'mt-2 pt-2 border-top' if task.steps.any? || task.tools.present? || task.ppe.present? %>">
+        <div class="mb-1"><i class="bi bi-box-seam text-muted me-1"></i><strong>Repuestos de referencia para esta tarea:</strong></div>
+        <ul class="ps-3 mb-0">
+          <% library_parts.each do |part| %>
+            <li>
+              <%= part.description %><%= " · #{part.specification}" if part.specification.present? %>:
+              <%= number_with_precision(part.quantity, precision: 2, strip_insignificant_zeros: true) %> <%= part.unit %>
+              <% if part.unit_price_net_clp %>
+                a <%= format_money(part.unit_price_net_clp, "CLP") %> neto c/u
+              <% end %>
+              <% if part.price_type == "estimado" %>
+                <span class="badge text-bg-warning">Precio estimado</span>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
     <% end %>
   </div>
 </details>
