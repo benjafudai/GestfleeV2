@@ -1,8 +1,15 @@
-<%# locals: icon (Bootstrap Icons name), title, tag %>
-<div class="gf-welcome mb-4">
-  <span class="gf-welcome-icon"><i class="bi <%= icon %>"></i></span>
-  <div class="min-w-0">
-    <h4 class="mb-1"><%= title %></h4>
-    <span class="badge bg-primary"><%= tag %></span>
+<%# locals: icon (Bootstrap Icons name), title, subtitle (optional, HTML), action (optional, HTML: main button of the panel) %>
+<div class="gf-welcome align-items-start align-items-sm-center mb-4">
+  <span class="gf-welcome-icon" aria-hidden="true"><i class="bi <%= icon %>"></i></span>
+  <div class="min-w-0 flex-grow-1 d-flex flex-wrap align-items-center justify-content-between gap-3">
+    <div class="min-w-0">
+      <h1 class="h4 mb-0 text-break"><%= title %></h1>
+      <% if local_assigns[:subtitle].present? %>
+        <p class="text-muted mb-0 text-break"><%= subtitle %></p>
+      <% end %>
+    </div>
+    <% if local_assigns[:action].present? %>
+      <div class="d-grid flex-grow-1 flex-sm-grow-0"><%= action %></div>
+    <% end %>
   </div>
 </div>

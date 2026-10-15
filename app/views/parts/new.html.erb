@@ -1,11 +1,11 @@
-<div class="container mt-4" style="max-width: 800px;">
+<div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3"><i class="bi bi-box-seam me-2 text-primary"></i>Nuevo Repuesto</h1>
-  </div>
-  <div class="card shadow-sm border-0">
-    <div class="card-body p-4">
-      <% provide(:submit_text, "Añadir Repuesto") %>
-      <%= render 'form', part: @part %>
+    <div>
+      <h1 class="h3 mb-0"><i class="bi bi-box-seam me-2"></i>Nuevo repuesto</h1>
+      <p class="text-muted mb-0">Agrégalo al catálogo con su stock inicial, costo y vehículos compatibles.</p>
     </div>
   </div>
+
+  <% provide(:submit_text, "Guardar repuesto") %>
+  <%= render "form", part: @part %>
 </div>

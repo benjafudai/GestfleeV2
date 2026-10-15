@@ -1,51 +1,83 @@
-<div class="container mt-5">
+<div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Solicitudes de Recuperación de Contraseña</h2>
+    <div>
+      <h1 class="h3 mb-0"><i class="bi bi-key-fill me-2"></i>Solicitudes de clave</h1>
+      <p class="text-muted mb-0">Usuarios que pidieron recuperar su contraseña desde la pantalla de inicio de sesión.</p>
+    </div>
   </div>
 
-  <div class="card shadow-sm">
-    <div class="card-body">
+  <div class="card">
+    <div class="card-header bg-white d-flex align-items-center justify-content-between gap-2">
+      <h2 class="h6 mb-0">Pendientes de atender</h2>
       <% if @pending_requests.any? %>
-        <div class="table-responsive">
-          <table class="table table-hover align-middle">
-            <thead class="table-light">
-              <tr>
-                <th>Usuario</th>
-                <th>Empresa</th>
-                <th>Fecha de Solicitud</th>
-                <th>Estado</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% @pending_requests.each do |request| %>
-                <tr>
-                  <td>
-                    <div class="fw-bold"><%= request.user.email %> <%= account_locked_badge(request.user) %></div>
-                  </td>
-                  <td><%= request.user.company&.name || "—" %></td>
-                  <td><%= request.created_at.strftime("%d/%m/%Y %H:%M") %></td>
-                  <td>
-                    <span class="badge bg-warning text-dark">Pendiente</span>
-                  </td>
-                  <td>
-                    <div class="d-flex gap-2">
-                      <%= link_to "Validar y Asignar Contraseña", password_reset_request_path(request), class: "btn btn-sm btn-primary" %>
-                      <%= button_to "Rechazar", reject_password_reset_request_path(request), method: :patch,
-                            data: { turbo_confirm: "¿Rechazar la solicitud de #{request.user.email}?" },
-                            class: "btn btn-sm btn-outline-danger" %>
-                    </div>
-                  </td>
-                </tr>
-              <% end %>
-            </tbody>
-          </table>
-        </div>
-      <% else %>
-        <div class="text-center py-5">
-          <p class="text-muted mb-0">No hay solicitudes de recuperación de contraseña pendientes.</p>
-        </div>
+        <span class="badge text-bg-light">
+          <%= @pending_requests.size %> <%= @pending_requests.size == 1 ? "solicitud" : "solicitudes" %>
+        </span>
       <% end %>
     </div>
+    <% if @pending_requests.any? %>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Usuario</th>
+              <th class="d-none d-md-table-cell">Empresa</th>
+              <th class="d-none d-md-table-cell">Fecha de solicitud</th>
+              <th class="text-end">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @pending_requests.each do |request| %>
+              <tr>
+                <td class="text-wrap">
+                  <div class="d-flex align-items-center gap-2">
+                    <%= user_avatar(request.user) %>
+                    <div class="min-w-0">
+                      <%= link_to request.user.email, password_reset_request_path(request), class: "fw-bold text-body text-decoration-none text-break" %>
+                      <%= account_locked_badge(request.user) %>
+                      <div class="small text-muted d-md-none">
+                        <%= request.user.company&.name || "Sin empresa" %> · <span class="text-nowrap">hace <%= time_ago_in_words(request.created_at) %></span>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td class="d-none d-md-table-cell">
+                  <% if request.user.company %>
+                    <%= request.user.company.name %>
+                  <% else %>
+                    <span class="text-muted">Sin empresa</span>
+                  <% end %>
+                </td>
+                <td class="d-none d-md-table-cell">
+                  <div class="text-nowrap"><%= l(request.created_at, format: :short) %></div>
+                  <div class="small text-muted text-nowrap">hace <%= time_ago_in_words(request.created_at) %></div>
+                </td>
+                <td class="text-end">
+                  <div class="gf-row-actions">
+                    <%= link_to password_reset_request_path(request), class: "btn btn-sm btn-outline-primary",
+                          title: "Validar y asignar contraseña", "aria-label": "Validar y asignar contraseña" do %>
+                      <i class="bi bi-key"></i>
+                    <% end %>
+                    <%= button_to reject_password_reset_request_path(request), method: :patch,
+                          data: { turbo_confirm: "¿Rechazar la solicitud de #{request.user.email}?" },
+                          class: "btn btn-sm btn-outline-danger", title: "Rechazar", "aria-label": "Rechazar" do %>
+                      <i class="bi bi-x-lg"></i>
+                    <% end %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="card-body">
+        <div class="text-center py-5 text-muted">
+          <i class="bi bi-check2-circle d-block opacity-50"></i>
+          <p class="mb-1 fw-bold text-body">No hay solicitudes pendientes</p>
+          <p class="small mb-0">Cuando alguien pida recuperar su contraseña desde la pantalla de inicio de sesión, aparecerá aquí.</p>
+        </div>
+      </div>
+    <% end %>
   </div>
 </div>

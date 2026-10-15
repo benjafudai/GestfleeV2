@@ -1,83 +1,148 @@
+<% sees_team = current_user.superadmin? || current_user.admin? || current_user.mecanico? %>
+<% can_report = policy(Incident).new? %>
 <div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3">Incidentes</h1>
-    <% if policy(Incident).new? %>
-      <%= link_to new_incident_path, class: "btn btn-primary" do %>
-        <i class="bi bi-plus-lg"></i> Reportar Incidente
+    <div>
+      <h1 class="h3 mb-0"><i class="bi bi-exclamation-triangle me-2"></i>Incidentes</h1>
+      <p class="text-muted mb-0">
+        <% if sees_team %>
+          Fallas, daños y eventos reportados en la flota.
+        <% elsif can_report %>
+          Los incidentes que has reportado.
+        <% else %>
+          Fallas, daños y eventos que reportan los choferes.
+        <% end %>
+      </p>
+    </div>
+    <% if can_report %>
+      <%= link_to new_incident_path, class: "btn btn-primary text-nowrap" do %>
+        <i class="bi bi-plus-lg me-1"></i>Reportar incidente
       <% end %>
     <% end %>
   </div>
 
-  <div class="card shadow-sm">
-    <div class="card-body p-0">
+  <% scope = policy_scope(Incident) %>
+  <% status_counts = scope.group(:status).count %>
+  <% if status_counts.values.sum.positive? %>
+    <% open_serious = scope.where(severity: [:high, :critical]).where.not(status: :resolved).count %>
+    <div class="row g-3 mb-4">
+      <% Incident.statuses.each_key do |status| %>
+        <div class="col-6 col-lg-3">
+          <div class="card h-100">
+            <div class="card-body d-flex align-items-center gap-3 p-3">
+              <%= incident_status_icon_circle(status) %>
+              <div class="min-w-0">
+                <div class="fs-4 fw-bold lh-1"><%= number_with_delimiter(status_counts[status].to_i) %></div>
+                <div class="small text-muted text-truncate mt-1"><%= incident_status_count_label(status, status_counts[status].to_i) %></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+      <div class="col-6 col-lg-3">
+        <div class="card h-100">
+          <div class="card-body d-flex align-items-center gap-3 p-3">
+            <%= incident_icon_circle("bi-exclamation-octagon", open_serious.positive? ? "danger" : "secondary") %>
+            <div class="min-w-0">
+              <div class="fs-4 fw-bold lh-1"><%= number_with_delimiter(open_serious) %></div>
+              <div class="small text-muted mt-1" title="Gravedad alta o crítica, sin resolver"><%= open_serious == 1 ? "Grave sin resolver" : "Graves sin resolver" %></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="card">
+    <% if @incidents.any? %>
       <div class="table-responsive">
-        <table class="table table-hover table-striped mb-0 align-middle">
+        <table class="table table-hover align-middle mb-0">
           <thead class="table-light">
             <tr>
-              <th scope="col">ID</th>
+              <%# En celular: ID, fecha y gravedad pasan a líneas chicas para que Estado y las acciones quepan. %>
+              <th scope="col" class="d-none d-md-table-cell">ID</th>
               <th scope="col">Vehículo</th>
-              <th scope="col">Reportado por</th>
-              <th scope="col">Fecha</th>
-              <th scope="col">Severidad</th>
+              <th scope="col" class="d-none d-md-table-cell">Gravedad</th>
               <th scope="col">Estado</th>
-              <th scope="col" class="text-end">Acciones</th>
+              <th scope="col" class="d-none d-lg-table-cell">Descripción</th>
+              <% if sees_team %>
+                <th scope="col" class="d-none d-xl-table-cell">Reportado por</th>
+              <% end %>
+              <th scope="col" class="d-none d-md-table-cell">Fecha</th>
+              <th scope="col" class="text-end">
+                <span class="d-none d-md-inline">Acciones</span><span class="visually-hidden d-md-none">Acciones</span>
+              </th>
             </tr>
           </thead>
           <tbody>
             <% @incidents.each do |incident| %>
               <tr>
-                <td class="fw-bold">
-                  <%= link_to "##{incident.id}", incident_path(incident), class: "text-decoration-none" %>
+                <td class="text-nowrap d-none d-md-table-cell">
+                  <%= link_to "##{incident.id}", incident_path(incident), class: "fw-bold" %>
                 </td>
                 <td>
-                  <%= link_to incident.vehicle.plate, vehicle_path(incident.vehicle), class: "text-decoration-none" if incident.vehicle %>
-                </td>
-                <td><%= incident.reporter&.email %></td>
-                <td><%= incident.created_at.strftime("%d/%m/%Y %H:%M") %></td>
-                <td>
-                  <% severity_class = case incident.severity
-                     when 'low' then 'text-bg-info'
-                     when 'medium' then 'text-bg-warning'
-                     when 'high' then 'text-bg-danger'
-                     when 'critical' then 'text-bg-dark'
-                     else 'text-bg-light'
-                     end %>
-                  <span class="badge <%= severity_class %> rounded-pill">
-                    <%= incident_severity_label(incident.severity) %>
-                  </span>
-                </td>
-                <td>
-                  <% status_class = case incident.status
-                     when 'pending' then 'text-bg-secondary'
-                     when 'in_review' then 'text-bg-primary'
-                     when 'resolved' then 'text-bg-success'
-                     else 'text-bg-light'
-                     end %>
-                  <span class="badge <%= status_class %> rounded-pill">
-                    <%= incident_status_label(incident.status) %>
-                  </span>
-                </td>
-                <td class="text-end">
-                  <div class="btn-group btn-group-sm">
-                    <%= link_to "Ver", incident_path(incident), class: "btn btn-outline-secondary" %>
-                    <% if policy(incident).edit? %>
-                      <%= link_to "Editar", edit_incident_path(incident), class: "btn btn-outline-primary" %>
-                    <% end %>
+                  <%= incident_vehicle_link(incident.vehicle, class: "fw-bold") %>
+                  <% model = incident_vehicle_model(incident.vehicle) %>
+                  <% if model.present? %>
+                    <div class="small text-muted text-wrap"><%= model %></div>
+                  <% end %>
+                  <div class="small text-muted d-md-none">
+                    <%= link_to "##{incident.id}", incident_path(incident), class: "fw-bold" %> · <%= l(incident.created_at.to_date) %>
                   </div>
                 </td>
-              </tr>
-            <% end %>
-            <% if @incidents.empty? %>
-              <tr>
-                <td colspan="7" class="text-center py-5 text-muted">
-                  No hay incidentes reportados.
+                <td class="text-nowrap d-none d-md-table-cell"><%= incident_severity_badge(incident.severity) %></td>
+                <td class="text-nowrap">
+                  <%= status_badge(incident_status_label(incident.status), incident.status) %>
+                  <div class="d-md-none mt-1"><%= incident_severity_text(incident.severity) %></div>
+                </td>
+                <td class="d-none d-lg-table-cell">
+                  <div class="text-truncate" style="max-width: 18rem;" title="<%= incident.description %>"><%= incident.description %></div>
+                </td>
+                <% if sees_team %>
+                  <td class="text-nowrap d-none d-xl-table-cell"><%= incident.reporter&.email || tag.span("—", class: "text-muted") %></td>
+                <% end %>
+                <td class="text-nowrap d-none d-md-table-cell">
+                  <%= l(incident.created_at.to_date) %>
+                  <span class="small text-muted ms-1"><%= incident.created_at.strftime("%H:%M") %></span>
+                </td>
+                <td class="text-end">
+                  <div class="gf-row-actions">
+                    <%= link_to incident_path(incident), class: "btn btn-sm btn-outline-primary", title: "Ver", "aria-label": "Ver" do %>
+                      <i class="bi bi-eye"></i>
+                    <% end %>
+                    <% if policy(incident).edit? %>
+                      <%= link_to edit_incident_path(incident), class: "btn btn-sm btn-outline-secondary", title: "Editar", "aria-label": "Editar" do %>
+                        <i class="bi bi-pencil"></i>
+                      <% end %>
+                    <% end %>
+                  </div>
                 </td>
               </tr>
             <% end %>
           </tbody>
         </table>
       </div>
-    </div>
+    <% else %>
+      <div class="card-body">
+        <div class="text-center py-5 text-muted">
+          <i class="bi bi-shield-check d-block opacity-50"></i>
+          <% if sees_team %>
+            <p class="mb-1 fw-bold text-body">No hay incidentes reportados</p>
+          <% elsif can_report %>
+            <p class="mb-1 fw-bold text-body">Aún no has reportado incidentes</p>
+          <% else %>
+            <p class="mb-1 fw-bold text-body">No hay incidentes para mostrar</p>
+          <% end %>
+          <% if can_report %>
+            <p class="small mb-0">Si ocurre una falla, un daño o un problema en ruta, usa «Reportar incidente» y agrega fotos y la ubicación.</p>
+          <% elsif sees_team %>
+            <p class="small mb-0">Aquí aparecerán los incidentes que reporten los choferes.</p>
+          <% else %>
+            <p class="small mb-0">Los incidentes los reportan los choferes y los revisa el taller.</p>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
   </div>
   <%= render "shared/pagination", pagy: @pagy %>
 </div>

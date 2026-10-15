@@ -26,7 +26,7 @@ RSpec.describe "Incident reporting", type: :system do
 
     select "Media", from: "incident_severity"
     fill_in "incident_description", with: "Ruido extraño en el motor al frenar."
-    click_button "Guardar Incidente"
+    click_button "Guardar incidente"
 
     expect(page).to have_content("Incidente reportado exitosamente")
 
@@ -45,9 +45,9 @@ RSpec.describe "Incident reporting", type: :system do
 
   it "requires a description" do
     visit new_incident_path
-    click_button "Guardar Incidente"
+    click_button "Guardar incidente"
 
-    expect(page).to have_content("impidieron guardar el incidente")
+    expect(page).to have_content(/impidi(ó|eron) guardar el incidente/)
     expect(Incident.count).to eq(0)
   end
 end

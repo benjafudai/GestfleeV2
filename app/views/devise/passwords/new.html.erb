@@ -1,24 +1,15 @@
-<% content_for :title, "Recuperar contraseña | GestFlee" %>
+<% content_for :title, "Recuperar contraseña · GestFlee" %>
 
 <div class="gf-auth">
   <div class="gf-auth-card is-narrow">
     <section class="gf-auth-form">
-      <div class="gf-auth-brand">
-        <span class="gf-brand-mark"><i class="fa-solid fa-truck-fast"></i></span>
-        <span>
-          <span class="gf-brand-name">GestFlee</span>
-          <span class="gf-brand-sub">Gestión de Flota</span>
-        </span>
-      </div>
+      <%= render "devise/shared/auth_brand" %>
 
+      <span class="gf-action-icon is-primary mb-3" aria-hidden="true"><i class="bi bi-key-fill"></i></span>
       <h1 class="gf-auth-title">Recuperar contraseña</h1>
       <p class="gf-auth-sub">Ingresa tu correo y avisaremos al equipo de GestFlee para que restablezca tu acceso.</p>
 
-      <% if flash[:alert] %>
-        <div class="alert alert-danger d-flex align-items-center gap-2" role="alert">
-          <i class="fa-solid fa-circle-exclamation"></i> <span><%= flash[:alert] %></span>
-        </div>
-      <% end %>
+      <%= render "devise/shared/auth_flash" %>
 
       <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
         <%= render "devise/shared/error_messages", resource: resource %>
@@ -26,10 +17,11 @@
         <div class="mb-4">
           <%= f.label :email, "Correo electrónico", class: "form-label" %>
           <div class="gf-input-icon">
-            <i class="fa-regular fa-envelope"></i>
+            <i class="bi bi-envelope-fill" aria-hidden="true"></i>
             <%= f.email_field :email, autofocus: true, autocomplete: "email",
                   placeholder: "nombre@empresa.cl", class: "form-control" %>
           </div>
+          <div class="form-text">Usa el mismo correo con el que inicias sesión.</div>
         </div>
 
         <%= f.submit "Solicitar recuperación", class: "btn btn-primary w-100 gf-auth-submit" %>
@@ -37,7 +29,7 @@
 
       <p class="gf-auth-foot">
         <%= link_to new_session_path(resource_name), class: "gf-auth-link" do %>
-          <i class="fa-solid fa-arrow-left"></i> Volver al inicio de sesión
+          <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>Volver al inicio de sesión
         <% end %>
       </p>
     </section>

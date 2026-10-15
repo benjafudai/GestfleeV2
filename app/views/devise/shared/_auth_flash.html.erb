@@ -1,0 +1,15 @@
+<%# Avisos (flash) de las pantallas de acceso: no usan el layout con barra lateral, que es el que los muestra en el resto de la app.
+    alert_tone: "danger" (por defecto) o "warning" cuando el aviso es una indicación y no un error. %>
+<% alert_tone = local_assigns.fetch(:alert_tone, "danger") %>
+<% if flash[:alert].present? %>
+  <div class="alert alert-<%= alert_tone %> d-flex align-items-baseline gap-2" role="alert">
+    <i class="bi <%= alert_tone == "warning" ? "bi-exclamation-triangle-fill" : "bi-exclamation-circle-fill" %> flex-shrink-0" aria-hidden="true"></i>
+    <span><%= flash[:alert] %></span>
+  </div>
+<% end %>
+<% if flash[:notice].present? %>
+  <div class="alert alert-success d-flex align-items-baseline gap-2" role="status">
+    <i class="bi bi-check-circle-fill flex-shrink-0" aria-hidden="true"></i>
+    <span><%= flash[:notice] %></span>
+  </div>
+<% end %>

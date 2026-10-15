@@ -41,6 +41,7 @@
           <div class="min-w-0">
             <div class="gf-user-email"><%= current_user.email %></div>
             <span class="badge bg-primary"><%= role_label(current_user.role) %></span>
+            <div class="gf-user-company"><i class="fa-solid fa-building fa-fw"></i> <%= current_user.company&.name || "Panel global" %></div>
           </div>
         </div>
         <div class="dropdown-divider"></div>

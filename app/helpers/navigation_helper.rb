@@ -9,16 +9,19 @@ module NavigationHelper
   def nav_item_active?(item)
     if item[:match] == :dashboard
       request.path.in?(["/", "/dashboard"])
+    elsif request.path.match?(%r{\A/vehicles/\d+/fuel_fills})
+      item[:match] == "/fuel_fills"
     else
       request.path.start_with?(item[:match])
     end
   end
 
-  # Pages reachable from the topbar instead of the sidebar.
+  # Pages reachable from the topbar instead of the sidebar, or through links
+  # from other pages (e.g. the analista opening a vehicle), still get a title.
   def current_nav_item
     items = sidebar_sections.flat_map { |section| section[:items] }
     items += [nav_item("Notificaciones", notifications_path, "fa-bell", "/notifications")]
-    items.find { |item| nav_item_active?(item) }
+    items.find { |item| nav_item_active?(item) } || fallback_nav_item
   end
 
   def user_initials(user)
@@ -26,6 +29,23 @@ module NavigationHelper
   end
 
   private
+
+  def fallback_nav_item
+    path = request.path
+    if path.match?(%r{\A/vehicles/\d+/fuel_fills})
+      nav_item("Combustible", fuel_fills_path, "fa-gas-pump", path)
+    elsif path.start_with?("/vehicles")
+      nav_item("Vehículos", vehicles_path, "fa-truck-front", path)
+    elsif path.start_with?("/users")
+      nav_item("Usuarios", users_path, "fa-users", path)
+    elsif path.start_with?("/checklist")
+      nav_item("Checklists", checklist_submissions_path, "fa-list-check", path)
+    elsif path.start_with?("/incidents")
+      nav_item("Incidentes", incidents_path, "fa-triangle-exclamation", path)
+    elsif path.start_with?("/alerts")
+      nav_item("Alertas", alerts_path, "fa-circle-exclamation", path)
+    end
+  end
 
   def nav_item(label, path, icon, match, tone: nil)
     { label: label, path: path, icon: icon, match: match, tone: tone }
@@ -50,7 +70,7 @@ module NavigationHelper
           nav_item("Checklists", checklist_templates_path, "fa-list-check", "/checklist"),
           nav_item("Combustible", fuel_fills_path, "fa-gas-pump", "/fuel_fills")
         ] },
-        { title: "Mantenimiento", items: [
+        { title: "Mantención", items: [
           nav_item("Órdenes de trabajo", work_orders_path, "fa-screwdriver-wrench", "/work_orders"),
           nav_item("Planes de mantención", maintenance_plans_path, "fa-clipboard-check", "/maintenance_plans"),
           nav_item("Incidentes", incidents_path, "fa-triangle-exclamation", "/incidents")
@@ -73,7 +93,7 @@ module NavigationHelper
           nav_item("Checklists", checklist_templates_path, "fa-list-check", "/checklist"),
           nav_item("Combustible", fuel_fills_path, "fa-gas-pump", "/fuel_fills")
         ] },
-        { title: "Mantenimiento", items: [
+        { title: "Mantención", items: [
           nav_item("Órdenes de trabajo", work_orders_path, "fa-screwdriver-wrench", "/work_orders"),
           nav_item("Planes de mantención", maintenance_plans_path, "fa-clipboard-check", "/maintenance_plans"),
           nav_item("Incidentes", incidents_path, "fa-triangle-exclamation", "/incidents")
@@ -96,7 +116,7 @@ module NavigationHelper
       [
         { title: nil, items: [
           nav_item("Mi unidad", dashboard_path, "fa-gauge-high", :dashboard),
-          nav_item("Check del día", checklist_submissions_path, "fa-clipboard-check", "/checklist_submissions"),
+          nav_item("Checklist del día", checklist_submissions_path, "fa-clipboard-check", "/checklist_submissions"),
           nav_item("Incidentes", incidents_path, "fa-triangle-exclamation", "/incidents"),
           nav_item("Combustible", fuel_fills_path, "fa-gas-pump", "/fuel_fills")
         ] }
@@ -112,7 +132,7 @@ module NavigationHelper
         { title: "Inventario", items: [
           nav_item("Repuestos", parts_path, "fa-boxes-stacked", "/parts"),
           nav_item("Buscar repuesto", part_search_path, "fa-magnifying-glass", "/buscar_repuestos"),
-          nav_item("Solicitudes", supply_requests_path, "fa-cart-plus", "/supply_requests")
+          nav_item("Suministros", supply_requests_path, "fa-cart-plus", "/supply_requests")
         ] }
       ]
     when "analista"

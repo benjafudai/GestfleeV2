@@ -1,110 +1,159 @@
+<% located = incident.latitude.present? && incident.longitude.present? %>
 <%= form_with(model: incident, local: true, class: "needs-validation") do |form| %>
-  <% if incident.errors.any? %>
-    <div class="alert alert-danger">
-      <h4 class="alert-heading h5"><%= pluralize(incident.errors.count, "error", "errores") %> impidieron guardar el incidente:</h4>
-      <ul class="mb-0">
-        <% incident.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
+  <%= render "shared/form_errors", object: incident, subject: "el incidente" %>
+
+  <div class="row g-4">
+    <div class="col-lg-7">
+      <div class="card h-100">
+        <div class="card-header bg-white">
+          <%= incident_card_title("Datos del incidente", icon: "bi-card-text") %>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <%= form.label :vehicle_id, class: ["form-label", ("text-danger-emphasis" if incident.errors.include?(:vehicle))] do %>Vehículo <span class="text-danger">*</span><% end %>
+            <% if current_user.chofer? %>
+              <% assigned_vehicle = current_user.active_assignment&.vehicle %>
+              <% if assigned_vehicle %>
+                <%= form.hidden_field :vehicle_id, value: assigned_vehicle.id %>
+                <div class="d-flex align-items-center gap-2 px-3 py-2 rounded-3 border bg-light">
+                  <i class="bi bi-truck-front text-primary"></i>
+                  <span class="fw-bold"><%= assigned_vehicle.plate %></span>
+                  <% if (model = incident_vehicle_model(assigned_vehicle)).present? %>
+                    <span class="small text-muted text-truncate"><%= model %></span>
+                  <% end %>
+                </div>
+                <div class="form-text">Es el vehículo que tienes asignado.</div>
+              <% else %>
+                <%= form.hidden_field :vehicle_id, value: "" %>
+                <div class="alert alert-warning d-flex gap-2 mb-0" role="alert">
+                  <i class="bi bi-exclamation-triangle-fill flex-shrink-0 mt-1"></i>
+                  <div>No tienes un vehículo asignado actualmente. Pide a un administrador que te asigne uno para poder reportar.</div>
+                </div>
+              <% end %>
+            <% else %>
+              <%= form.collection_select :vehicle_id, Vehicle.active, :id, ->(v) { incident_vehicle_label(v) },
+                    { prompt: "Selecciona un vehículo" },
+                    { class: ["form-select", ("is-invalid" if incident.errors.include?(:vehicle))], required: true } %>
+            <% end %>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="<%= policy(incident).update? && incident.persisted? ? 'col-sm-6' : 'col-12' %>">
+              <%= form.label :severity, "Gravedad", class: "form-label" %>
+              <%= form.select :severity, Incident.severities.keys.map { |k| [incident_severity_label(k), k] }, {}, { class: "form-select" } %>
+              <div class="form-text">Qué tanto afecta la operación del vehículo.</div>
+            </div>
+
+            <% if policy(incident).update? && incident.persisted? %>
+              <div class="col-sm-6">
+                <%= form.label :status, "Estado", class: "form-label" %>
+                <%= form.select :status, Incident.statuses.keys.map { |k| [incident_status_label(k), k] }, {}, { class: "form-select" } %>
+              </div>
+            <% end %>
+          </div>
+
+          <div>
+            <%= form.label :description, class: "form-label" do %>Descripción <span class="text-danger">*</span><% end %>
+            <%= form.text_area :description, rows: 5, class: "form-control", required: true, placeholder: "Describe qué pasó, dónde ocurrió y cómo afecta al vehículo." %>
+          </div>
+        </div>
+      </div>
     </div>
-  <% end %>
 
-  <div class="mb-3">
-    <%= form.label :vehicle_id, "Vehículo", class: "form-label fw-bold" %>
-    <% if current_user.chofer? %>
-      <% assigned_vehicle = current_user.active_assignment&.vehicle %>
-      <% if assigned_vehicle %>
-        <%= form.hidden_field :vehicle_id, value: assigned_vehicle.id %>
-        <p class="form-control-plaintext"><%= assigned_vehicle.plate %></p>
-      <% else %>
-        <p class="text-danger mb-0">No tienes un vehículo asignado actualmente.</p>
-        <%= form.hidden_field :vehicle_id, value: "" %>
-      <% end %>
-    <% else %>
-      <%= form.collection_select :vehicle_id, Vehicle.active, :id, :plate, { prompt: "Seleccione un vehículo" }, { class: "form-select", required: true } %>
-    <% end %>
-  </div>
+    <div class="col-lg-5">
+      <div class="card h-100">
+        <div class="card-header bg-white">
+          <%= incident_card_title("Evidencias y ubicación", icon: "bi-camera") %>
+        </div>
+        <div class="card-body">
+          <div class="mb-4">
+            <%= form.label :photos, "Fotos", class: "form-label" %>
+            <%= form.file_field :photos, multiple: true, accept: "image/*", class: "form-control" %>
+            <div class="form-text">
+              Puedes seleccionar varias imágenes a la vez.
+              <% attached = incident.persisted? ? incident.photos.attachments.count : 0 %>
+              <% if attached.positive? %>
+                Ya tiene <%= attached == 1 ? "1 foto" : "#{attached} fotos" %>; las que agregues se suman a ellas.
+              <% end %>
+            </div>
+          </div>
 
-  <div class="mb-3">
-    <%= form.label :severity, "Severidad", class: "form-label fw-bold" %>
-    <%= form.select :severity, Incident.severities.keys.map { |k| [incident_severity_label(k), k] }, {}, { class: "form-select" } %>
-  </div>
+          <div>
+            <span class="form-label d-block">Ubicación <span class="fw-normal text-muted">(opcional)</span></span>
+            <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+              <button type="button" id="btn-get-location" class="btn btn-outline-primary btn-sm text-nowrap">
+                <i class="bi bi-crosshair me-1"></i><%= located ? "Actualizar con mi ubicación" : "Usar mi ubicación actual" %>
+              </button>
+              <% if located %>
+                <span id="location-status" class="text-success small fw-bold">Ubicación registrada: <%= incident_coordinates(incident) %></span>
+              <% else %>
+                <span id="location-status" class="text-muted small">Sin ubicación por ahora.</span>
+              <% end %>
+            </div>
 
-  <% if policy(incident).update? && incident.persisted? %>
-    <div class="mb-3">
-      <%= form.label :status, "Estado", class: "form-label fw-bold" %>
-      <%= form.select :status, Incident.statuses.keys.map { |k| [incident_status_label(k), k] }, {}, { class: "form-select" } %>
-    </div>
-  <% end %>
+            <%= form.hidden_field :latitude, id: "incident_latitude" %>
+            <%= form.hidden_field :longitude, id: "incident_longitude" %>
 
-  <div class="mb-3">
-    <%= form.label :description, "Descripción del Incidente", class: "form-label fw-bold" %>
-    <%= form.text_area :description, rows: 4, class: "form-control", required: true, placeholder: "Describa lo sucedido..." %>
-  </div>
-
-  <div class="mb-3">
-    <%= form.label :photos, "Evidencias (Fotos)", class: "form-label fw-bold" %>
-    <%= form.file_field :photos, multiple: true, accept: "image/*", class: "form-control" %>
-    <div class="form-text">Puede seleccionar múltiples imágenes.</div>
-  </div>
-
-  <div class="mb-4">
-    <label class="form-label fw-bold">Ubicación (Opcional)</label>
-    <div class="d-flex align-items-center mb-2">
-      <button type="button" id="btn-get-location" class="btn btn-outline-info btn-sm me-3">
-        Obtener mi ubicación actual
-      </button>
-      <span id="location-status" class="text-muted small">Ubicación no obtenida</span>
-    </div>
-    
-    <%= form.hidden_field :latitude, id: "incident_latitude" %>
-    <%= form.hidden_field :longitude, id: "incident_longitude" %>
-    
-    <div id="map-preview-container" style="display: none; width: 100%; height: 200px; border-radius: 8px; overflow: hidden; border: 1px solid #dee2e6;">
-      <iframe id="map-preview" width="100%" height="100%" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+            <div id="map-placeholder" class="ratio ratio-16x9 rounded-3 border bg-light"<% if located %> hidden<% end %>>
+              <div class="d-flex flex-column align-items-center justify-content-center text-center text-muted small p-3">
+                <i class="bi bi-map fs-3 opacity-50 mb-2" aria-hidden="true"></i>
+                <span>El mapa aparecerá aquí cuando agregues la ubicación.</span>
+              </div>
+            </div>
+            <div id="map-preview-container" class="ratio ratio-16x9 rounded-3 overflow-hidden border bg-light" style="<%= 'display: none;' unless located %>">
+              <iframe id="map-preview" title="Vista previa de la ubicación" class="border-0" allowfullscreen="" aria-hidden="false" tabindex="0"<% if located %> src="<%= incident_map_embed_url(incident) %>"<% end %>></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div class="d-flex justify-content-between">
-    <%= link_to "Cancelar", incidents_path, class: "btn btn-outline-secondary" %>
-    <%= form.submit "Guardar Incidente", class: "btn btn-primary" %>
+  <div class="d-flex justify-content-end gap-2 mt-4">
+    <%= link_to "Cancelar", (incident.persisted? ? incident_path(incident) : incidents_path), class: "btn btn-outline-secondary" %>
+    <%= form.submit "Guardar incidente", class: "btn btn-primary" %>
   </div>
 <% end %>
 
 <script>
-  document.addEventListener("turbo:load", function() {
-    const btnLocation = document.getElementById("btn-get-location");
-    const statusText = document.getElementById("location-status");
-    const latField = document.getElementById("incident_latitude");
-    const lngField = document.getElementById("incident_longitude");
-    const mapContainer = document.getElementById("map-preview-container");
-    const mapIframe = document.getElementById("map-preview");
+  (function() {
+    function initIncidentLocation() {
+      const btnLocation = document.getElementById("btn-get-location");
+      if (!btnLocation || btnLocation.dataset.locationBound) return;
+      btnLocation.dataset.locationBound = "true";
 
-    if (btnLocation) {
+      const statusText = document.getElementById("location-status");
+      const latField = document.getElementById("incident_latitude");
+      const lngField = document.getElementById("incident_longitude");
+      const mapContainer = document.getElementById("map-preview-container");
+      const mapIframe = document.getElementById("map-preview");
+      const mapPlaceholder = document.getElementById("map-placeholder");
+
       btnLocation.addEventListener("click", function() {
         if (!navigator.geolocation) {
-          statusText.textContent = "La geolocalización no es soportada por tu navegador";
+          statusText.textContent = "Tu navegador no permite obtener la ubicación.";
           statusText.className = "text-danger small";
           return;
         }
 
-        statusText.textContent = "Obteniendo ubicación...";
+        statusText.textContent = "Obteniendo ubicación…";
+        statusText.className = "text-muted small";
         btnLocation.disabled = true;
 
         navigator.geolocation.getCurrentPosition(
           function(position) {
             const lat = position.coords.latitude;
             const lng = position.coords.longitude;
-            
+
             latField.value = lat;
             lngField.value = lng;
-            
+
             statusText.textContent = `Ubicación obtenida: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
             statusText.className = "text-success small fw-bold";
             btnLocation.disabled = false;
-            
-            // Show simple map via embed without API Key (uses generic search query)
+
+            // Mapa simple con el embed de Google Maps (sin API key)
+            if (mapPlaceholder) mapPlaceholder.hidden = true;
             mapContainer.style.display = "block";
             mapIframe.src = `https://maps.google.com/maps?q=${lat},${lng}&z=15&output=embed`;
           },
@@ -113,16 +162,16 @@
             statusText.className = "text-danger small";
             switch(error.code) {
               case error.PERMISSION_DENIED:
-                statusText.textContent = "Permiso denegado para obtener ubicación.";
+                statusText.textContent = "No diste permiso para obtener la ubicación.";
                 break;
               case error.POSITION_UNAVAILABLE:
-                statusText.textContent = "Información de ubicación no disponible.";
+                statusText.textContent = "La ubicación no está disponible en este momento.";
                 break;
               case error.TIMEOUT:
-                statusText.textContent = "Tiempo de espera agotado.";
+                statusText.textContent = "Se agotó el tiempo de espera. Inténtalo de nuevo.";
                 break;
               default:
-                statusText.textContent = "Error desconocido al obtener la ubicación.";
+                statusText.textContent = "No se pudo obtener la ubicación.";
                 break;
             }
           },
@@ -130,5 +179,8 @@
         );
       });
     }
-  });
+
+    initIncidentLocation();
+    document.addEventListener("turbo:load", initIncidentLocation);
+  })();
 </script>

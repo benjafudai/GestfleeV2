@@ -47,7 +47,7 @@ class FuelFillsController < ApplicationController
   def update
     authorize @fuel_fill
     if @fuel_fill.update(fuel_fill_params)
-      redirect_to fuel_fill_path(@fuel_fill), notice: "Registro de combustible actualizado."
+      redirect_to fuel_fill_path(@fuel_fill), notice: "Carga actualizada."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -57,7 +57,7 @@ class FuelFillsController < ApplicationController
     authorize @fuel_fill
     vehicle = @fuel_fill.vehicle
     @fuel_fill.destroy
-    redirect_to vehicle_fuel_fills_path(vehicle), notice: "Registro eliminado."
+    redirect_to vehicle_fuel_fills_path(vehicle), notice: "Carga eliminada."
   end
 
   private

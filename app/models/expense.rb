@@ -21,7 +21,7 @@ class Expense < ApplicationRecord
     CATEGORY_LABELS[category.to_s] || category.to_s.humanize
   end
 
-  validates :amount, numericality: { greater_than_or_equal_to: 0 }
+  validates :amount, presence: true, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
   validates :date, presence: true
   validates :currency, inclusion: { in: %w[CLP USD] }
   validate :documents_must_be_image_or_pdf

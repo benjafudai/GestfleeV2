@@ -26,7 +26,7 @@ class ApplicationController < ActionController::Base
 
     # Manejo centralizado de errores de autorización
     rescue_from Pundit::NotAuthorizedError do
-        redirect_to root_path, alert: "No autorizado."
+        redirect_to root_path, alert: "No tienes permisos para acceder a esta página."
     end
 
     # Un ID inválido o de otra empresa no debe mostrar la página de error de Rails

@@ -25,7 +25,7 @@ class Users::PasswordsController < Devise::PasswordsController
       Notification.create!(
         user: superadmin,
         notifiable: reset_request,
-        title: "Solicitud de Recuperación de Contraseña",
+        title: "Solicitud de recuperación de contraseña",
         message: "El usuario #{user.email} (#{company_name}) ha solicitado recuperar su contraseña."
       )
     end

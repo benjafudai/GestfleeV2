@@ -1,0 +1,16 @@
+<%# locals: (object:, subject:) — subject en minúscula con artículo, p. ej. "el vehículo" %>
+<% if object.errors.any? %>
+  <div class="alert alert-danger d-flex gap-2" role="alert" data-turbo-temporary>
+    <i class="bi bi-exclamation-circle-fill flex-shrink-0 mt-1"></i>
+    <div>
+      <p class="alert-heading mb-1">
+        <%= object.errors.count == 1 ? "1 error impidió guardar #{subject}:" : "#{object.errors.count} errores impidieron guardar #{subject}:" %>
+      </p>
+      <ul class="mb-0">
+        <% object.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+<% end %>

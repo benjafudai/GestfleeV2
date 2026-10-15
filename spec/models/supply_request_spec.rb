@@ -42,7 +42,7 @@ RSpec.describe SupplyRequest, type: :model do
     supply_request.update!(status: :delivered)
 
     expect(supply_request.update(status: :requested)).to be false
-    expect(supply_request.errors[:base]).to include("no se puede modificar una solicitud ya entregada")
+    expect(supply_request.errors[:base]).to include("No se puede modificar una solicitud ya entregada")
   end
 
   it "doesn't take stock when it moves to a status other than delivered" do

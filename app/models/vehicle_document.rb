@@ -17,14 +17,14 @@ class VehicleDocument < ApplicationRecord
 
   validates :doc_type, presence: true
   validates :due_on, presence: true
-  validates :file, presence: { message: "debe adjuntar un archivo PDF" }
+  validates :file, presence: { message: "es obligatorio: adjunta un archivo PDF" }
   validate :file_must_be_pdf, if: -> { file.attached? }
 
   private
 
   def file_must_be_pdf
     unless file.content_type == "application/pdf"
-      errors.add(:file, "debe ser un archivo PDF")
+      errors.add(:file, "debe estar en formato PDF")
     end
   end
 end

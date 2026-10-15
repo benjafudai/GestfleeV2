@@ -9,10 +9,10 @@ class SupplyRequest < ApplicationRecord
   enum :status, { requested: 0, received: 1, purchasing: 2, delivered: 3 }
 
   STATUS_LABELS = {
-    "requested" => "Solicitado",
-    "received" => "Recibido",
-    "purchasing" => "Comprando",
-    "delivered" => "Entregado"
+    "requested" => "Solicitada",
+    "received" => "Recibida",
+    "purchasing" => "En compra",
+    "delivered" => "Entregada"
   }.freeze
 
   def self.human_status(status)
@@ -41,7 +41,7 @@ class SupplyRequest < ApplicationRecord
   end
 
   def immutable_once_delivered
-    errors.add(:base, "no se puede modificar una solicitud ya entregada") if status_was == "delivered"
+    errors.add(:base, "No se puede modificar una solicitud ya entregada") if status_was == "delivered"
   end
 
   def process_stock_delivery

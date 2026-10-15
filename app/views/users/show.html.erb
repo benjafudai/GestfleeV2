@@ -1,85 +1,138 @@
-<div class="container mt-4" style="max-width: 900px;">
+<% documents = @user.user_documents.with_attached_file.order(:due_on).to_a %>
+<div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3 fw-bold mb-0">Perfil de <%= @user.email %></h1>
-    <%= link_to "Volver", users_path, class: "btn btn-outline-secondary btn-sm" %>
-  </div>
-
-  <div class="card shadow-sm mb-4">
-    <div class="card-header bg-white">
-      <h6 class="mb-0">Información del Usuario</h6>
+    <div class="min-w-0">
+      <h1 class="h3 mb-0 text-break"><i class="bi bi-person-badge me-2"></i><%= @user.email %></h1>
+      <p class="text-muted mb-0">
+        <%= role_label(@user.role) %> · <%= @user.company ? @user.company.name : "Global (sin empresa)" %>
+      </p>
     </div>
-    <ul class="list-group list-group-flush">
-      <li class="list-group-item d-flex justify-content-between align-items-center">
-        <span class="text-muted">Rol</span>
-        <span class="fw-medium"><%= role_label(@user.role) %></span>
-      </li>
-      <% if @user.company %>
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          <span class="text-muted">Empresa</span>
-          <span class="fw-medium"><%= @user.company.name %></span>
-        </li>
-      <% end %>
-      <li class="list-group-item d-flex justify-content-between align-items-center">
-        <span class="text-muted">Estado de la cuenta</span>
-        <% if @user.access_locked? %>
-          <span class="d-flex align-items-center gap-2">
-            <span>
-              <%= account_locked_badge(@user) %>
-              <small class="text-muted">por intentos fallidos · se desbloquea sola el <%= auto_unlock_time(@user) %></small>
-            </span>
-            <%= unlock_account_button(@user, label: "Desbloquear cuenta") %>
-          </span>
-        <% else %>
-          <span class="badge text-bg-success">Activa</span>
-        <% end %>
-      </li>
-    </ul>
-  </div>
-
-  <div class="card shadow-sm">
-    <div class="card-header bg-white d-flex justify-content-between align-items-center">
-      <h6 class="mb-0">Documentos de Personal</h6>
-      <% if policy(UserDocument).new? %>
-        <%= link_to new_user_user_document_path(@user), class: "btn btn-sm btn-primary" do %>
-          <i class="bi bi-plus-lg me-1"></i> Añadir Documento
+    <div class="d-flex flex-wrap gap-2">
+      <% if can_edit_user?(@user) %>
+        <%= link_to edit_user_path(@user), class: "btn btn-primary text-nowrap" do %>
+          <i class="bi bi-pencil me-1"></i>Editar
         <% end %>
       <% end %>
+      <%= link_to users_path, class: "btn btn-outline-secondary text-nowrap" do %>
+        <i class="bi bi-arrow-left me-1"></i>Volver
+      <% end %>
     </div>
+  </div>
 
-    <% if @user.user_documents.any? %>
-      <ul class="list-group list-group-flush">
-        <% @user.user_documents.each do |doc| %>
-          <li class="list-group-item d-flex align-items-center justify-content-between flex-wrap gap-2">
-            <div>
-              <p class="fw-medium mb-0"><%= user_doc_type_label(doc.doc_type) %></p>
-              <p class="text-muted small mb-0">Vence: <%= l doc.due_on, format: :long %></p>
-            </div>
-            <div class="d-flex align-items-center gap-2">
-              <% badge_class = case doc.status
-                   when 'ok'       then 'text-bg-success'
-                   when 'expiring' then 'text-bg-warning'
-                   else 'text-bg-danger'
-                   end %>
-              <span class="badge <%= badge_class %> rounded-pill"><%= document_status_label(doc.status) %></span>
-
-              <% if doc.file.attached? %>
-                <%= link_to "Ver PDF", rails_blob_path(doc.file, disposition: "inline"), target: "_blank", class: "btn btn-sm btn-outline-secondary" %>
-              <% end %>
-              <% if policy(doc).edit? %>
-                <%= link_to "Editar", edit_user_user_document_path(@user, doc), class: "btn btn-sm btn-outline-primary" %>
-              <% end %>
-              <% if policy(doc).destroy? %>
-                <%= button_to "Eliminar", user_user_document_path(@user, doc), method: :delete, data: { turbo_confirm: "¿Estás seguro?" }, class: "btn btn-sm btn-outline-danger" %>
-              <% end %>
-            </div>
+  <div class="row g-4">
+    <div class="col-lg-4">
+      <div class="card">
+        <div class="card-body d-flex align-items-center gap-3 p-4">
+          <%= user_avatar(@user, size: :lg) %>
+          <div class="min-w-0">
+            <h2 class="h6 fw-bold mb-1 text-break"><%= @user.email %></h2>
+            <%= role_pill(@user.role) %>
+          </div>
+        </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item d-flex justify-content-between align-items-start gap-3">
+            <span class="text-muted">Empresa</span>
+            <% if @user.company %>
+              <span class="text-end">
+                <span class="d-block fw-medium"><%= @user.company.name %></span>
+                <span class="d-block small text-muted">RUT <%= @user.company.rut %></span>
+              </span>
+            <% else %>
+              <span class="text-muted"><i class="bi bi-globe2 me-1"></i>Global (sin empresa)</span>
+            <% end %>
           </li>
-        <% end %>
-      </ul>
-    <% else %>
-      <div class="text-center py-5 text-muted">
-        <i class="bi bi-file-earmark-x d-block mb-2 fs-3 opacity-50"></i>
-        No hay documentos registrados para este usuario.
+          <li class="list-group-item">
+            <div class="d-flex justify-content-between align-items-center gap-3">
+              <span class="text-muted">Estado de la cuenta</span>
+              <% if @user.access_locked? %>
+                <%= account_locked_badge(@user) %>
+              <% else %>
+                <%= status_badge("Activa", "active") %>
+              <% end %>
+            </div>
+            <% if @user.access_locked? %>
+              <p class="small text-muted mt-2 mb-2">Por intentos fallidos · se desbloquea sola el <%= auto_unlock_time(@user) %>.</p>
+              <%= unlock_account_button(@user, label: "Desbloquear cuenta") %>
+            <% elsif @user.force_password_change? %>
+              <p class="small text-muted mt-2 mb-0"><i class="bi bi-key me-1"></i>Debe cambiar su contraseña al ingresar.</p>
+            <% end %>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center gap-3">
+            <span class="text-muted">Registrado el</span>
+            <span class="fw-medium text-end"><%= l(@user.created_at.to_date, format: :long) %></span>
+          </li>
+        </ul>
       </div>
-    <% end %>
+    </div>
+
+    <div class="col-lg-8">
+      <div class="card">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center gap-2">
+          <h2 class="h6 mb-0 d-flex align-items-center gap-2">
+            <i class="bi bi-folder2-open text-primary"></i>Documentos personales
+            <% if documents.any? %>
+              <span class="badge text-bg-light"><%= documents.size %></span>
+            <% end %>
+          </h2>
+          <% if policy(UserDocument).new? %>
+            <%= link_to new_user_user_document_path(@user), class: "btn btn-sm btn-primary text-nowrap" do %>
+              <i class="bi bi-plus-lg me-1"></i>Nuevo<span class="d-none d-sm-inline"> documento</span>
+            <% end %>
+          <% end %>
+        </div>
+
+        <% if documents.any? %>
+          <ul class="list-group list-group-flush">
+            <% documents.each do |doc| %>
+              <li class="list-group-item d-flex align-items-center gap-3 py-3">
+                <%= user_document_icon_circle(doc, extra_class: "d-none d-sm-grid") %>
+                <div class="flex-grow-1 min-w-0">
+                  <div class="d-flex align-items-center flex-wrap gap-2">
+                    <span class="fw-bold text-body"><%= user_doc_type_label(doc.doc_type) %></span>
+                    <%= status_badge(document_status_label(doc.status), doc.status) %>
+                  </div>
+                  <div class="small text-muted mt-1"><%= user_document_due_text(doc) %></div>
+                  <% if doc.notes.present? %>
+                    <div class="small text-muted text-truncate" title="<%= doc.notes %>"><i class="bi bi-chat-left-text me-1"></i><%= doc.notes %></div>
+                  <% end %>
+                </div>
+                <div class="gf-row-actions flex-shrink-0">
+                  <% if doc.file.attached? %>
+                    <%= link_to rails_blob_path(doc.file, disposition: "inline"), target: "_blank", rel: "noopener",
+                                class: "btn btn-sm btn-outline-primary", title: "Ver archivo (#{doc.file.filename})", "aria-label": "Ver archivo" do %>
+                      <i class="bi <%= user_document_file_icon(doc.file) %>"></i>
+                    <% end %>
+                  <% end %>
+                  <% if policy(doc).edit? %>
+                    <%= link_to edit_user_user_document_path(@user, doc), class: "btn btn-sm btn-outline-secondary", title: "Editar", "aria-label": "Editar" do %>
+                      <i class="bi bi-pencil"></i>
+                    <% end %>
+                  <% end %>
+                  <% if policy(doc).destroy? %>
+                    <%= button_to user_user_document_path(@user, doc), method: :delete, class: "btn btn-sm btn-outline-danger", title: "Eliminar", "aria-label": "Eliminar",
+                                  form: { data: { turbo_confirm: "¿Eliminar el documento «#{user_doc_type_label(doc.doc_type)}»? Esta acción no se puede deshacer." } } do %>
+                      <i class="bi bi-trash"></i>
+                    <% end %>
+                  <% end %>
+                </div>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <div class="card-body">
+            <div class="text-center py-5 text-muted">
+              <i class="bi bi-file-earmark-x d-block opacity-50"></i>
+              <p class="mb-1 fw-bold text-body">No hay documentos registrados</p>
+              <p class="small mb-0">Agrega su licencia, carnet, contrato u otros documentos para controlar sus vencimientos.</p>
+              <% if policy(UserDocument).new? %>
+                <%= link_to new_user_user_document_path(@user), class: "btn btn-sm btn-outline-primary mt-3" do %>
+                  <i class="bi bi-plus-lg me-1"></i>Agregar primer documento
+                <% end %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
   </div>
 </div>

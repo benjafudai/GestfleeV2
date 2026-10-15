@@ -2,7 +2,7 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8">
-    <title><%= content_for?(:title) ? yield(:title) : "GestFlee — Gestión de Flota" %></title>
+    <title><%= content_for?(:title) ? yield(:title) : [(current_nav_item&.dig(:label) if user_signed_in?), "GestFlee"].compact.join(" · ") %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="description" content="Sistema integral de gestión de flota vehicular.">
     <%= csrf_meta_tags %>
@@ -51,6 +51,10 @@
           } else if (event.target.closest("[data-gf-sidebar-close]")) {
             root.classList.remove("gf-drawer-open");
           }
+        });
+
+        document.addEventListener("keydown", function (event) {
+          if (event.key === "Escape") root.classList.remove("gf-drawer-open");
         });
 
         document.addEventListener("turbo:load", syncCollapseButton);
