@@ -1,12 +1,11 @@
 import { Controller } from "@hotwired/stimulus"
-import { applyChartTheme, chartColors } from "../lib/chart_theme"
+import { Chart, applyChartTheme, chartColors } from "../lib/chart_theme"
 
 // Renders a combined bar (liters) + line (cost) chart for fuel history.
 export default class extends Controller {
   static values = { labels: Array, liters: Array, costs: Array }
 
   connect() {
-    if (typeof Chart === "undefined") return
     applyChartTheme()
     // On phones the axis titles overlap the tick labels, so hide them and abbreviate amounts.
     const narrow = window.innerWidth < 576

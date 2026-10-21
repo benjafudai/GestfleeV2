@@ -1,12 +1,11 @@
 import { Controller } from "@hotwired/stimulus"
-import { applyChartTheme, chartColors } from "../lib/chart_theme"
+import { Chart, applyChartTheme, chartColors } from "../lib/chart_theme"
 
 // Renders a bar chart of reported failures (incidents) per month.
 export default class extends Controller {
   static values = { labels: Array, counts: Array }
 
   connect() {
-    if (typeof Chart === "undefined") return
     applyChartTheme()
 
     this.chart = new Chart(this.element.getContext("2d"), {

@@ -1,8 +1,32 @@
 class ComplianceChecker
+  DAILY_RUN_LOCK = Mutex.new
+
   def self.call
     Rails.logger.info "Iniciando chequeo de cumplimiento de vencimientos..."
     new.check_all
     Rails.logger.info "Chequeo finalizado."
+  end
+
+  # Chequeo diario sin tarea programada: la app lo llama en cada visita con sesión
+  # iniciada y solo corre la primera vez del día en este proceso. Repetirlo (por ejemplo
+  # tras un reinicio) no duplica avisos, porque solo se avisa cuando cambia el estado.
+  def self.call_once_per_day(today = Date.current)
+    DAILY_RUN_LOCK.synchronize do
+      return false if @last_run_on == today
+
+      @last_run_on = today
+    end
+
+    # Sin empresa ni usuario de la visita: revisa todas las empresas y el historial
+    # de cambios no queda a nombre de quien abrió la página.
+    Current.set(company: nil, user: nil) do
+      PaperTrail.request(whodunnit: nil) { call }
+    end
+    true
+  rescue StandardError => e
+    DAILY_RUN_LOCK.synchronize { @last_run_on = nil }
+    Rails.logger.error "Falló el chequeo diario de vencimientos: #{e.class}: #{e.message}"
+    false
   end
 
   def check_all

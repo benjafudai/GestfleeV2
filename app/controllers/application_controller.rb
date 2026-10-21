@@ -7,8 +7,14 @@ class ApplicationController < ActionController::Base
     before_action :set_current_tenant, if: :user_signed_in?
 
     before_action :check_force_password_change
+    before_action :run_daily_compliance_check, if: :user_signed_in?
 
     private
+
+    # Marca documentos por vencer o vencidos y avisa a los administradores, una vez al día.
+    def run_daily_compliance_check
+      ComplianceChecker.call_once_per_day if Rails.configuration.x.daily_compliance_check
+    end
 
     def check_force_password_change
       if user_signed_in? && current_user.force_password_change? && !devise_controller?

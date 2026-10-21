@@ -12,24 +12,26 @@
     "defaults"
   ],
   "devDependencies": {
-    "esbuild": "^0.27.2"
+    "esbuild": "^0.28.2"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.7.2",
     "@hotwired/stimulus": "^3.2.2",
     "@hotwired/turbo": "^8.0.23",
     "@hotwired/turbo-rails": "^8.0.23",
     "@popperjs/core": "^2.11.8",
-    "@rails/actioncable": "^8.1.200",
-    "autoprefixer": "^10.4.27",
+    "@rails/actioncable": "^8.1.400",
+    "autoprefixer": "^10.6.1",
     "bootstrap": "^5.3.8",
-    "bootstrap-icons": "^1.13.1",
-    "postcss": "^8.5.8",
-    "postcss-cli": "^11.0.1",
-    "sass": "^1.97.3",
+    "bootstrap-icons": "^1.13.2",
+    "chart.js": "^4.5.1",
+    "postcss": "^8.5.31",
+    "postcss-cli": "^12.0.0",
+    "sass": "^1.105.2",
     "stimulus-mask": "^1.2.0"
   },
   "allowScripts": {
     "@parcel/watcher@2.5.6": true,
-    "esbuild@0.27.2": true
+    "esbuild@0.28.2": true
   }
 }

@@ -284,13 +284,12 @@ CTA-06-TR-02-REE-40000;CTA-06;TR-02;Reemplazar;40000;km;24;En faena polvorienta:
 CTA-06-TR-04-REE-20000;CTA-06;TR-04;Reemplazar;20000;km;12;
 CTA-06-TR-06-INS-10000;CTA-06;TR-06;Inspeccionar;10000;km;6;
 CTA-06-TR-08-INS-10000;CTA-06;TR-08;Inspeccionar;10000;km;6;Rotar cada 10.000 km
-CTA-06-TR-12-LUB-10000;CTA-06;TR-12;Lubricar;10000;km;6;Cardán y 4x4
+CTA-06-TR-12-LUB-10000;CTA-06;TR-12;Lubricar;10000;km;6;Rótulas, terminales y articulaciones (sin cardán: tracción delantera)
 CTA-06-TR-13-INS-20000;CTA-06;TR-13;Inspeccionar;20000;km;12;
 CTA-06-TR-14-INS-10000;CTA-06;TR-14;Inspeccionar;10000;km;6;
 CTA-06-TR-15-INS-20000;CTA-06;TR-15;Inspeccionar;20000;km;12;
 CTA-06-TR-07-REE-40000;CTA-06;TR-07;Reemplazar;40000;km;24;
 CTA-06-TR-10-REE-80000;CTA-06;TR-10;Reemplazar;80000;km;48;Uso severo: 40.000 km
-CTA-06-TR-11-REE-40000;CTA-06;TR-11;Reemplazar;40000;km;24;Diferenciales y transfer
 CTA-06-TR-09-REE-100000;CTA-06;TR-09;Reemplazar;100000;km;60;Primer cambio según manual (a veces 160.000 km)
 CTA-06-TR-16-REE-100000;CTA-06;TR-16;Reemplazar;100000;km;60;"Bujías de iridio; cobre cada 30.000 km"
 CTA-07-TR-23-INS-D;CTA-07;TR-23;Inspeccionar;1;día;;Checklist del conductor
