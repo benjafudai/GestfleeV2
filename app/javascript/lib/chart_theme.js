@@ -1,5 +1,8 @@
 // Shared Chart.js look, matching the app theme in gestflee.css.
-// Chart is the global loaded from the CDN script in the layout.
+import Chart from "chart.js/auto"
+
+export { Chart }
+
 export const chartColors = {
   primary: "rgba(31, 111, 209, 0.8)",
   primaryLight: "rgba(31, 111, 209, 0.12)",

@@ -1,54 +1,49 @@
 <%= form_with(model: maintenance_plan, class: "needs-validation") do |form| %>
-  <% if maintenance_plan.errors.any? %>
-    <div class="alert alert-danger shadow-sm rounded-3">
-      <h5 class="alert-heading fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i>Por favor corrija los siguientes errores:</h5>
-      <ul class="mb-0">
-        <% maintenance_plan.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <%= render "shared/form_errors", object: maintenance_plan, subject: "el plan de mantención" %>
 
-  <div class="card shadow-sm border-0 mb-4">
-    <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
-      <h5 class="fw-bold mb-0">Información General</h5>
+  <div class="card mb-4">
+    <div class="card-header bg-white">
+      <%= maintenance_card_title("Datos del plan", icon: "bi-clipboard-check") %>
     </div>
     <div class="card-body">
       <div class="row g-3">
-        <div class="col-md-12">
-          <%= form.label :name, "Nombre del Plan", class: "form-label fw-medium" %>
-          <%= form.text_field :name, class: "form-control form-control-lg", required: true, placeholder: "Ej. Mantenimiento Preventivo 10K" %>
+        <div class="col-12">
+          <%= form.label :name, class: "form-label" do %>Nombre del plan <span class="text-danger">*</span><% end %>
+          <%= form.text_field :name, class: "form-control", required: true, placeholder: "Ej.: Mantención 10.000 km camionetas" %>
         </div>
 
-        <div class="col-md-12">
-          <%= form.label :description, "Descripción", class: "form-label fw-medium" %>
-          <%= form.text_area :description, class: "form-control", rows: 3, placeholder: "Breve descripción de los objetivos del plan" %>
+        <div class="col-12">
+          <%= form.label :description, "Descripción", class: "form-label" %>
+          <%= form.text_area :description, class: "form-control", rows: 3, placeholder: "Qué incluye el plan y a qué vehículos aplica" %>
         </div>
+      </div>
 
-        <div class="col-md-6">
-          <%= form.label :interval_km, "Intervalo (Kilómetros)", class: "form-label fw-medium" %>
+      <h6 class="mt-4 mb-1">Frecuencia</h6>
+      <p class="form-text mt-0 mb-3">Completa uno o más intervalos. Si defines varios, la mantención corresponde a lo que ocurra primero.</p>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <%= form.label :interval_km, "Intervalo en kilómetros", class: "form-label" %>
           <div class="input-group">
-            <span class="input-group-text"><i class="bi bi-speedometer2"></i></span>
-            <%= form.number_field :interval_km, class: "form-control", placeholder: "Ej. 10000" %>
+            <%= form.number_field :interval_km, class: "form-control", placeholder: "Ej.: 10000" %>
+            <span class="input-group-text">km</span>
           </div>
-          <div class="form-text">Cada cuántos kilómetros se debe realizar.</div>
+          <div class="form-text">Cada cuántos kilómetros se repite.</div>
         </div>
 
-        <div class="col-md-6">
-          <%= form.label :interval_days, "Intervalo (Días)", class: "form-label fw-medium" %>
+        <div class="col-md-4">
+          <%= form.label :interval_days, "Intervalo en días", class: "form-label" %>
           <div class="input-group">
-            <span class="input-group-text"><i class="bi bi-calendar3"></i></span>
-            <%= form.number_field :interval_days, class: "form-control", placeholder: "Ej. 180" %>
+            <%= form.number_field :interval_days, class: "form-control", placeholder: "Ej.: 180" %>
+            <span class="input-group-text">días</span>
           </div>
-          <div class="form-text">Cada cuántos días se debe realizar si no se alcanza el kilometraje.</div>
+          <div class="form-text">Cada cuántos días, aunque no se alcance el kilometraje.</div>
         </div>
 
-        <div class="col-md-6">
-          <%= form.label :interval_hours, "Intervalo (Horas de uso)", class: "form-label fw-medium" %>
+        <div class="col-md-4">
+          <%= form.label :interval_hours, "Intervalo en horas de uso", class: "form-label" %>
           <div class="input-group">
-            <span class="input-group-text"><i class="bi bi-hourglass-split"></i></span>
-            <%= form.number_field :interval_hours, class: "form-control", placeholder: "Ej. 500" %>
+            <%= form.number_field :interval_hours, class: "form-control", placeholder: "Ej.: 500" %>
+            <span class="input-group-text">h</span>
           </div>
           <div class="form-text">Para maquinaria que se mide con horómetro.</div>
         </div>
@@ -56,14 +51,18 @@
     </div>
   </div>
 
-  <div class="card shadow-sm border-0 mb-4">
-    <div class="card-header bg-white border-bottom-0 pt-4 pb-0 d-flex justify-content-between align-items-center">
-      <h5 class="fw-bold mb-0">Pautas Técnicas (Tareas)</h5>
+  <div class="card mb-4">
+    <div class="card-header bg-white">
+      <%= maintenance_card_title("Pautas técnicas", icon: "bi-list-check") %>
     </div>
     <div class="card-body" id="tasks-container">
-      <% 
+      <p class="form-text mt-0 mb-3">
+        <i class="bi bi-info-circle me-1"></i>Escribe una tarea en cada campo; los campos vacíos no se guardan.
+        Al editar siempre aparece un campo libre al final. Para eliminar una tarea, pulsa «Eliminar» y guarda.
+      </p>
+      <%
         # Si el plan es nuevo o no tiene tareas, pre-construimos 3 vacías.
-        # Si ya tiene, mostramos las que tiene y talvez añadimos una vacía al final.
+        # Si ya tiene, mostramos las que tiene y añadimos una vacía al final.
         tasks_to_show = maintenance_plan.maintenance_task_templates
         if tasks_to_show.empty?
           3.times { maintenance_plan.maintenance_task_templates.build }
@@ -71,38 +70,48 @@
           maintenance_plan.maintenance_task_templates.build # Añadir una en blanco al editar
         end
       %>
-      
+
+      <% removable = maintenance_plan.maintenance_task_templates.any?(&:persisted?) %>
+      <div class="row g-2 d-none d-md-flex small fw-bold text-muted mb-1 px-2">
+        <div class="col-md">Tarea</div>
+        <div class="col-md-3">Duración estimada</div>
+        <% if removable %>
+          <div class="col-md-auto invisible" aria-hidden="true"><span class="btn btn-outline-danger text-nowrap py-0"><i class="bi bi-trash3 me-1"></i>Eliminar</span></div>
+        <% end %>
+      </div>
+
       <%= form.fields_for :maintenance_task_templates do |task_form| %>
-        <div class="task-row mb-3 p-3 bg-light rounded border position-relative">
+        <div class="task-row mb-2 p-2 bg-light rounded-3 border">
           <div class="row g-2 align-items-center">
-            <div class="col-md-8">
-              <%= task_form.label :description, "Descripción de la Tarea", class: "form-label fw-medium visually-hidden" %>
-              <%= task_form.text_field :description, class: "form-control", placeholder: "Ej. Cambio de Aceite 15W40" %>
+            <div class="col-12 col-md">
+              <%= task_form.label :description, "Descripción de la tarea", class: "visually-hidden" %>
+              <%= task_form.text_field :description, class: "form-control", placeholder: "Ej.: cambio de aceite 15W-40" %>
             </div>
-            <div class="col-md-3">
+            <div class="col-8 col-md-3">
+              <%= task_form.label :expected_duration_minutes, "Duración estimada en minutos", class: "visually-hidden" %>
               <div class="input-group">
-                <%= task_form.number_field :expected_duration_minutes, class: "form-control", placeholder: "Min." %>
-                <span class="input-group-text"><i class="bi bi-stopwatch"></i></span>
+                <%= task_form.number_field :expected_duration_minutes, class: "form-control", placeholder: "Duración" %>
+                <span class="input-group-text">min</span>
               </div>
             </div>
             <% if task_form.object&.persisted? %>
-               <div class="col-md-1 text-end">
-                <div class="form-check d-inline-block">
-                  <%= task_form.check_box :_destroy, class: "form-check-input" %>
-                  <%= task_form.label :_destroy, "Eliminar", class: "form-check-label text-danger small pt-1" %>
-                </div>
+              <div class="col-auto ms-auto">
+                <%= task_form.check_box :_destroy, class: "btn-check", autocomplete: "off" %>
+                <%= task_form.label :_destroy, class: "btn btn-outline-danger text-nowrap", title: "Eliminar esta tarea al guardar" do %><i class="bi bi-trash3 me-1"></i>Eliminar<% end %>
+              </div>
+            <% elsif removable %>
+              <div class="col-auto d-none d-md-block invisible" aria-hidden="true">
+                <span class="btn btn-outline-danger text-nowrap"><i class="bi bi-trash3 me-1"></i>Eliminar</span>
               </div>
             <% end %>
           </div>
         </div>
       <% end %>
-      
-      <div class="form-text"><i class="bi bi-info-circle me-1"></i> Para agregar una tarea, simplemente escriba en uno de los espacios en blanco. Si está editando, siempre se muestra uno nuevo al final. Para eliminar, marque la casilla "Eliminar" y guarde.</div>
     </div>
   </div>
 
-  <div class="d-flex justify-content-end gap-2 my-4">
-    <%= link_to "Cancelar", maintenance_plans_path, class: "btn btn-light shadow-sm" %>
-    <%= form.submit "Guardar Plan", class: "btn btn-primary shadow-sm px-4 fw-medium" %>
+  <div class="d-flex justify-content-end gap-2 mt-4">
+    <%= link_to "Cancelar", (maintenance_plan.persisted? ? maintenance_plan_path(maintenance_plan) : maintenance_plans_path), class: "btn btn-outline-secondary" %>
+    <%= form.submit "Guardar plan", class: "btn btn-primary" %>
   </div>
 <% end %>

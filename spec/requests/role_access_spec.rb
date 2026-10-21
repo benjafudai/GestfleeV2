@@ -1,7 +1,7 @@
 require "rails_helper"
 
 # Qué pantallas puede abrir cada rol. Un rol sin permiso es redirigido al
-# inicio con "No autorizado." (ver ApplicationController).
+# inicio con "No tienes permisos para acceder a esta página." (ver ApplicationController).
 RSpec.describe "Role access", type: :request do
   ROLES = %i[superadmin admin chofer mecanico analista].freeze
 

@@ -1,4 +1,6 @@
 <% if pagy.pages > 1 %>
+  <%# Pagy usa su propio diccionario; sin esto los botones dicen "Previous"/"Next" %>
+  <% Pagy::I18n.locale = I18n.locale %>
   <div class="d-flex justify-content-center mt-3">
     <%== pagy.series_nav(:bootstrap, aria_label: "Paginación") %>
   </div>

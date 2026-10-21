@@ -54,7 +54,8 @@ class ChecklistSubmissionsController < ApplicationController
   def review
     authorize @submission
     if @submission.update(review_params)
-      redirect_to @submission, notice: "Checklist revisado. Estado: #{@submission.status.humanize}."
+      estado = { "approved" => "aprobado", "rejected" => "rechazado", "pending" => "pendiente" }.fetch(@submission.status, @submission.status)
+      redirect_to @submission, notice: "Checklist #{estado} correctamente."
     else
       redirect_to @submission, alert: "Error al revisar el checklist."
     end

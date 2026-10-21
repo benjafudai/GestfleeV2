@@ -1,53 +1,36 @@
-<% content_for :title, "Actualiza tu contraseña | GestFlee" %>
+<% content_for :title, "Actualiza tu contraseña · GestFlee" %>
 <%# The user can't navigate until the password is changed, so no sidebar. %>
 <% content_for :auth_page, true %>
 
 <div class="gf-auth">
   <div class="gf-auth-card is-narrow">
     <section class="gf-auth-form">
-      <div class="gf-auth-brand">
-        <span class="gf-brand-mark"><i class="fa-solid fa-truck-fast"></i></span>
-        <span>
-          <span class="gf-brand-name">GestFlee</span>
-          <span class="gf-brand-sub">Gestión de Flota</span>
-        </span>
-      </div>
+      <%= render "devise/shared/auth_brand" %>
 
+      <span class="gf-action-icon is-primary mb-3" aria-hidden="true"><i class="bi bi-shield-lock-fill"></i></span>
       <h1 class="gf-auth-title">Actualiza tu contraseña</h1>
       <p class="gf-auth-sub">Por tu seguridad, debes crear una nueva contraseña antes de continuar.</p>
 
-      <% if alert %>
-        <div class="alert alert-warning d-flex align-items-center gap-2" role="alert">
-          <i class="fa-solid fa-triangle-exclamation"></i> <span><%= alert %></span>
-        </div>
-      <% end %>
+      <%= render "devise/shared/auth_flash", alert_tone: "warning" %>
 
       <%= form_with model: current_user, url: user_force_password_change_path(current_user), method: :patch, local: true do |f| %>
-        <% if current_user.errors.any? %>
-          <div class="alert alert-danger">
-            <ul class="mb-0 ps-3">
-              <% current_user.errors.full_messages.each do |msg| %>
-                <li><%= msg %></li>
-              <% end %>
-            </ul>
-          </div>
-        <% end %>
+        <%= render "shared/form_errors", object: current_user, subject: "tu contraseña" %>
 
         <div class="mb-3">
           <%= f.label :password, "Nueva contraseña", class: "form-label" %>
           <div class="gf-input-icon">
-            <i class="fa-solid fa-lock"></i>
+            <i class="bi bi-lock-fill" aria-hidden="true"></i>
             <%= f.password_field :password, autocomplete: "new-password", class: "form-control",
-                  placeholder: "Mínimo 10 caracteres", required: true, minlength: 10 %>
+                  placeholder: "Mínimo #{User.password_length.min} caracteres", required: true, minlength: User.password_length.min %>
           </div>
         </div>
 
         <div class="mb-4">
           <%= f.label :password_confirmation, "Confirmar contraseña", class: "form-label" %>
           <div class="gf-input-icon">
-            <i class="fa-solid fa-lock"></i>
+            <i class="bi bi-lock-fill" aria-hidden="true"></i>
             <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "form-control",
-                  placeholder: "Repite la contraseña", required: true, minlength: 10 %>
+                  placeholder: "Repite la contraseña", required: true, minlength: User.password_length.min %>
           </div>
         </div>
 
@@ -58,7 +41,7 @@
         <%= button_to destroy_user_session_path, method: :delete,
               data: { action: "click->logout#clearStorage" },
               class: "btn btn-link p-0 gf-auth-link" do %>
-          <i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar sesión
+          <i class="bi bi-box-arrow-right me-1" aria-hidden="true"></i>Cerrar sesión
         <% end %>
       </div>
     </section>

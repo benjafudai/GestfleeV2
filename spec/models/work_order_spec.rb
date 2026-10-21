@@ -33,7 +33,7 @@ RSpec.describe WorkOrder, type: :model do
       work_order.update!(status: status)
 
       expect(work_order.update(notes: "otro cambio")).to be false
-      expect(work_order.errors[:base]).to include("no se puede modificar una orden de trabajo ya #{label}")
+      expect(work_order.errors[:base]).to include("No se puede modificar una orden de trabajo ya #{label}")
     end
   end
 end

@@ -9,7 +9,7 @@ class ChecklistAnswer < ApplicationRecord
 
   def value_required_if_item_required
     if checklist_item&.required? && value.blank?
-      errors.add(:value, "es obligatorio para el ítem \"#{checklist_item.label}\"")
+      errors.add(:value, "es obligatoria para la pregunta «#{checklist_item.label}»")
     end
   end
 end

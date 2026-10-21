@@ -1,0 +1,35 @@
+<%# locals: (fill:, average:, threshold:, variant: :number) %>
+<%#
+  Rendimiento de una carga comparado con el promedio histórico de su vehículo.
+  variant :number → píldora con el km/l (tabla; en el celular solo el número, la unidad va en el encabezado);
+  :hint → píldora con la conclusión (detalle).
+%>
+<% if fill.km_per_liter.present? %>
+  <%
+    avg = average.to_f
+    avg = fill.km_per_liter if avg == 0
+    lower_limit = avg * (1.0 - threshold)
+    upper_limit = avg * (1.0 + threshold)
+
+    tone, icon, hint = if fill.km_per_liter < lower_limit
+      ["danger", "bi-arrow-down-short", "Bajo el promedio"]
+    elsif fill.km_per_liter > upper_limit
+      ["primary", "bi-arrow-up-short", "Sobre el promedio"]
+    else
+      ["success", "bi-check2", "Dentro del promedio"]
+    end
+    avg_text = "#{number_with_precision(avg, precision: 2)} km/l"
+  %>
+  <% if variant == :hint %>
+    <span class="badge text-bg-<%= tone %>"><i class="bi <%= icon %>"></i> <%= hint %></span>
+    <div class="small text-muted mt-1">Promedio del vehículo: <%= avg_text %></div>
+  <% else %>
+    <span class="badge text-bg-<%= tone %>" title="<%= hint %> del vehículo (<%= avg_text %>)">
+      <%= number_with_precision(fill.km_per_liter, precision: 2) %><span class="d-none d-sm-inline"> km/l</span>
+    </span>
+  <% end %>
+<% elsif variant == :hint %>
+  <div class="small text-muted">Se calcula a partir de la segunda carga del vehículo.</div>
+<% else %>
+  <span class="text-muted" title="Primera carga: aún no hay con qué comparar">—</span>
+<% end %>

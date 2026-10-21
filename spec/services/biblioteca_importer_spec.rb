@@ -18,7 +18,7 @@ RSpec.describe BibliotecaImporter do
   it "loads the whole planilla from db/biblioteca" do
     counts = described_class.new.call
 
-    expect(counts).to eq(modelos: 30, tareas: 28, pasos: 136, plan: 536, repuestos: 371)
+    expect(counts).to eq(modelos: 30, tareas: 28, pasos: 136, plan: 535, repuestos: 370)
   end
 
   it "keeps the values the app depends on" do

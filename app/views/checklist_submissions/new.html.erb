@@ -1,157 +1,188 @@
 <div class="container mt-4" style="max-width: 760px;">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3">
-      <i class="bi bi-clipboard-check me-2"></i>Checklist del día
-    </h1>
-    <%= link_to "Cancelar", checklist_submissions_path, class: "btn btn-outline-secondary btn-sm" %>
+    <div>
+      <h1 class="h3 mb-0"><i class="bi bi-clipboard-check me-2"></i>Checklist del día</h1>
+      <p class="text-muted mb-0"><%= l(Date.current, format: :long) %> · revisa el vehículo antes de salir.</p>
+    </div>
+    <%# Con el formulario visible basta el «Cancelar» del final (como en Reportar incidente). %>
+    <% if @vehicle.nil? || @templates.empty? %>
+      <%= link_to checklist_submissions_path, class: "btn btn-outline-secondary text-nowrap" do %>
+        <i class="bi bi-arrow-left me-1"></i>Volver
+      <% end %>
+    <% end %>
   </div>
 
   <% if @vehicle.nil? %>
-    <div class="alert alert-warning">
-      <i class="bi bi-exclamation-triangle me-2"></i>
-      No tienes un vehículo asignado actualmente. Contacta al administrador para que te asigne uno.
+    <div class="card">
+      <div class="card-body">
+        <div class="text-center py-5 text-muted">
+          <i class="bi bi-truck d-block opacity-50"></i>
+          <p class="mb-1 fw-bold text-body">No tienes un vehículo asignado</p>
+          <p class="small mb-0">Pide a un administrador que te asigne uno para poder completar el checklist.</p>
+        </div>
+      </div>
     </div>
   <% elsif @templates.empty? %>
-    <div class="alert alert-info">
-      <i class="bi bi-info-circle me-2"></i>
-      No hay plantillas de checklist disponibles. El administrador debe crear una primero.
+    <div class="card">
+      <div class="card-body">
+        <div class="text-center py-5 text-muted">
+          <i class="bi bi-list-check d-block opacity-50"></i>
+          <p class="mb-1 fw-bold text-body">No hay plantillas de checklist</p>
+          <p class="small mb-0">Un administrador debe crear una plantilla antes de que puedas completar el checklist.</p>
+        </div>
+      </div>
     </div>
   <% else %>
-    <%# Template selector %>
-    <div class="card shadow-sm mb-4">
-      <div class="card-body">
-        <label class="form-label fw-semibold">Seleccionar Plantilla</label>
-        <select id="template-selector" class="form-select" onchange="loadTemplate(this.value)">
-          <% @templates.each do |tpl| %>
-            <option value="<%= tpl.id %>" data-items='<%= tpl.checklist_items.map { |i| { id: i.id, label: i.label, item_type: i.item_type, required: i.required } }.to_json.html_safe %>' <%= "selected" if tpl == @selected_template %>>
-              <%= tpl.name %>
-            </option>
-          <% end %>
-        </select>
+    <%= render "shared/form_errors", object: @submission, subject: "el checklist" %>
 
-        <div class="mt-2 text-muted small">
-          <strong>Vehículo:</strong> <%= @vehicle.plate %> — <%= @vehicle.brand %> <%= @vehicle.model %>
+    <%# Vehículo y plantilla %>
+    <div class="card mb-4">
+      <div class="card-body">
+        <div class="d-flex align-items-center gap-3">
+          <span class="gf-action-icon is-primary" aria-hidden="true"><i class="bi bi-truck-front"></i></span>
+          <div class="min-w-0">
+            <div class="small text-muted">Vehículo asignado</div>
+            <div class="fw-bold"><%= @vehicle.plate %></div>
+            <% model = [@vehicle.brand, @vehicle.model].compact_blank.join(" ") %>
+            <% if model.present? %>
+              <div class="small text-muted text-truncate"><%= model %></div>
+            <% end %>
+          </div>
+        </div>
+
+        <%# Con una sola plantilla el selector queda oculto (el script igual lee sus preguntas desde aquí). %>
+        <div class="<%= @templates.size > 1 ? "mt-3" : "d-none" %>">
+          <label class="form-label" for="template-selector">Plantilla</label>
+          <select id="template-selector" class="form-select" onchange="loadTemplate(this.value)">
+            <% @templates.each do |tpl| %>
+              <%= tag.option tpl.name, value: tpl.id, selected: tpl == @selected_template,
+                    data: { items: tpl.checklist_items.map { |i| { id: i.id, label: i.label, item_type: i.item_type, required: i.required } } } %>
+            <% end %>
+          </select>
         </div>
       </div>
     </div>
 
     <%= form_with url: checklist_submissions_path, method: :post, local: true, id: "checklist-form", model: @submission, html: { multipart: true } do |f| %>
-      <% if @submission.errors.any? %>
-        <div class="alert alert-danger mb-4">
-          <ul class="mb-0">
-            <% @submission.errors.full_messages.each do |msg| %>
-              <li><%= msg %></li>
-            <% end %>
-          </ul>
-        </div>
-      <% end %>
-
       <%= f.hidden_field :checklist_template_id, id: "hidden-template-id", value: @selected_template.id %>
       <%= f.hidden_field :vehicle_id, value: @vehicle.id %>
 
-      <div id="items-container" class="card shadow-sm mb-4">
+      <% previous_answers = @submission.checklist_answers.each_with_object({}) { |a, h| h[a.checklist_item_id] = a.value if a.checklist_item_id } %>
+      <% missing_items = @submission.checklist_answers.select { |a| a.errors[:value].any? }.map(&:checklist_item_id) %>
+      <div id="items-container" class="card mb-4">
+        <div class="card-header bg-white d-flex flex-wrap justify-content-between align-items-center gap-2">
+          <%# El script escribe el nombre de la plantilla elegida en #template-title. %>
+          <%= checklist_card_title(tag.span(@selected_template.name, id: "template-title"), icon: "bi-list-check") %>
+          <span class="small text-muted">Las preguntas con <span class="text-danger">*</span> son obligatorias</span>
+        </div>
+        <%= tag.div id: "items-body", class: "card-body", data: { answers: previous_answers, missing: missing_items } do %>
+          <%# Se llena con JavaScript al cargar %>
+        <% end %>
+      </div>
+
+      <div class="card">
         <div class="card-header bg-white">
-          <h5 class="mb-0" id="template-title"><%= @selected_template.name %></h5>
+          <%= checklist_card_title("Evidencias fotográficas", icon: "bi-camera") %>
         </div>
-        <div class="card-body" id="items-body">
-          <%# Populated by JS on load %>
-        </div>
-      </div>
-
-      <div class="card shadow-sm mb-4">
         <div class="card-body">
-          <label class="form-label fw-semibold">Evidencias Fotográficas</label>
+          <%= f.label :photos, "Fotos del vehículo", class: "form-label" %>
           <%= f.file_field :photos, multiple: true, class: "form-control", accept: "image/*" %>
-          <div class="form-text">Puedes seleccionar múltiples imágenes.</div>
+          <div class="form-text">Opcional. Puedes adjuntar varias imágenes (jpg, png, etc.).</div>
         </div>
       </div>
 
-      <div class="d-flex justify-content-end">
-        <%= f.submit "Enviar Checklist", class: "btn btn-primary px-4" %>
+      <div class="d-flex justify-content-end gap-2 mt-4">
+        <%= link_to "Cancelar", checklist_submissions_path, class: "btn btn-outline-secondary" %>
+        <%= f.button type: "submit", name: nil, class: "btn btn-primary text-nowrap" do %>
+          <i class="bi bi-send me-1"></i>Enviar checklist
+        <% end %>
       </div>
     <% end %>
   <% end %>
 </div>
 
 <script>
-  document.addEventListener("turbo:load", initChecklistForm);
-  document.addEventListener("DOMContentLoaded", initChecklistForm);
+  // Se ejecuta en cada carga de la página (también con Turbo y al volver con errores de validación).
+  (function () {
+    const selector = document.getElementById("template-selector");
+    const body = document.getElementById("items-body");
+    if (!selector || !body) return;
 
-  function initChecklistForm() {
-    // Evitar inicializar dos veces si ambos eventos se disparan
-    if (window.checklistFormInitialized) return;
-    const selector = document.getElementById('template-selector');
-    if (!selector) return; // No estamos en la página correcta
-    window.checklistFormInitialized = true;
+    const parse = (raw, fallback) => {
+      try { return JSON.parse(raw) ?? fallback; } catch (e) { return fallback; }
+    };
+    const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => (
+      { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]
+    ));
+
+    // Respuestas y preguntas faltantes del envío anterior (cuando el servidor devuelve errores).
+    const answers = parse(body.dataset.answers, {});
+    const missing = parse(body.dataset.missing, []).map(String);
 
     const allTemplates = {};
-    document.querySelectorAll('#template-selector option').forEach(opt => {
-      try {
-        allTemplates[opt.value] = JSON.parse(opt.dataset.items);
-      } catch(e) {
-        allTemplates[opt.value] = [];
-      }
+    selector.querySelectorAll("option").forEach((opt) => {
+      allTemplates[opt.value] = parse(opt.dataset.items, []);
     });
 
     function renderItem(item, index) {
-      let inputHtml = '';
       const baseName = `checklist_submission[checklist_answers_attributes][${index}]`;
-      const required = item.required ? 'required' : '';
+      const required = item.required ? "required" : "";
+      const previous = answers[String(item.id)];
+      const isMissing = missing.includes(String(item.id));
+      const fieldId = `item_${index}_value`;
+      const mark = item.required
+        ? ' <span class="text-danger">*</span>'
+        : ' <span class="small text-muted fw-normal">(opcional)</span>';
+      let title;
+      let inputHtml;
 
-      if (item.item_type === 'boolean') {
+      if (item.item_type === "boolean") {
+        title = `<div class="fw-bold" id="item_${index}_label">${esc(item.label)}${mark}</div>`;
         inputHtml = `
-          <div class="d-flex gap-3">
+          <div class="d-flex gap-3" role="radiogroup" aria-labelledby="item_${index}_label">
             <div class="form-check">
-              <input class="form-check-input" type="radio" name="${baseName}[value]" value="si" id="item_${index}_si" ${required}>
-              <label class="form-check-label" for="item_${index}_si">Sí / Conforme</label>
+              <input class="form-check-input" type="radio" name="${baseName}[value]" value="si" id="item_${index}_si" ${required} ${previous === "si" ? "checked" : ""}>
+              <label class="form-check-label" for="item_${index}_si"><i class="bi bi-check-lg text-success me-1"></i>Sí, conforme</label>
             </div>
             <div class="form-check">
-              <input class="form-check-input" type="radio" name="${baseName}[value]" value="no" id="item_${index}_no">
-              <label class="form-check-label text-danger" for="item_${index}_no">No / No conforme</label>
+              <input class="form-check-input" type="radio" name="${baseName}[value]" value="no" id="item_${index}_no" ${previous === "no" ? "checked" : ""}>
+              <label class="form-check-label" for="item_${index}_no"><i class="bi bi-x-lg text-danger me-1"></i>No conforme</label>
             </div>
           </div>`;
-      } else if (item.item_type === 'text') {
-        inputHtml = `<textarea class="form-control form-control-sm" name="${baseName}[value]" rows="2" placeholder="Observación..." ${required}></textarea>`;
+      } else if (item.item_type === "text") {
+        title = `<label class="fw-bold" for="${fieldId}">${esc(item.label)}${mark}</label>`;
+        inputHtml = `<textarea class="form-control${isMissing ? " is-invalid" : ""}" id="${fieldId}" name="${baseName}[value]" rows="2" placeholder="Escribe tus observaciones" ${required}>${esc(previous)}</textarea>`;
       } else {
-        inputHtml = `<input type="number" step="any" class="form-control form-control-sm" name="${baseName}[value]" placeholder="0" ${required}>`;
+        title = `<label class="fw-bold" for="${fieldId}">${esc(item.label)}${mark}</label>`;
+        inputHtml = `<input type="number" step="any" inputmode="decimal" class="form-control${isMissing ? " is-invalid" : ""}" id="${fieldId}" name="${baseName}[value]" value="${esc(previous)}" placeholder="Ingresa un número" ${required}>`;
       }
 
       return `
-        <div class="border rounded p-3 mb-3">
-          <input type="hidden" name="${baseName}[checklist_item_id]" value="${item.id}">
-          <div class="d-flex align-items-start justify-content-between mb-2">
-            <label class="fw-medium">${index + 1}. ${item.label}</label>
-            ${item.required ? '<span class="badge text-bg-danger ms-2">Obligatorio</span>' : '<span class="badge text-bg-secondary ms-2">Opcional</span>'}
+        <div class="border rounded-3 p-3${isMissing ? " border-danger" : ""}">
+          <input type="hidden" name="${baseName}[checklist_item_id]" value="${esc(item.id)}">
+          <div class="d-flex align-items-start gap-2 mb-2">
+            <span class="badge rounded-pill text-bg-light flex-shrink-0 mt-1">${index + 1}</span>
+            ${title}
           </div>
           ${inputHtml}
+          ${isMissing ? '<div class="small text-danger mt-2"><i class="bi bi-exclamation-circle me-1"></i>Falta responder esta pregunta.</div>' : ""}
         </div>`;
     }
 
-    window.loadTemplate = function(templateId) {
+    window.loadTemplate = function (templateId) {
       const items = allTemplates[templateId] || [];
-      const body = document.getElementById('items-body');
-      const title = document.getElementById('template-title');
-      const hiddenId = document.getElementById('hidden-template-id');
+      const title = document.getElementById("template-title");
+      const hiddenId = document.getElementById("hidden-template-id");
 
-      if (!body) return;
-
-      hiddenId.value = templateId;
-      const opt = document.querySelector(`#template-selector option[value="${templateId}"]`);
+      if (hiddenId) hiddenId.value = templateId;
+      const opt = selector.querySelector(`option[value="${templateId}"]`);
       if (opt && title) title.textContent = opt.textContent.trim();
 
       body.innerHTML = items.length
-        ? items.map((item, idx) => renderItem(item, idx)).join('')
-        : '<p class="text-muted">Esta plantilla no tiene ítems.</p>';
+        ? `<div class="vstack gap-3">${items.map((item, idx) => renderItem(item, idx)).join("")}</div>`
+        : '<div class="text-center py-4 text-muted"><i class="bi bi-list-check d-block opacity-50"></i><p class="mb-0 fw-bold text-body">Esta plantilla no tiene preguntas</p></div>';
     };
 
-    // Render first template on page load
-    if (selector.value) {
-      window.loadTemplate(selector.value);
-    }
-  }
-
-  // Limpiar flag al salir de la página para que Turbo vuelva a ejecutar al entrar
-  document.addEventListener("turbo:before-cache", function() {
-    window.checklistFormInitialized = false;
-  });
+    if (selector.value) window.loadTemplate(selector.value);
+  })();
 </script>

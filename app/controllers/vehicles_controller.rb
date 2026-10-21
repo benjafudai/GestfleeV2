@@ -50,7 +50,7 @@ class VehiclesController < ApplicationController
   def generate_plan
     authorize @vehicle
     unless @vehicle.vehicle_model
-      return redirect_to @vehicle, alert: "Primero elige el modelo de la biblioteca en Editar Vehículo."
+      return redirect_to @vehicle, alert: "Primero elige el modelo de la biblioteca con el botón «Editar»."
     end
 
     result = VehiclePlanGenerator.new(@vehicle).call

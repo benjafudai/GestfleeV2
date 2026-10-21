@@ -1,86 +1,111 @@
-<div class="container py-4">
+<% filtering = params[:role].present? || params[:company_name].present? %>
+<% filter_roles = current_user.superadmin? ? User.roles.keys : User.roles.keys - ["superadmin"] %>
+<div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3">Gestión de Usuarios</h1>
-    <%= link_to "Nuevo Usuario", new_user_path, class: "btn btn-primary" %>
+    <div>
+      <h1 class="h3 mb-0"><i class="bi bi-people me-2"></i>Usuarios</h1>
+      <p class="text-muted mb-0">
+        <% if current_user.superadmin? %>
+          Cuentas de acceso de todas las empresas, con su rol y documentos.
+        <% else %>
+          Cuentas de acceso de tu equipo, con su rol y documentos.
+        <% end %>
+      </p>
+    </div>
+    <%= link_to new_user_path, class: "btn btn-primary text-nowrap" do %>
+      <i class="bi bi-person-plus me-1"></i>Nuevo usuario
+    <% end %>
   </div>
 
-  <div class="card mb-4 shadow-sm">
+  <div class="card mb-4">
     <div class="card-body">
       <%= form_with url: users_path, method: :get, class: "row g-3 align-items-end" do |f| %>
         <% if current_user.superadmin? %>
-          <div class="col-md-4">
-            <%= f.label :company_name, "Buscar por Empresa", class: "form-label" %>
-            <%= f.text_field :company_name, value: params[:company_name], class: "form-control", placeholder: "Nombre de la empresa..." %>
+          <div class="col-md-5 col-lg-4">
+            <%= f.label :company_name, "Empresa", class: "form-label" %>
+            <%= f.text_field :company_name, value: params[:company_name], class: "form-control", placeholder: "Buscar por nombre de la empresa" %>
           </div>
         <% end %>
-        <div class="col-md-3">
-          <%= f.label :role, "Filtrar por Rol", class: "form-label" %>
-          <%= f.select :role, User.roles.keys.map { |r| [role_label(r), r] }, { include_blank: "Todos los roles", selected: params[:role] }, class: "form-select" %>
+        <div class="col-md-4 col-lg-3">
+          <%= f.label :role, "Rol", class: "form-label" %>
+          <%= f.select :role, filter_roles.map { |r| [role_label(r), r] }, { include_blank: "Todos los roles", selected: params[:role] }, class: "form-select" %>
         </div>
-        <div class="col-md-2">
-           <%= f.submit "Filtrar", class: "btn btn-outline-dark w-100" %>
-        </div>
-        <div class="col-md-2">
-           <%= link_to "Limpiar", users_path, class: "btn btn-link text-decoration-none" %>
+        <div class="col-md-auto d-flex gap-2">
+          <%= button_tag type: "submit", name: nil, class: "btn btn-outline-primary text-nowrap flex-fill" do %>
+            <i class="bi bi-funnel me-1"></i>Filtrar
+          <% end %>
+          <% if filtering %>
+            <%= link_to users_path, class: "btn btn-outline-secondary text-nowrap flex-fill" do %>
+              <i class="bi bi-x-lg me-1"></i>Limpiar
+            <% end %>
+          <% end %>
         </div>
       <% end %>
     </div>
   </div>
 
-  <div class="card shadow-sm">
-    <div class="card-body p-0">
+  <div class="card">
+    <div class="card-header bg-white d-flex align-items-center justify-content-between gap-2">
+      <h2 class="h6 mb-0"><%= filtering ? "Resultados" : "Todos los usuarios" %></h2>
+      <span class="badge text-bg-light"><%= number_with_delimiter(@pagy.count) %> <%= @pagy.count == 1 ? "usuario" : "usuarios" %></span>
+    </div>
+    <% if @users.any? %>
       <div class="table-responsive">
-        <table class="table table-hover mb-0">
+        <table class="table table-hover align-middle mb-0">
           <thead class="table-light">
             <tr>
               <th>ID</th>
+              <th>Usuario</th>
               <% if current_user.superadmin? %>
                 <th>Empresa</th>
               <% end %>
-              <th>Email</th>
               <th>Rol</th>
-              <th>Fecha Registro</th>
+              <th>Fecha de registro</th>
               <th class="text-end">Acciones</th>
             </tr>
           </thead>
           <tbody>
             <% @users.each do |user| %>
               <tr>
-                <td><%= user.id %></td>
+                <td class="text-muted">#<%= user.id %></td>
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    <%= user_avatar(user) %>
+                    <%= link_to user.email, user_path(user), class: "fw-bold text-body text-decoration-none text-nowrap" %>
+                    <% if user == current_user %>
+                      <span class="badge text-bg-light">Tú</span>
+                    <% end %>
+                    <%= account_locked_badge(user) %>
+                  </div>
+                </td>
                 <% if current_user.superadmin? %>
                   <td>
                     <% if user.company %>
-                      <%= user.company.name %>
-                      <br>
-                      <small class="text-muted"><%= user.company.rut %></small>
+                      <div class="text-nowrap"><%= user.company.name %></div>
+                      <div class="small text-muted text-nowrap">RUT <%= user.company.rut %></div>
                     <% else %>
-                      <span class="badge bg-secondary">Global (Sin Empresa)</span>
+                      <span class="text-muted text-nowrap"><i class="bi bi-globe2 me-1"></i>Global (sin empresa)</span>
                     <% end %>
                   </td>
                 <% end %>
-                <td><%= user.email %> <%= account_locked_badge(user) %></td>
-                <td>
-                  <span class="badge bg-<%=
-                    case user.role 
-                    when 'superadmin' then 'danger'
-                    when 'admin' then 'dark'
-                    when 'chofer' then 'warning'
-                    when 'analista' then 'info'
-                    when 'bodeguero' then 'primary'
-                    else 'secondary'
-                    end 
-                  %>">
-                    <%= role_label(user.role) %>
-                  </span>
-                </td>
-                <td><%= user.created_at.strftime("%d/%m/%Y") %></td>
+                <td><%= role_pill(user.role) %></td>
+                <td class="text-nowrap"><%= l(user.created_at.to_date) %></td>
                 <td class="text-end">
-                  <div class="btn-group" role="group">
-                    <%= link_to "Ver Perfil / Documentos", user_path(user), class: "btn btn-sm btn-outline-primary" %>
-                    <%= link_to "Editar", edit_user_path(user), class: "btn btn-sm btn-outline-secondary" %>
-                    <%= unlock_account_button(user) %>
+                  <div class="gf-row-actions">
+                    <%= link_to user_path(user), class: "btn btn-sm btn-outline-primary", title: "Ver perfil y documentos", "aria-label": "Ver perfil y documentos" do %>
+                      <i class="bi bi-eye"></i>
+                    <% end %>
+                    <% if can_edit_user?(user) %>
+                      <%= link_to edit_user_path(user), class: "btn btn-sm btn-outline-secondary", title: "Editar", "aria-label": "Editar" do %>
+                        <i class="bi bi-pencil"></i>
+                      <% end %>
+                    <% end %>
+                    <%= unlock_account_button(user, icon_only: true) %>
                     <% unless user == current_user %>
-                      <%= button_to "Eliminar", user_path(user), method: :delete, data: { turbo_confirm: "¿Estás seguro?" }, class: "btn btn-sm btn-outline-danger" %>
+                      <%= button_to user_path(user), method: :delete, class: "btn btn-sm btn-outline-danger", title: "Eliminar", "aria-label": "Eliminar",
+                                    form: { data: { turbo_confirm: "¿Eliminar al usuario #{user.email}? Esta acción no se puede deshacer." } } do %>
+                        <i class="bi bi-trash"></i>
+                      <% end %>
                     <% end %>
                   </div>
                 </td>
@@ -89,7 +114,20 @@
           </tbody>
         </table>
       </div>
-    </div>
+    <% else %>
+      <div class="card-body">
+        <div class="text-center py-5 text-muted">
+          <i class="bi bi-person-x d-block opacity-50"></i>
+          <% if filtering %>
+            <p class="mb-1 fw-bold text-body">No hay usuarios con estos filtros</p>
+            <p class="small mb-0">Prueba con otro rol<%= " u otra empresa" if current_user.superadmin? %> o <%= link_to "limpia los filtros", users_path %>.</p>
+          <% else %>
+            <p class="mb-1 fw-bold text-body">No hay usuarios registrados</p>
+            <p class="small mb-0">Crea el primero con el botón «Nuevo usuario».</p>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
   </div>
   <%= render "shared/pagination", pagy: @pagy %>
 </div>

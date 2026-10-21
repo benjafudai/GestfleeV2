@@ -1,8 +1,32 @@
 class ComplianceChecker
+  DAILY_RUN_LOCK = Mutex.new
+
   def self.call
     Rails.logger.info "Iniciando chequeo de cumplimiento de vencimientos..."
     new.check_all
     Rails.logger.info "Chequeo finalizado."
+  end
+
+  # Chequeo diario sin tarea programada: la app lo llama en cada visita con sesión
+  # iniciada y solo corre la primera vez del día en este proceso. Repetirlo (por ejemplo
+  # tras un reinicio) no duplica avisos, porque solo se avisa cuando cambia el estado.
+  def self.call_once_per_day(today = Date.current)
+    DAILY_RUN_LOCK.synchronize do
+      return false if @last_run_on == today
+
+      @last_run_on = today
+    end
+
+    # Sin empresa ni usuario de la visita: revisa todas las empresas y el historial
+    # de cambios no queda a nombre de quien abrió la página.
+    Current.set(company: nil, user: nil) do
+      PaperTrail.request(whodunnit: nil) { call }
+    end
+    true
+  rescue StandardError => e
+    DAILY_RUN_LOCK.synchronize { @last_run_on = nil }
+    Rails.logger.error "Falló el chequeo diario de vencimientos: #{e.class}: #{e.message}"
+    false
   end
 
   def check_all
@@ -32,18 +56,23 @@ class ComplianceChecker
     if doc.due_on < Date.today
       if doc.status != 'expired'
         doc.update(status: 'expired')
-        notify_admins(company, doc, "Documento Vencido", "El documento #{doc.doc_type} ha vencido el #{doc.due_on}.")
+        notify_admins(company, doc, "Documento vencido", "#{doc_label(doc)} venció el #{I18n.l(doc.due_on, format: :long)}.")
       end
     elsif doc.due_on <= 30.days.from_now.to_date
       if doc.status != 'expiring'
         doc.update(status: 'expiring')
-        notify_admins(company, doc, "Documento por vencer", "El documento #{doc.doc_type} vencerá pronto (#{doc.due_on}).")
+        notify_admins(company, doc, "Documento por vencer", "#{doc_label(doc)} vence el #{I18n.l(doc.due_on, format: :long)}.")
       end
     else
       if doc.status != 'ok'
         doc.update(status: 'ok')
       end
     end
+  end
+
+  def doc_label(doc)
+    helpers = ApplicationController.helpers
+    doc.is_a?(VehicleDocument) ? helpers.vehicle_doc_type_label(doc.doc_type) : helpers.user_doc_type_label(doc.doc_type)
   end
 
   def notify_admins(company, notifiable, title, message_prefix)
@@ -59,7 +88,7 @@ class ComplianceChecker
         user: admin,
         notifiable: notifiable,
         title: "#{title}: #{subject_name}",
-        message: "#{message_prefix} - #{subject_name}"
+        message: message_prefix
       )
     end
   end

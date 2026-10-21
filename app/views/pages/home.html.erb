@@ -1,0 +1,130 @@
+<% content_for :title, "GestFlee · Gestión de flota para empresas" %>
+<%
+  demo_message = "Hola, quiero conocer GestFlee para la flota de mi empresa."
+  demo_url =
+    if @contact_whatsapp
+      "https://wa.me/#{@contact_whatsapp}?text=#{ERB::Util.url_encode(demo_message)}"
+    elsif @contact_email
+      "mailto:#{@contact_email}?subject=#{ERB::Util.url_encode("Demo de GestFlee")}&body=#{ERB::Util.url_encode(demo_message)}"
+    end
+
+  features = [
+    ["fa-truck-front", "Vehículos y documentos",
+     "Ficha de cada vehículo con permiso de circulación, revisión técnica, seguro y padrón. Avisos antes de que algo venza."],
+    ["fa-screwdriver-wrench", "Mantención preventiva",
+     "Planes por kilómetros, horas o meses. Biblioteca con planes de 30 modelos de camiones, camionetas y maquinaria."],
+    ["fa-list-check", "Checklist pre-operacional",
+     "El conductor completa el checklist desde el celular y el administrador lo revisa y aprueba."],
+    ["fa-boxes-stacked", "Órdenes de trabajo y repuestos",
+     "Órdenes con tareas y repuestos usados, control de stock y solicitudes de suministro del taller."],
+    ["fa-gas-pump", "Combustible y costos",
+     "Cargas con foto de la boleta, rendimiento por vehículo y gastos del mes por categoría."],
+    ["fa-triangle-exclamation", "Incidentes y fallas",
+     "Registro de incidentes con evidencia y análisis de fallas por mes para anticipar problemas."]
+  ]
+
+  roles = [
+    ["fa-user-tie", "Administración", "Ve toda la flota, los vencimientos y los costos en un solo panel."],
+    ["fa-wrench", "Taller", "El mecánico gestiona órdenes de trabajo y pide repuestos a bodega."],
+    ["fa-id-card", "Conductores", "Cada conductor ve su vehículo asignado y hace su checklist diario."],
+    ["fa-chart-line", "Análisis", "El analista revisa gastos, rendimiento de combustible y fallas de la flota."]
+  ]
+%>
+
+<div class="gf-landing">
+  <header class="gf-landing-nav">
+    <div class="gf-landing-wrap">
+      <%= link_to root_path, class: "gf-landing-brand", aria: { label: "GestFlee, inicio" } do %>
+        <span class="gf-brand-mark"><i class="fa-solid fa-truck-fast" aria-hidden="true"></i></span>
+        <span class="gf-brand-name">GestFlee</span>
+      <% end %>
+      <%= link_to new_user_session_path, class: "btn btn-outline-light btn-sm" do %>
+        <i class="fa-solid fa-arrow-right-to-bracket me-1" aria-hidden="true"></i> Iniciar sesión
+      <% end %>
+    </div>
+  </header>
+
+  <section class="gf-landing-hero">
+    <div class="gf-landing-wrap">
+      <p class="gf-landing-eyebrow">Gestión de flota para empresas en Chile</p>
+      <h1>Toda su flota en un solo lugar</h1>
+      <p class="gf-landing-lead">
+        GestFlee reúne vehículos, documentos, mantenciones, combustible y costos de su empresa,
+        con avisos antes de que venza un documento.
+      </p>
+      <div class="gf-landing-cta">
+        <% if demo_url %>
+          <%= link_to demo_url, class: "btn btn-primary btn-lg", target: "_blank", rel: "noopener" do %>
+            <i class="fa-solid fa-calendar-check me-2" aria-hidden="true"></i>Solicitar una demo
+          <% end %>
+        <% end %>
+        <%= link_to new_user_session_path, class: "btn btn-lg #{demo_url ? 'btn-outline-light' : 'btn-primary'}" do %>
+          Iniciar sesión
+        <% end %>
+      </div>
+      <% if demo_url %>
+        <p class="gf-landing-note">Prueba gratis de 14 días, sin compromiso.</p>
+      <% end %>
+    </div>
+  </section>
+
+  <main>
+    <section class="gf-landing-section">
+      <div class="gf-landing-wrap">
+        <h2>Lo que puede hacer con GestFlee</h2>
+        <p class="gf-landing-section-sub">Funciona en el computador y en el celular, para todo tipo de flota.</p>
+        <div class="gf-landing-grid">
+          <% features.each do |icon, title, text| %>
+            <article class="gf-landing-card">
+              <span class="gf-landing-icon"><i class="fa-solid <%= icon %>" aria-hidden="true"></i></span>
+              <h3><%= title %></h3>
+              <p><%= text %></p>
+            </article>
+          <% end %>
+        </div>
+      </div>
+    </section>
+
+    <section class="gf-landing-section is-alt">
+      <div class="gf-landing-wrap">
+        <h2>Cada persona ve lo que necesita</h2>
+        <p class="gf-landing-section-sub">Accesos por rol, y los datos de cada empresa separados de los de otras.</p>
+        <div class="gf-landing-roles">
+          <% roles.each do |icon, title, text| %>
+            <div class="gf-landing-role">
+              <span class="gf-landing-icon is-small"><i class="fa-solid <%= icon %>" aria-hidden="true"></i></span>
+              <div>
+                <h3><%= title %></h3>
+                <p><%= text %></p>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </section>
+
+    <section class="gf-landing-final">
+      <div class="gf-landing-wrap">
+        <h2>¿Listo para ordenar su flota?</h2>
+        <% if demo_url %>
+          <p>Escríbanos y le mostramos GestFlee con los datos de su empresa.</p>
+          <%= link_to demo_url, class: "btn btn-light btn-lg", target: "_blank", rel: "noopener" do %>
+            <i class="fa-solid fa-calendar-check me-2" aria-hidden="true"></i>Solicitar una demo
+          <% end %>
+        <% else %>
+          <p>Si su empresa ya tiene cuenta, ingrese con su correo.</p>
+          <%= link_to "Iniciar sesión", new_user_session_path, class: "btn btn-light btn-lg" %>
+        <% end %>
+      </div>
+    </section>
+  </main>
+
+  <footer class="gf-landing-footer">
+    <div class="gf-landing-wrap">
+      <span>© <%= Date.current.year %> GestFlee</span>
+      <% if @contact_email %>
+        <%= mail_to @contact_email, class: "gf-landing-footer-link" %>
+      <% end %>
+    </div>
+  </footer>
+</div>

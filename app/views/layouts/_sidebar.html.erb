@@ -1,11 +1,16 @@
 <aside class="gf-sidebar" aria-label="Navegación principal">
-  <%= link_to dashboard_path, class: "gf-sidebar-brand" do %>
-    <span class="gf-brand-mark"><i class="fa-solid fa-truck-fast"></i></span>
-    <span class="gf-brand-text">
-      <span class="gf-brand-name">GestFlee</span>
-      <span class="gf-brand-sub">Gestión de Flota</span>
-    </span>
-  <% end %>
+  <div class="gf-sidebar-head">
+    <%= link_to dashboard_path, class: "gf-sidebar-brand" do %>
+      <span class="gf-brand-mark"><i class="fa-solid fa-truck-fast"></i></span>
+      <span class="gf-brand-text">
+        <span class="gf-brand-name">GestFlee</span>
+        <span class="gf-brand-sub">Gestión de flota</span>
+      </span>
+    <% end %>
+    <button type="button" class="gf-icon-btn gf-drawer-close" data-gf-sidebar-close aria-label="Cerrar menú">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
 
   <nav class="gf-sidebar-nav">
     <% sidebar_sections.each do |section| %>

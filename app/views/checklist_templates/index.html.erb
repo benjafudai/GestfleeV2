@@ -1,9 +1,12 @@
 <div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3">Plantillas de Checklist</h1>
+    <div>
+      <h1 class="h3 mb-0"><i class="bi bi-list-check me-2"></i>Plantillas de checklist</h1>
+      <p class="text-muted mb-0">Las preguntas que los choferes responden antes de operar el vehículo.</p>
+    </div>
     <% if policy(ChecklistTemplate).create? %>
-      <%= link_to new_checklist_template_path, class: "btn btn-primary" do %>
-        <i class="bi bi-plus-lg me-1"></i> Nueva Plantilla
+      <%= link_to new_checklist_template_path, class: "btn btn-primary text-nowrap" do %>
+        <i class="bi bi-plus-lg me-1"></i>Nueva plantilla
       <% end %>
     <% end %>
   </div>
@@ -11,24 +14,43 @@
   <% if @templates.any? %>
     <div class="row g-3">
       <% @templates.each do |tpl| %>
-        <div class="col-md-6 col-lg-4">
-          <div class="card shadow-sm h-100">
-            <div class="card-body">
-              <h5 class="card-title"><%= tpl.name %></h5>
-              <p class="card-text text-muted small"><%= tpl.description.presence || "Sin descripción" %></p>
-              <span class="badge text-bg-secondary">
-                <%= pluralize(tpl.checklist_items.size, "ítem", "ítems") %>
-              </span>
+        <% items = tpl.checklist_items.to_a %>
+        <% required_count = items.count(&:required?) %>
+        <div class="col-md-6 col-xl-4">
+          <div class="card h-100">
+            <div class="card-body d-flex flex-column gap-3">
+              <div class="d-flex align-items-start gap-3">
+                <span class="gf-action-icon is-primary" aria-hidden="true"><i class="bi bi-list-check"></i></span>
+                <div class="min-w-0">
+                  <h2 class="card-title h5 mb-1 text-break"><%= link_to tpl.name, tpl, class: "text-reset" %></h2>
+                  <p class="small text-muted mb-0"><%= tpl.description.presence || "Sin descripción" %></p>
+                </div>
+              </div>
+              <div class="d-flex flex-wrap gap-2 mt-auto">
+                <span class="badge text-bg-primary"><%= items.size == 1 ? "1 pregunta" : "#{items.size} preguntas" %></span>
+                <% if required_count.positive? %>
+                  <span class="badge text-bg-light"><%= required_count == 1 ? "1 obligatoria" : "#{required_count} obligatorias" %></span>
+                <% end %>
+              </div>
             </div>
-            <div class="card-footer bg-white border-0 d-flex gap-2">
-              <%= link_to "Ver", tpl, class: "btn btn-sm btn-outline-primary" %>
-              <% if policy(tpl).update? %>
-                <%= link_to "Editar", edit_checklist_template_path(tpl), class: "btn btn-sm btn-outline-secondary" %>
+            <div class="card-footer d-flex align-items-center justify-content-between gap-2">
+              <%= link_to tpl, class: "btn btn-sm btn-outline-primary text-nowrap" do %>
+                <i class="bi bi-eye me-1"></i>Ver
               <% end %>
-              <% if policy(tpl).destroy? %>
-                <%= button_to "Eliminar", tpl, method: :delete,
-                      form: { data: { turbo_confirm: "¿Eliminar esta plantilla?" } },
-                      class: "btn btn-sm btn-outline-danger" %>
+              <% if policy(tpl).update? || policy(tpl).destroy? %>
+                <div class="gf-row-actions">
+                  <% if policy(tpl).update? %>
+                    <%= link_to edit_checklist_template_path(tpl), class: "btn btn-sm btn-outline-secondary", title: "Editar", "aria-label": "Editar" do %>
+                      <i class="bi bi-pencil"></i>
+                    <% end %>
+                  <% end %>
+                  <% if policy(tpl).destroy? %>
+                    <%= button_to tpl, method: :delete, class: "btn btn-sm btn-outline-danger", title: "Eliminar", "aria-label": "Eliminar",
+                          form: { data: { turbo_confirm: "¿Eliminar esta plantilla? También se borrarán los checklists enviados con ella." } } do %>
+                      <i class="bi bi-trash"></i>
+                    <% end %>
+                  <% end %>
+                </div>
               <% end %>
             </div>
           </div>
@@ -36,12 +58,21 @@
       <% end %>
     </div>
   <% else %>
-    <div class="text-center py-5">
-      <i class="bi bi-clipboard-x display-4 text-muted opacity-50 d-block mb-3"></i>
-      <p class="text-muted">No hay plantillas de checklist creadas aún.</p>
-      <% if policy(ChecklistTemplate).create? %>
-        <%= link_to "Crear primera plantilla", new_checklist_template_path, class: "btn btn-primary mt-2" %>
-      <% end %>
+    <div class="card">
+      <div class="card-body">
+        <div class="text-center py-5 text-muted">
+          <i class="bi bi-clipboard-x d-block opacity-50"></i>
+          <p class="mb-1 fw-bold text-body">No hay plantillas de checklist</p>
+          <% if policy(ChecklistTemplate).create? %>
+            <p class="small mb-3">Crea la primera para que los choferes puedan completar su checklist diario.</p>
+            <%= link_to new_checklist_template_path, class: "btn btn-primary text-nowrap" do %>
+              <i class="bi bi-plus-lg me-1"></i>Crear primera plantilla
+            <% end %>
+          <% else %>
+            <p class="small mb-0">Un administrador debe crear la primera plantilla.</p>
+          <% end %>
+        </div>
+      </div>
     </div>
   <% end %>
 </div>

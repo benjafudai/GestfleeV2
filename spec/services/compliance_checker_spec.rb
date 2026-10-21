@@ -15,7 +15,7 @@ RSpec.describe ComplianceChecker do
     expect { described_class.call }.to change { Notification.where(user: admin).count }.by(1)
 
     expect(document.reload).to be_expired
-    expect(Notification.last.title).to eq("Documento Vencido: AB1234")
+    expect(Notification.last.title).to eq("Documento vencido: AB1234")
   end
 
   it "marks a document due within 30 days as expiring and warns the admins" do
@@ -58,5 +58,30 @@ RSpec.describe ComplianceChecker do
 
     expect(document.reload).to be_expiring
     expect(Notification.last.title).to eq("Documento por vencer: chofer@uno.cl")
+  end
+
+  describe ".call_once_per_day" do
+    before { described_class.instance_variable_set(:@last_run_on, nil) }
+
+    it "runs the first time each day only" do
+      document = vehicle_document(Date.today - 1)
+
+      expect(described_class.call_once_per_day(Date.new(2026, 10, 19))).to be(true)
+      expect(document.reload).to be_expired
+
+      document.update!(due_on: Date.today + 365)
+      expect(described_class.call_once_per_day(Date.new(2026, 10, 19))).to be(false)
+      expect(document.reload).to be_expired
+
+      expect(described_class.call_once_per_day(Date.new(2026, 10, 20))).to be(true)
+      expect(document.reload).to be_ok
+    end
+
+    it "tries again on the next visit if the check fails" do
+      allow(described_class).to receive(:call).and_raise(ActiveRecord::ConnectionNotEstablished)
+
+      expect(described_class.call_once_per_day(Date.new(2026, 10, 19))).to be(false)
+      expect(described_class.instance_variable_get(:@last_run_on)).to be_nil
+    end
   end
 end

@@ -1,58 +1,46 @@
-<%= render "dashboards/welcome", icon: "bi-shield-check", title: "Panel de Super Administración", tag: current_user.email %>
+<div class="container mt-4">
+  <% new_user_action = link_to new_user_path, class: "btn btn-primary text-nowrap" do
+       safe_join([tag.i(class: "bi bi-person-plus me-1"), "Nuevo usuario"])
+     end %>
+  <%= render "dashboards/welcome", icon: "bi-shield-lock", title: "Panel global",
+        subtitle: dashboard_greeting(current_user), action: new_user_action %>
 
-<div class="row">
-  <div class="col-md-4 mb-4">
-    <div class="card h-100 text-center">
-      <div class="card-body">
-        <h6 class="text-muted text-uppercase small">Empresas</h6>
-        <p class="display-6 mb-0"><%= @companies_count %></p>
-      </div>
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-xl-4">
+      <%= dashboard_stat "Empresas", number_with_delimiter(@companies_count), icon: "bi-buildings" %>
     </div>
-  </div>
-  <div class="col-md-4 mb-4">
-    <div class="card h-100 text-center">
-      <div class="card-body">
-        <h6 class="text-muted text-uppercase small">Usuarios</h6>
-        <p class="display-6 mb-0"><%= @users_count %></p>
-      </div>
+    <div class="col-6 col-xl-4">
+      <%= dashboard_stat "Usuarios", number_with_delimiter(@users_count), icon: "bi-people" %>
     </div>
-  </div>
-  <div class="col-md-4 mb-4">
-    <div class="card h-100 text-center <%= 'border-danger' if @companies_without_admin.any? %>">
-      <div class="card-body">
-        <h6 class="text-muted text-uppercase small">Sin Administrador</h6>
-        <p class="display-6 mb-0 <%= 'text-danger' if @companies_without_admin.any? %>"><%= @companies_without_admin.size %></p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<% if @companies_without_admin.any? %>
-  <div class="alert alert-danger">
-    <strong>Empresas sin ningún administrador:</strong>
-    <%= @companies_without_admin.map(&:name).join(", ") %>
-  </div>
-<% end %>
-
-<div class="row">
-  <div class="col-md-6 mb-4">
-    <div class="card h-100">
-      <div class="card-body">
-        <h5 class="card-title">Gestión de Usuarios</h5>
-        <p class="card-text">Administra los usuarios y administradores de la empresa.</p>
-        <%= link_to "Ver Usuarios", users_path, class: "btn btn-primary" %>
-        <%= link_to "Crear Nuevo Usuario", new_user_path, class: "btn btn-outline-primary ms-2" %>
-      </div>
+    <div class="col-12 col-xl-4">
+      <%= dashboard_stat "Empresas sin administrador", number_with_delimiter(@companies_without_admin.size),
+            icon: @companies_without_admin.any? ? "bi-exclamation-octagon" : "bi-check2-circle",
+            tone: @companies_without_admin.any? ? :danger : :success %>
     </div>
   </div>
 
-  <div class="col-md-6 mb-4">
-    <div class="card h-100">
-      <div class="card-body">
-        <h5 class="card-title">Configuración de Empresa</h5>
-        <p class="card-text">Activa o desactiva módulos (Mecánico, Analista) para cada empresa.</p>
-        <%= link_to "Ver Empresas", companies_path, class: "btn btn-dark" %>
+  <% if @companies_without_admin.any? %>
+    <div class="alert alert-danger d-flex align-items-start gap-2 mb-4">
+      <i class="bi bi-exclamation-triangle mt-1"></i>
+      <div>
+        <strong>Empresas sin ningún administrador:</strong>
+        <%= @companies_without_admin.map(&:name).join(", ") %>
       </div>
+    </div>
+  <% end %>
+
+  <div class="row g-3">
+    <div class="col-md-6 col-xl-4">
+      <%= dashboard_action_card "Empresas", "Activa o desactiva módulos (Mecánico, Analista) para cada empresa.",
+            path: companies_path, link_text: "Ver empresas", icon: "bi-buildings" %>
+    </div>
+    <div class="col-md-6 col-xl-4">
+      <%= dashboard_action_card "Usuarios", "Administra los usuarios y administradores de todas las empresas.",
+            path: users_path, link_text: "Ver usuarios", icon: "bi-people", tone: :success %>
+    </div>
+    <div class="col-md-12 col-xl-4">
+      <%= dashboard_action_card "Solicitudes de clave", "Atiende los pedidos de recuperación de contraseña de los usuarios.",
+            path: password_reset_requests_path, link_text: "Ver solicitudes", icon: "bi-key", tone: :warning %>
     </div>
   </div>
 </div>

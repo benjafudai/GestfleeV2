@@ -1,95 +1,159 @@
-﻿<div class="container mt-4">
+<% lines = @supply_request.supply_request_lines.includes(:part).to_a %>
+<% states = SupplyRequest.statuses.keys %>
+<% current_idx = states.index(@supply_request.status) %>
+<% editable = policy(@supply_request).edit? && @supply_request.status != 'delivered' %>
+<div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-      <h1 class="h3 mb-0"><i class="bi bi-file-earmark-text me-2 text-primary"></i> Solicitud #<%= @supply_request.id %></h1>
-      <p class="text-muted mb-0 mt-1">Generada el <strong><%= l(@supply_request.created_at, format: :long) %></strong> por <%= @supply_request.user.email %></p>
+    <div class="min-w-0">
+      <h1 class="h3 mb-0">
+        <i class="bi bi-file-earmark-text me-2"></i>Solicitud #<%= @supply_request.id %>
+        <%= status_badge(supply_request_status_label(@supply_request.status), @supply_request.status, class: "fs-6 align-middle ms-1") %>
+      </h1>
+      <p class="text-muted mb-0">Creada el <%= l(@supply_request.created_at, format: :long) %> por <%= @supply_request.user.email %></p>
     </div>
-    <div class="d-flex gap-2">
-      <%= link_to "Volver atrás", supply_requests_path, class: "btn btn-outline-secondary btn-sm shadow-sm" %>
-      <% if policy(@supply_request).edit? && @supply_request.status != 'delivered' %>
-        <%= link_to "Modificar", edit_supply_request_path(@supply_request), class: "btn btn-outline-primary btn-sm shadow-sm" %>
+    <div class="d-flex flex-wrap gap-2">
+      <% if editable %>
+        <%= link_to edit_supply_request_path(@supply_request), class: "btn btn-primary" do %>
+          <i class="bi bi-pencil me-1"></i>Editar
+        <% end %>
+      <% end %>
+      <%= link_to supply_requests_path, class: "btn btn-outline-secondary" do %>
+        <i class="bi bi-arrow-left me-1"></i>Volver
       <% end %>
     </div>
   </div>
 
   <div class="row g-4">
-    <div class="col-md-8">
-      <div class="card shadow-sm border-0 mb-4">
-        <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
-          <h5 class="mb-0 fw-bold">Repuestos Requeridos (<%= @supply_request.supply_request_lines.count %>)</h5>
+    <div class="col-lg-8 d-flex flex-column gap-4">
+      <div class="card">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center gap-2">
+          <%= inventory_card_title("Repuestos solicitados", icon: "bi-tools") %>
+          <% if lines.any? %>
+            <span class="badge text-bg-secondary"><%= lines.size %></span>
+          <% end %>
         </div>
-        <div class="card-body p-0 mt-3">
-          <ul class="list-group list-group-flush">
-            <% @supply_request.supply_request_lines.each do |line| %>
-              <li class="list-group-item d-flex justify-content-between align-items-center py-3">
-                <div>
-                  <h6 class="mb-0 fw-bold"><%= line.part.name %></h6>
-                  <small class="text-muted">SKU: <%= line.part.sku %></small>
-                </div>
-                <span class="badge bg-primary rounded-pill px-3 py-2 fs-6 shadow-sm">
-                  <%= number_with_precision(line.quantity, precision: 2, strip_insignificant_zeros: true) %> <%= line.part.unit_of_measure %>
-                </span>
-              </li>
-            <% end %>
-          </ul>
-        </div>
+        <% if lines.any? %>
+          <div class="table-responsive">
+            <table class="table align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Repuesto</th>
+                  <th class="text-end">Cantidad</th>
+                  <th class="text-end d-none d-md-table-cell">En bodega</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% lines.each do |line| %>
+                  <% part = line.part %>
+                  <tr>
+                    <td class="text-wrap" style="min-width: 9rem;">
+                      <div class="fw-bold"><%= part.name %></div>
+                      <div class="small text-muted text-nowrap">SKU <%= part.sku %></div>
+                    </td>
+                    <td class="text-end text-nowrap">
+                      <span class="fw-bold"><%= format_quantity(line.quantity) %></span>
+                      <span class="small text-muted"><%= unit_of_measure_label(line.quantity, part.unit_of_measure) %></span>
+                      <%# En el teléfono la columna «En bodega» se oculta y su dato va bajo la cantidad. %>
+                      <div class="d-md-none mt-1">
+                        <% if @supply_request.delivered? %>
+                          <span class="small text-muted"><%= format_quantity(part.stock) %> en bodega</span>
+                        <% elsif part.stock >= line.quantity %>
+                          <span class="badge text-bg-success"><%= format_quantity(part.stock) %> en bodega</span>
+                        <% else %>
+                          <span class="badge text-bg-danger">Faltan <%= format_quantity(line.quantity - part.stock) %></span>
+                        <% end %>
+                      </div>
+                    </td>
+                    <td class="text-end d-none d-md-table-cell">
+                      <% if @supply_request.delivered? %>
+                        <span class="text-muted"><%= format_quantity(part.stock) %></span>
+                      <% elsif part.stock >= line.quantity %>
+                        <span class="badge text-bg-success"><%= format_quantity(part.stock) %></span>
+                      <% else %>
+                        <span class="badge text-bg-danger" title="No alcanza para entregar">Faltan <%= format_quantity(line.quantity - part.stock) %></span>
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        <% else %>
+          <div class="card-body">
+            <div class="text-center py-4 px-3 text-muted">
+              <i class="bi bi-tools d-block opacity-50"></i>
+              <p class="mb-0 fw-bold text-body">Esta solicitud no tiene repuestos</p>
+            </div>
+          </div>
+        <% end %>
       </div>
 
       <% if @supply_request.admin_notes.present? %>
-        <div class="card shadow-sm border-0 border-start border-4 border-warning bg-light">
-          <div class="card-body">
-            <h6 class="fw-bold text-warning-emphasis"><i class="bi bi-chat-square-text me-2"></i>Notas / Observaciones</h6>
-            <p class="mb-0 text-muted"><%= simple_format(@supply_request.admin_notes) %></p>
+        <div class="card">
+          <div class="card-header bg-white">
+            <%= inventory_card_title("Notas", icon: "bi-chat-square-text") %>
+          </div>
+          <div class="card-body text-body">
+            <%= simple_format(@supply_request.admin_notes, class: "mb-2") %>
           </div>
         </div>
       <% end %>
     </div>
 
-    <div class="col-md-4">
-      <div class="card shadow-sm border-0 mb-4 bg-primary text-white">
-        <div class="card-body text-center py-4">
-          <i class="bi bi-truck display-5 opacity-75 mb-2 d-block"></i>
-          <h4 class="fw-bold mb-0 text-white"><%= @supply_request.vehicle.plate %></h4>
-          <span class="opacity-75">Vehículo Objetivo</span>
+    <div class="col-lg-4 d-flex flex-column gap-4">
+      <% vehicle = @supply_request.vehicle %>
+      <div class="card">
+        <div class="card-body d-flex align-items-center gap-3">
+          <span class="gf-action-icon is-primary"><i class="bi bi-truck"></i></span>
+          <div class="min-w-0">
+            <div class="small text-muted">Vehículo</div>
+            <div class="h4 mb-0"><%= vehicle.plate %></div>
+            <% details = [vehicle.brand, vehicle.model, vehicle.year].compact_blank.join(" · ") %>
+            <% if details.present? %>
+              <div class="small text-muted text-truncate"><%= details %></div>
+            <% end %>
+          </div>
         </div>
       </div>
 
-      <div class="card shadow-sm border-0">
-        <div class="card-header bg-white border-bottom-0 pt-4 pb-1">
-          <h5 class="fw-bold mb-0 text-center"><i class="bi bi-signpost-split me-2 text-primary"></i> Workflow</h5>
+      <div class="card">
+        <div class="card-header bg-white">
+          <%= inventory_card_title("Seguimiento", icon: "bi-signpost-split") %>
         </div>
         <div class="card-body">
-          <ul class="list-group list-group-flush">
-            <% 
-               states = { requested: 1, received: 2, purchasing: 3, delivered: 4 } 
-               current_idx = states[@supply_request.status.to_sym]
-            %>
-            <% SupplyRequest.statuses.keys.each do |state| %>
-              <li class="list-group-item border-0 px-0 py-2 d-flex align-items-center">
-                <% if states[state.to_sym] < current_idx %>
-                  <i class="bi bi-check-circle-fill text-success fs-4 me-3"></i>
-                  <span class="text-muted text-decoration-line-through"><%= SupplyRequest.human_status(state) %></span>
-                <% elsif states[state.to_sym] == current_idx %>
-                  <i class="bi bi-circle-fill text-primary fs-5 me-3 ms-1"></i>
-                  <span class="fw-bold fs-5"><%= SupplyRequest.human_status(state) %></span>
-                <% else %>
-                  <i class="bi bi-circle text-muted fs-5 me-3 ms-1"></i>
-                  <span class="text-muted"><%= SupplyRequest.human_status(state) %></span>
-                <% end %>
+          <ol class="list-unstyled mb-0">
+            <% states.each_with_index do |state, idx| %>
+              <li class="d-flex gap-3<%= ' pb-3' unless idx == states.size - 1 %>">
+                <div class="flex-shrink-0 pt-1">
+                  <% if idx < current_idx || (idx == current_idx && state == 'delivered') %>
+                    <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                  <% elsif idx == current_idx %>
+                    <i class="bi bi-record-circle-fill text-primary fs-5"></i>
+                  <% else %>
+                    <i class="bi bi-circle text-muted opacity-50 fs-5"></i>
+                  <% end %>
+                </div>
+                <div class="min-w-0">
+                  <div class="<%= idx == current_idx ? 'fw-bold text-body' : (idx < current_idx ? 'text-body' : 'text-muted') %>">
+                    <%= supply_request_status_label(state) %>
+                  </div>
+                  <div class="small text-muted"><%= supply_request_step_hint(state) %></div>
+                </div>
               </li>
             <% end %>
-          </ul>
+          </ol>
 
           <% if policy(@supply_request).change_status? && @supply_request.status != 'delivered' %>
-            <div class="mt-4 pt-3 border-top text-center">
-              <label class="form-label small text-muted text-uppercase fw-bold">Gestionar Estado</label>
-              <% next_state = SupplyRequest.statuses.keys[current_idx] %>
-              <%= button_to change_status_supply_request_path(@supply_request, status: next_state), 
-                    method: :patch, 
-                    class: "btn btn-#{next_state == 'delivered' ? 'success' : 'primary'} w-100 shadow-sm",
+            <% next_state = states[current_idx + 1] %>
+            <% next_label, next_icon = supply_request_next_action(next_state) %>
+            <div class="mt-4 pt-3 border-top">
+              <p class="small text-muted mb-2">Siguiente paso</p>
+              <%= button_to change_status_supply_request_path(@supply_request, status: next_state),
+                    method: :patch,
+                    class: "btn btn-#{next_state == 'delivered' ? 'success' : 'primary'} w-100",
                     form_class: "d-block",
-                    data: { turbo_confirm: next_state == 'delivered' ? "¿Confirma entregar los repuestos? Esto descontará del inventario permanentemente." : "Avanzar al estado #{SupplyRequest.human_status(next_state)}" } do %>
-                Avanzar a <%= SupplyRequest.human_status(next_state) %> <i class="bi bi-arrow-right ms-1"></i>
+                    data: { turbo_confirm: next_state == 'delivered' ? "¿Confirmas la entrega de los repuestos? Se descontarán del inventario y no se podrá deshacer." : "¿Pasar la solicitud a «#{supply_request_status_label(next_state)}»?" } do %>
+                <i class="bi <%= next_icon %> me-1"></i><%= next_label %>
               <% end %>
             </div>
           <% end %>

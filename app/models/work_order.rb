@@ -30,7 +30,7 @@ class WorkOrder < ApplicationRecord
 
   def immutable_once_terminal
     return unless TERMINAL_STATUSES.include?(status_was)
-    errors.add(:base, "no se puede modificar una orden de trabajo ya #{status_was == 'completed' ? 'completada' : 'cancelada'}")
+    errors.add(:base, "No se puede modificar una orden de trabajo ya #{status_was == 'completed' ? 'completada' : 'cancelada'}")
   end
 
   def sufficient_stock_to_complete

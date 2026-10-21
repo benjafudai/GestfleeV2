@@ -8,7 +8,7 @@ RSpec.describe UsersHelper, type: :helper do
   describe "#role_label" do
     it "names each role in Spanish" do
       expect(helper.role_label(:mecanico)).to eq("Mecánico")
-      expect(helper.role_label("superadmin")).to eq("Super Administrador")
+      expect(helper.role_label("superadmin")).to eq("Superadministrador")
     end
 
     it "falls back to a readable name for an unknown role" do

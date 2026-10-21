@@ -22,6 +22,10 @@ module TrucksProyect
     # in config/environments, which are processed later.
     #
     config.time_zone = "Santiago"
+
+    # Revisa vencimientos de documentos con la primera visita del día (ver ComplianceChecker).
+    config.x.daily_compliance_check = true
+
     config.i18n.default_locale = :es
     config.i18n.available_locales = [:es, :en]
     config.i18n.fallbacks = [:en]

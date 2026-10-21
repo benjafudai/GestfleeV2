@@ -1,63 +1,55 @@
-<div class="container py-4">
+<div class="container mt-4">
   <div class="row justify-content-center">
-    <div class="col-md-8 col-lg-8">
-      <div class="card shadow">
-        <div class="card-header bg-white">
-          <h1 class="h4 mb-0">Registrar Nueva Empresa</h1>
+    <div class="col-lg-9 col-xl-8">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+        <div class="min-w-0">
+          <h1 class="h3 mb-0"><i class="bi bi-building-add me-2"></i>Nueva empresa</h1>
+          <p class="text-muted mb-0">Registra la empresa y la cuenta de su primer administrador.</p>
         </div>
-        <div class="card-body">
+      </div>
+      <div class="card">
+        <div class="card-body p-4">
           <%= form_with(model: @company, local: true) do |f| %>
-            <% if @company.errors.any? %>
-              <div class="alert alert-danger">
-                <ul class="mb-0">
-                  <% @company.errors.full_messages.each do |msg| %>
-                    <li><%= msg %></li>
-                  <% end %>
-                </ul>
-              </div>
-            <% end %>
+            <%= render "shared/form_errors", object: @company, subject: "la empresa" %>
 
-            <h5 class="mb-3 text-primary">Datos de la Empresa</h5>
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <%= f.label :name, "Nombre Empresa", class: "form-label" %>
-                <%= f.text_field :name, class: "form-control", required: true, autofocus: true %>
+            <h2 class="h6 mb-3"><i class="bi bi-building me-2 text-primary"></i>Datos de la empresa</h2>
+            <div class="row g-3">
+              <div class="col-md-7">
+                <%= f.label :name, class: "form-label" do %>Nombre de la empresa <span class="text-danger">*</span><% end %>
+                <%= f.text_field :name, class: "form-control", required: true, autofocus: true, placeholder: "Ej.: Transportes del Sur SpA" %>
               </div>
-              <div class="col-md-6 mb-3">
-                <%= f.label :rut, "RUT", class: "form-label" %>
+              <div class="col-md-5">
+                <%= f.label :rut, class: "form-label" do %>RUT <span class="text-danger">*</span><% end %>
                 <%= f.text_field :rut, class: "form-control", required: true, placeholder: "77.777.777-7",
                     data: { controller: "mask", action: "input->mask#mask", mask_format: "99.999.999-#" } %>
               </div>
             </div>
 
-            <hr class="my-4">
-            
-            <h5 class="mb-3 text-primary">Administrador Inicial</h5>
+            <h2 class="h6 mt-4 mb-1"><i class="bi bi-person-gear me-2 text-primary"></i>Administrador inicial</h2>
+            <p class="form-text mt-0 mb-3">Con esta cuenta la empresa podrá entrar a GestFlee y crear al resto de su equipo.</p>
             <%= f.fields_for :users do |user_form| %>
               <%= user_form.hidden_field :role, value: 'admin' %>
-              
-              <div class="mb-3">
-                <%= user_form.label :email, "Email del Administrador", class: "form-label" %>
-                <%= user_form.email_field :email, class: "form-control", required: true %>
-              </div>
 
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <%= user_form.label :password, "Contraseña", class: "form-label" %>
-                  <%= user_form.password_field :password, class: "form-control", required: true %>
+              <div class="row g-3">
+                <div class="col-12">
+                  <%= user_form.label :email, class: "form-label" do %>Correo del administrador <span class="text-danger">*</span><% end %>
+                  <%= user_form.email_field :email, class: "form-control", required: true, placeholder: "admin@empresa.cl" %>
                 </div>
-                <div class="col-md-6 mb-3">
-                  <%= user_form.label :password_confirmation, "Confirmar Contraseña", class: "form-label" %>
-                  <%= user_form.password_field :password_confirmation, class: "form-control", required: true %>
+                <div class="col-md-6">
+                  <%= user_form.label :password, class: "form-label" do %>Contraseña <span class="text-danger">*</span><% end %>
+                  <%= user_form.password_field :password, class: "form-control", required: true, autocomplete: "new-password" %>
+                  <div class="form-text">Mínimo 10 caracteres.</div>
+                </div>
+                <div class="col-md-6">
+                  <%= user_form.label :password_confirmation, class: "form-label" do %>Confirmar contraseña <span class="text-danger">*</span><% end %>
+                  <%= user_form.password_field :password_confirmation, class: "form-control", required: true, autocomplete: "new-password" %>
                 </div>
               </div>
             <% end %>
 
-            <hr class="my-4">
-
-            <div class="d-flex justify-content-end gap-2">
-              <%= link_to "Cancelar", companies_path, class: "btn btn-light" %>
-              <%= f.submit "Crear Empresa", class: "btn btn-primary" %>
+            <div class="d-flex justify-content-end gap-2 mt-4">
+              <%= link_to "Cancelar", companies_path, class: "btn btn-outline-secondary" %>
+              <%= f.submit "Crear empresa", class: "btn btn-primary" %>
             </div>
           <% end %>
         </div>

@@ -1,14 +1,10 @@
 <div class="container mt-4">
-  <div class="row justify-content-center">
-    <div class="col-md-8">
-      <div class="card shadow-sm">
-        <div class="card-header bg-white">
-          <h1 class="h4 mb-0">Reportar Nuevo Incidente</h1>
-        </div>
-        <div class="card-body">
-          <%= render "form", incident: @incident %>
-        </div>
-      </div>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="h3 mb-0"><i class="bi bi-exclamation-triangle me-2"></i>Reportar incidente</h1>
+      <p class="text-muted mb-0">Cuenta qué pasó con el vehículo y, si puedes, agrega fotos y la ubicación.</p>
     </div>
   </div>
+
+  <%= render "form", incident: @incident %>
 </div>

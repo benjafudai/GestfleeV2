@@ -1,2 +1,9 @@
 @import 'bootstrap/scss/bootstrap';
 @import 'bootstrap-icons/font/bootstrap-icons';
+
+// Font Awesome (solo estilos sólido y regular, que son los que usa la app).
+// Las fuentes se sirven desde node_modules (ver config/initializers/assets.rb).
+$fa-font-path: ".";
+@import '@fortawesome/fontawesome-free/scss/fontawesome';
+@import '@fortawesome/fontawesome-free/scss/solid';
+@import '@fortawesome/fontawesome-free/scss/regular';

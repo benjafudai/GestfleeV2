@@ -137,12 +137,12 @@ class UsersController < ApplicationController
 
   def ensure_admin_or_superadmin!
     unless current_user&.superadmin? || current_user&.admin?
-      redirect_to root_path, alert: "Acceso denegado"
+      redirect_to root_path, alert: "No tienes permisos para acceder a esta página."
     end
   end
 
   def ensure_superadmin!
-    redirect_to root_path, alert: "Acceso denegado" unless current_user.superadmin?
+    redirect_to root_path, alert: "No tienes permisos para acceder a esta página." unless current_user.superadmin?
   end
   
   def available_roles_for_current_user

@@ -2,12 +2,12 @@ es:
   date:
     formats:
       default: "%d/%m/%Y"
-      short: "%d %b"
-      long: "%d de %B de %Y"
-    day_names: [Domingo, Lunes, Martes, Miércoles, Jueves, Viernes, Sábado]
-    abbr_day_names: [Dom, Lun, Mar, Mié, Jue, Vie, Sáb]
-    month_names: [~, Enero, Febrero, Marzo, Abril, Mayo, Junio, Julio, Agosto, Septiembre, Octubre, Noviembre, Diciembre]
-    abbr_month_names: [~, Ene, Feb, Mar, Abr, May, Jun, Jul, Ago, Sep, Oct, Nov, Dic]
+      short: "%-d %b"
+      long: "%-d de %B de %Y"
+    day_names: [domingo, lunes, martes, miércoles, jueves, viernes, sábado]
+    abbr_day_names: [dom, lun, mar, mié, jue, vie, sáb]
+    month_names: [~, enero, febrero, marzo, abril, mayo, junio, julio, agosto, septiembre, octubre, noviembre, diciembre]
+    abbr_month_names: [~, ene, feb, mar, abr, may, jun, jul, ago, sep, oct, nov, dic]
     order:
       - :day
       - :month
@@ -15,11 +15,51 @@ es:
 
   time:
     formats:
-      default: "%d de %B de %Y %H:%M"
-      short: "%d %b %H:%M"
-      long: "%d de %B de %Y, %H:%M horas"
+      default: "%-d de %B de %Y %H:%M"
+      short: "%-d %b %H:%M"
+      long: "%-d de %B de %Y, %H:%M horas"
     am: "am"
     pm: "pm"
+
+  datetime:
+    distance_in_words:
+      half_a_minute: "medio minuto"
+      less_than_x_seconds:
+        one: "menos de 1 segundo"
+        other: "menos de %{count} segundos"
+      x_seconds:
+        one: "1 segundo"
+        other: "%{count} segundos"
+      less_than_x_minutes:
+        one: "menos de 1 minuto"
+        other: "menos de %{count} minutos"
+      x_minutes:
+        one: "1 minuto"
+        other: "%{count} minutos"
+      about_x_hours:
+        one: "alrededor de 1 hora"
+        other: "alrededor de %{count} horas"
+      x_days:
+        one: "1 día"
+        other: "%{count} días"
+      about_x_months:
+        one: "alrededor de 1 mes"
+        other: "alrededor de %{count} meses"
+      x_months:
+        one: "1 mes"
+        other: "%{count} meses"
+      about_x_years:
+        one: "alrededor de 1 año"
+        other: "alrededor de %{count} años"
+      over_x_years:
+        one: "más de 1 año"
+        other: "más de %{count} años"
+      almost_x_years:
+        one: "casi 1 año"
+        other: "casi %{count} años"
+      x_hours:
+        one: "1 hora"
+        other: "%{count} horas"
 
   number:
     format:
@@ -33,6 +73,17 @@ es:
         separator: ","
         delimiter: "."
         precision: 0
+    human:
+      storage_units:
+        format: "%n %u"
+        units:
+          byte:
+            one: "byte"
+            other: "bytes"
+          kb: "KB"
+          mb: "MB"
+          gb: "GB"
+          tb: "TB"
 
   support:
     array:
@@ -75,7 +126,51 @@ es:
         other: "no tiene la longitud correcta (%{count} caracteres)"
 
   activerecord:
+    models:
+      checklist_answer: "respuesta"
+      checklist_item: "pregunta"
+      checklist_submission: "checklist"
+      checklist_template: "plantilla de checklist"
+      company: "empresa"
+      expense: "gasto"
+      fuel_fill: "carga de combustible"
+      incident: "incidente"
+      maintenance_plan: "plan de mantención"
+      notification: "notificación"
+      part: "repuesto"
+      part_quote: "cotización"
+      password_reset_request: "solicitud de clave"
+      supply_request: "solicitud de suministro"
+      supply_request_line: "línea de solicitud"
+      user: "usuario"
+      user_document: "documento"
+      vehicle: "vehículo"
+      vehicle_assignment: "asignación"
+      vehicle_document: "documento"
+      work_order: "orden de trabajo"
+      work_order_part_usage: "repuesto usado"
+      work_order_task: "tarea"
     errors:
+      models:
+        user:
+          attributes:
+            password:
+              too_short:
+                one: "es demasiado corta (mínimo 1 carácter)"
+                other: "es demasiado corta (mínimo %{count} caracteres)"
+              too_long:
+                one: "es demasiado larga (máximo 1 carácter)"
+                other: "es demasiado larga (máximo %{count} caracteres)"
+            password_confirmation:
+              confirmation: "no coincide con la contraseña"
+        incident:
+          attributes:
+            vehicle:
+              required: "es obligatorio"
+        vehicle_assignment:
+          attributes:
+            user:
+              required: "es obligatorio"
       messages:
         record_invalid: "La validación falló: %{errors}"
         restrict_dependent_destroy:
@@ -84,12 +179,18 @@ es:
     attributes:
       vehicle_document:
         file: "Archivo"
-        doc_type: "Tipo de Documento"
-        due_on: "Fecha de Vencimiento"
+        doc_type: "Tipo de documento"
+        due_on: "Fecha de vencimiento"
+        vehicle: "Vehículo"
+        status: "Estado"
+        notes: "Notas"
       user_document:
         file: "Archivo"
-        doc_type: "Tipo de Documento"
-        due_on: "Fecha de Vencimiento"
+        doc_type: "Tipo de documento"
+        due_on: "Fecha de vencimiento"
+        user: "Usuario"
+        status: "Estado"
+        notes: "Notas"
       work_order_task:
         description: "Descripción"
       work_order_part_usage:
@@ -109,21 +210,143 @@ es:
         year: "Año"
         hour_meter: "Horómetro"
         vehicle_model: "Modelo de la biblioteca"
+        odometer: "Odómetro"
+        status: "Estado"
+        company: "Empresa"
       maintenance_plan:
         name: "Nombre"
         interval_km: "Intervalo en km"
         interval_days: "Intervalo en días"
         interval_hours: "Intervalo en horas"
+        vehicle_model: "Modelo de la biblioteca"
       fuel_fill:
         liters: "Litros"
         cost: "Costo"
         odometer: "Odómetro"
         date: "Fecha"
+        vehicle: "Vehículo"
+        user: "Chofer"
+        currency: "Moneda"
+        ticket: "Boleta"
+        station: "Estación"
+        company: "Empresa"
       incident:
         description: "Descripción"
+        vehicle: "Vehículo"
+        reporter: "Reportado por"
+        severity: "Gravedad"
+        status: "Estado"
+        photos: "Fotos"
       company:
         name: "Nombre"
         rut: "RUT"
+        users: "Usuarios"
+      company/users:
+        email: "Correo del administrador"
+        password: "Contraseña del administrador"
+        password_confirmation: "Confirmación de contraseña del administrador"
       user:
         email: "Correo electrónico"
         password: "Contraseña"
+        password_confirmation: "Confirmación de contraseña"
+        current_password: "Contraseña actual"
+        role: "Rol"
+        company: "Empresa"
+      checklist_template:
+        name: "Nombre"
+        description: "Descripción"
+      checklist_item:
+        label: "Pregunta"
+        item_type: "Tipo de respuesta"
+        position: "Posición"
+      checklist_submission:
+        vehicle: "Vehículo"
+        user: "Chofer"
+        checklist_template: "Plantilla"
+        submitted_at: "Fecha de envío"
+        photos: "Fotos"
+      checklist_answer:
+        checklist_item: "Pregunta"
+        value: "Respuesta"
+      expense:
+        amount: "Monto"
+        date: "Fecha"
+        currency: "Moneda"
+        category: "Categoría"
+        vehicle: "Vehículo"
+        description: "Descripción"
+        documents: "Documentos"
+      part:
+        sku: "SKU"
+        name: "Nombre"
+        unit_of_measure: "Unidad de medida"
+        cost: "Costo"
+        stock: "Stock"
+        currency: "Moneda"
+        brand: "Marca"
+        description: "Descripción"
+        company: "Empresa"
+      part_fitment:
+        vehicle: "Vehículo"
+        vehicle_id: "Vehículo"
+        part: "Repuesto"
+      supply_request:
+        vehicle: "Vehículo"
+        user: "Solicitante"
+        status: "Estado"
+        notes: "Notas"
+        admin_notes: "Notas"
+        company: "Empresa"
+      supply_request_line:
+        part: "Repuesto"
+        quantity: "Cantidad"
+      supply_request/supply_request_lines:
+        part: "Repuesto"
+        quantity: "Cantidad"
+      work_order:
+        vehicle: "Vehículo"
+        mechanic: "Mecánico"
+        maintenance_plan: "Plan de mantención"
+        status: "Estado"
+        description: "Descripción"
+        start_date: "Fecha de inicio"
+        end_date: "Fecha de término"
+      work_order/work_order_tasks:
+        description: "Descripción de la tarea"
+      work_order/work_order_part_usages:
+        part: "Repuesto"
+        quantity: "Cantidad del repuesto"
+      maintenance_task_template:
+        description: "Descripción de la tarea"
+        expected_duration_minutes: "Duración estimada"
+      maintenance_plan/maintenance_task_templates:
+        description: "Descripción de la tarea"
+        expected_duration_minutes: "Duración estimada"
+      checklist_template/checklist_items:
+        label: "Pregunta"
+        item_type: "Tipo de respuesta"
+        position: "Posición"
+      checklist_submission/checklist_answers:
+        checklist_item: "Pregunta"
+        value: "Respuesta"
+      vehicle_assignment:
+        vehicle: "Vehículo"
+        user: "Chofer"
+        started_on: "Fecha de inicio"
+        ended_on: "Fecha de término"
+      password_reset_request:
+        user: "Usuario"
+        admin: "Administrador"
+        status: "Estado"
+      roadside_assistance_event:
+        vehicle: "Vehículo"
+        user: "Usuario"
+        company: "Empresa"
+        description: "Descripción"
+      stock_movement:
+        part: "Repuesto"
+        quantity: "Cantidad"
+      notification:
+        title: "Título"
+        message: "Mensaje"
+

@@ -200,8 +200,7 @@ CTA-06-R05;CTA-06;TR-06;Pastillas de freno delanteras;"Juego por eje; según des
 CTA-06-R06;CTA-06;TR-06;Discos de freno delanteros;"Par; según desgaste";Consultar OEM;1;par;81504;81504;15486;96990;Verificado
 CTA-06-R07;CTA-06;TR-07;Líquido de frenos;DOT 4 o el indicado en la tapa;;1;L;8395;8395;1595;9990;Estimado
 CTA-06-R08;CTA-06;TR-09;Refrigerante;Larga vida, premezcla 50/50;;6;L;1638;9828;1867;11695;Verificado
-CTA-06-R09;CTA-06;TR-10;Aceite de caja de cambios;Manual 75W-90 GL-4 / automática ATF según manual;;2.5;L;8395;20988;3988;24976;Estimado
-CTA-06-R10;CTA-06;TR-11;Aceite de diferenciales y transfer;80W-90 GL-5 (LSD si es autoblocante);;0;L;3825;0;0;0;Verificado
+CTA-06-R09;CTA-06;TR-10;Aceite de caja de cambios;Manual 75W-90 GL-4 / automática según manual (el diferencial va dentro de la caja);;2.5;L;8395;20988;3988;24976;Estimado
 CTA-06-R11;CTA-06;TR-12;Grasa;EP2 litio;;0.3;kg;6565;1970;374;2344;Verificado
 CTA-06-R12;CTA-06;TR-13;Correa de accesorios;Al reemplazar según inspección;Consultar OEM;1;un;21000;21000;3990;24990;Estimado
 CTA-06-R13;CTA-06;TR-16;Bujías;Iridio;Consultar OEM;4;un;10916;43664;8296;51960;Estimado

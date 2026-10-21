@@ -16,7 +16,7 @@ class UserDocument < ApplicationRecord
 
   validates :doc_type, presence: true
   validates :due_on, presence: true
-  validates :file, presence: { message: "debe adjuntar un archivo" }
+  validates :file, presence: { message: "es obligatorio: adjunta un PDF o una imagen" }
   validate :file_must_be_image_or_pdf, if: -> { file.attached? }
 
   has_many :notifications, as: :notifiable, dependent: :destroy

@@ -75,7 +75,7 @@ RSpec.describe "Unlocking a locked account", type: :request do
       patch unlock_user_path(chofer)
 
       expect(response).to redirect_to(root_path)
-      expect(flash[:alert]).to eq("Acceso denegado")
+      expect(flash[:alert]).to eq("No tienes permisos para acceder a esta página.")
       expect(chofer.reload.access_locked?).to be true
     end
 

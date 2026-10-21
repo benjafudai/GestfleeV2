@@ -1,73 +1,151 @@
+<% summary = vehicle_fleet_summary %>
+<% show_company = current_user.superadmin? %>
+<%# Sin empresa (superadmin en el panel global) no hay a qué empresa asociar un vehículo nuevo. %>
+<% can_create = policy(Vehicle).new? && current_user.company.present? %>
+<% vehicles = show_company ? @vehicles.includes(:company) : @vehicles %>
 <div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3">Flota de Vehículos</h1>
-    <% if policy(Vehicle).new? %>
-      <%= link_to new_vehicle_path, class: "btn btn-primary" do %>
-        <i class="bi bi-plus-lg"></i> Nuevo Vehículo
+    <div>
+      <h1 class="h3 mb-0"><i class="bi bi-truck-front me-2"></i>Flota de vehículos</h1>
+      <p class="text-muted mb-0">Patente, kilometraje y estado de cada vehículo.</p>
+    </div>
+    <% if can_create %>
+      <%= link_to new_vehicle_path, class: "btn btn-primary text-nowrap" do %>
+        <i class="bi bi-plus-lg me-1"></i>Nuevo vehículo
       <% end %>
+    <% elsif policy(Vehicle).new? %>
+      <span class="text-muted small d-inline-flex align-items-center gap-2">
+        <i class="bi bi-info-circle" aria-hidden="true"></i>Los vehículos se crean desde la cuenta de administrador de cada empresa.
+      </span>
     <% end %>
   </div>
 
-  <div class="card shadow-sm">
-    <div class="card-body p-0">
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-xl-3">
+      <div class="card h-100">
+        <div class="card-body d-flex align-items-center gap-2 gap-sm-3">
+          <%= vehicle_kpi_icon("bi-truck-front", "primary") %>
+          <div class="min-w-0">
+            <div class="small text-muted">Vehículos<span class="d-none d-sm-inline"> en la flota</span></div>
+            <div class="h4 mb-0"><%= number_with_delimiter(summary[:total]) %></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-xl-3">
+      <div class="card h-100">
+        <div class="card-body d-flex align-items-center gap-2 gap-sm-3">
+          <%= vehicle_kpi_icon("bi-check2-circle", "success") %>
+          <div class="min-w-0">
+            <div class="small text-muted">Activos</div>
+            <div class="h4 mb-0"><%= number_with_delimiter(summary[:active]) %></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-xl-3">
+      <div class="card h-100">
+        <div class="card-body d-flex align-items-center gap-2 gap-sm-3">
+          <%= vehicle_kpi_icon("bi-wrench-adjustable", "warning") %>
+          <div class="min-w-0">
+            <div class="small text-muted">En mantención</div>
+            <div class="h4 mb-0"><%= number_with_delimiter(summary[:maintenance]) %></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-xl-3">
+      <div class="card h-100">
+        <div class="card-body d-flex align-items-center gap-2 gap-sm-3">
+          <%= vehicle_kpi_icon("bi-pause-circle", "secondary") %>
+          <div class="min-w-0">
+            <div class="small text-muted">Inactivos</div>
+            <div class="h4 mb-0"><%= number_with_delimiter(summary[:inactive]) %></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <% if vehicles.any? %>
       <div class="table-responsive">
-        <table class="table table-hover table-striped mb-0 align-middle">
+        <table class="table table-hover align-middle mb-0">
           <thead class="table-light">
             <tr>
-              <th scope="col">Patente</th>
-              <th scope="col">Marca / Modelo</th>
-              <th scope="col">Año</th>
-              <th scope="col">Odómetro</th>
-              <th scope="col">Estado</th>
+              <th scope="col">Vehículo</th>
+              <% if show_company %>
+                <th scope="col" class="d-none d-lg-table-cell">Empresa</th>
+              <% end %>
+              <th scope="col" class="d-none d-md-table-cell">Año</th>
+              <th scope="col" class="d-none d-sm-table-cell text-end">Odómetro</th>
+              <th scope="col" class="d-none d-sm-table-cell">Estado</th>
               <th scope="col" class="text-end">Acciones</th>
             </tr>
           </thead>
           <tbody>
-            <% @vehicles.each do |vehicle| %>
+            <% vehicles.each do |vehicle| %>
+              <% name = vehicle_name(vehicle) %>
               <tr>
-                <td class="fw-bold">
-                  <%= link_to vehicle.plate, vehicle_path(vehicle), class: "text-decoration-none" %>
+                <td class="text-wrap">
+                  <div class="d-flex align-items-center flex-wrap column-gap-2">
+                    <%= link_to vehicle.plate, vehicle_path(vehicle), class: "fw-bold text-nowrap" %>
+                    <span class="d-sm-none"><%= vehicle_status_badge(vehicle) %></span>
+                  </div>
+                  <div class="small text-muted">
+                    <%= name || "Sin marca ni modelo" %><% if vehicle.year.present? %><span class="d-md-none text-nowrap">&nbsp;· <%= vehicle.year %></span><% end %>
+                  </div>
+                  <% if vehicle.odometer.present? %>
+                    <div class="small text-muted d-sm-none"><%= vehicle_odometer(vehicle) %></div>
+                  <% end %>
+                  <% if show_company %>
+                    <div class="small text-muted d-lg-none"><i class="bi bi-building me-1"></i><%= vehicle.company&.name %></div>
+                  <% end %>
                 </td>
-                <td><%= vehicle.brand %> <%= vehicle.model %></td>
-                <td><%= vehicle.year %></td>
-                <td><%= number_with_delimiter(vehicle.odometer) %> km</td>
-                <td>
-                  <% badge_class = case vehicle.status
-                     when 'active' then 'text-bg-success'
-                     when 'maintenance' then 'text-bg-warning'
-                     when 'inactive' then 'text-bg-secondary'
-                     else 'text-bg-light'
-                     end %>
-                  <span class="badge <%= badge_class %> rounded-pill">
-                    <%= vehicle_status_label(vehicle.status) %>
-                  </span>
-                </td>
+                <% if show_company %>
+                  <td class="d-none d-lg-table-cell text-muted"><%= vehicle.company&.name %></td>
+                <% end %>
+                <td class="d-none d-md-table-cell"><%= vehicle_value_or_dash(vehicle.year) %></td>
+                <td class="d-none d-sm-table-cell text-end text-nowrap"><%= vehicle_value_or_dash(vehicle_odometer(vehicle)) %></td>
+                <td class="d-none d-sm-table-cell"><%= vehicle_status_badge(vehicle) %></td>
                 <td class="text-end">
-                  <div class="btn-group btn-group-sm">
-                    <%= link_to "Ver", vehicle_path(vehicle), class: "btn btn-outline-secondary" %>
-                    
-                    <% if policy(vehicle).edit? %>
-                      <%= link_to "Editar", edit_vehicle_path(vehicle), class: "btn btn-outline-primary" %>
+                  <div class="gf-row-actions">
+                    <%= link_to vehicle_path(vehicle), class: "btn btn-sm btn-outline-primary", title: "Ver", "aria-label": "Ver" do %>
+                      <i class="bi bi-eye"></i>
                     <% end %>
-
+                    <% if policy(vehicle).edit? %>
+                      <%= link_to edit_vehicle_path(vehicle), class: "btn btn-sm btn-outline-secondary", title: "Editar", "aria-label": "Editar" do %>
+                        <i class="bi bi-pencil"></i>
+                      <% end %>
+                    <% end %>
                     <% if policy(vehicle).destroy? %>
-                      <%= button_to "Eliminar", vehicle_path(vehicle), method: :delete, form: { data: { turbo_confirm: "¿Estás seguro de eliminar este vehículo?" } }, class: "btn btn-outline-danger" %>
+                      <%= button_to vehicle_path(vehicle), method: :delete, class: "btn btn-sm btn-outline-danger", title: "Eliminar", "aria-label": "Eliminar",
+                                    form: { data: { turbo_confirm: "¿Eliminar el vehículo #{vehicle.plate}? También se borrará su historial (documentos, cargas de combustible, checklists, incidentes y órdenes de trabajo)." } } do %>
+                        <i class="bi bi-trash"></i>
+                      <% end %>
                     <% end %>
                   </div>
-                </td>
-              </tr>
-            <% end %>
-            <% if @vehicles.empty? %>
-              <tr>
-                <td colspan="6" class="text-center py-5 text-muted">
-                  No hay vehículos registrados aún.
                 </td>
               </tr>
             <% end %>
           </tbody>
         </table>
       </div>
-    </div>
+    <% else %>
+      <div class="card-body">
+        <div class="text-center py-5 text-muted">
+          <i class="bi bi-truck-front d-block opacity-50"></i>
+          <p class="mb-1 fw-bold text-body">No hay vehículos registrados</p>
+          <p class="small mb-0">
+            <% if can_create %>
+              Agrega el primero con el botón «Nuevo vehículo».
+            <% else %>
+              Cuando el administrador registre vehículos, aparecerán aquí.
+            <% end %>
+          </p>
+        </div>
+      </div>
+    <% end %>
   </div>
   <%= render "shared/pagination", pagy: @pagy %>
 </div>

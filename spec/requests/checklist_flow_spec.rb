@@ -81,7 +81,7 @@ RSpec.describe 'Checklist flow', type: :request do
         submit(checklist_answers_attributes: answers(lights: ''))
       }.not_to change(ChecklistSubmission.unscoped, :count)
       expect(response).to have_http_status(:unprocessable_content)
-      expect(response.body).to include('es obligatorio para el ítem')
+      expect(response.body).to include('es obligatoria para la pregunta')
     end
 
     it 'only allows one checklist per day' do

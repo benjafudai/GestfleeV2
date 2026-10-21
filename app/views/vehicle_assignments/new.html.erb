@@ -1,56 +1,83 @@
-<div class="container mt-4" style="max-width: 600px;">
-  <div class="card shadow-sm">
-    <div class="card-header bg-white">
-      <h5 class="mb-0">
-        <i class="bi bi-person-badge me-2 text-primary"></i>
-        Asignar Chofer a <strong><%= @vehicle.plate %></strong>
-      </h5>
-    </div>
-    <div class="card-body">
-      <%= form_with(model: [@vehicle, @assignment]) do |f| %>
-
-        <% if @assignment.errors.any? %>
-          <div class="alert alert-danger">
-            <ul class="mb-0">
-              <% @assignment.errors.full_messages.each do |msg| %>
-                <li><%= msg %></li>
+<% current_assignment = @vehicle.active_assignment %>
+<% drivers = @available_drivers.includes(active_assignment: :vehicle).to_a %>
+<% user_error = @assignment.errors[:user].any? || @assignment.errors[:user_id].any? %>
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-8 col-xl-6">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="min-w-0">
+          <h1 class="h3 mb-0"><i class="bi bi-person-plus me-2"></i>Asignar chofer</h1>
+          <p class="text-muted mb-0"><%= vehicle_identity(@vehicle) %></p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body p-4">
+          <% if current_assignment %>
+            <%# El vehículo ya tiene chofer: no tiene sentido mostrar un formulario que siempre fallará. %>
+            <div class="alert alert-warning d-flex gap-2 mb-0" role="alert">
+              <i class="bi bi-exclamation-triangle flex-shrink-0 mt-1"></i>
+              <div>
+                <p class="fw-bold mb-1">Este vehículo ya tiene chofer</p>
+                <p class="mb-0">
+                  Está asignado a <strong class="text-break"><%= current_assignment.user.email %></strong>.
+                  Termina esa asignación desde la <%= link_to "ficha del vehículo", vehicle_path(@vehicle), class: "alert-link" %> antes de asignar otro chofer.
+                </p>
+              </div>
+            </div>
+            <div class="d-flex justify-content-end gap-2 mt-4">
+              <%= link_to vehicle_path(@vehicle), class: "btn btn-primary text-nowrap" do %>
+                <i class="bi bi-arrow-left me-1"></i>Ir a la ficha del vehículo
               <% end %>
-            </ul>
-          </div>
-        <% end %>
+            </div>
+          <% elsif drivers.empty? %>
+            <div class="alert alert-warning d-flex gap-2 mb-0" role="alert">
+              <i class="bi bi-exclamation-triangle flex-shrink-0 mt-1"></i>
+              <div>
+                <p class="fw-bold mb-1">No hay choferes registrados en la empresa</p>
+                <p class="mb-0">Primero agrega un usuario con rol <strong>Chofer</strong> y luego vuelve a asignarlo a este vehículo.</p>
+              </div>
+            </div>
+            <div class="d-flex justify-content-end gap-2 mt-4">
+              <%= link_to vehicle_path(@vehicle), class: "btn btn-outline-secondary text-nowrap" do %>
+                <i class="bi bi-arrow-left me-1"></i>Volver al vehículo
+              <% end %>
+            </div>
+          <% else %>
+            <%= form_with(model: [@vehicle, @assignment]) do |f| %>
+              <%= render "shared/form_errors", object: @assignment, subject: "la asignación" %>
 
-        <% if @available_drivers.empty? %>
-          <div class="alert alert-warning">
-            <i class="bi bi-exclamation-triangle me-1"></i>
-            No hay choferes disponibles en tu empresa. Agrega primero un usuario con rol <strong>Chofer</strong>.
-          </div>
-        <% else %>
-          <div class="mb-3">
-            <%= f.label :user_id, "Chofer", class: "form-label fw-medium" %>
-            <%= f.select :user_id,
-                  @available_drivers.map { |u| [u.email, u.id] },
-                  { prompt: "Selecciona un chofer…" },
-                  class: "form-select" %>
-          </div>
+              <div class="row g-3">
+                <div class="col-12">
+                  <%= vehicle_field_with_errors(user_error) do %>
+                    <%= f.label :user_id, class: "form-label" do %>Chofer <span class="text-danger">*</span><% end %>
+                    <%= f.select :user_id,
+                          drivers.map { |u| [vehicle_driver_option_label(u), u.id] },
+                          { prompt: "Selecciona un chofer" },
+                          class: "form-select" %>
+                  <% end %>
+                  <div class="form-text">Un chofer puede tener un solo vehículo asignado a la vez.</div>
+                </div>
 
-          <div class="mb-3">
-            <%= f.label :started_on, "Fecha de inicio", class: "form-label fw-medium" %>
-            <%= f.date_field :started_on, class: "form-control" %>
-          </div>
+                <div class="col-sm-6">
+                  <%= f.label :started_on, class: "form-label" do %>Fecha de inicio <span class="text-danger">*</span><% end %>
+                  <%= f.date_field :started_on, class: "form-control" %>
+                </div>
 
-          <div class="mb-3">
-            <%= f.label :notes, "Notas (opcional)", class: "form-label fw-medium" %>
-            <%= f.text_area :notes, rows: 2, class: "form-control",
-                  placeholder: "Ej: turno mañana, ruta norte…" %>
-          </div>
+                <div class="col-12">
+                  <%= f.label :notes, class: "form-label" do %>Notas <span class="text-muted fw-normal">(opcional)</span><% end %>
+                  <%= f.text_area :notes, rows: 2, class: "form-control",
+                        placeholder: "Ej.: turno mañana, ruta norte…" %>
+                </div>
+              </div>
 
-          <div class="d-flex gap-2">
-            <%= f.submit "Asignar Chofer", class: "btn btn-primary" %>
-            <%= link_to "Cancelar", vehicle_path(@vehicle), class: "btn btn-outline-secondary" %>
-          </div>
-        <% end %>
-
-      <% end %>
+              <div class="d-flex justify-content-end gap-2 mt-4">
+                <%= link_to "Cancelar", vehicle_path(@vehicle), class: "btn btn-outline-secondary" %>
+                <%= f.submit "Asignar chofer", class: "btn btn-primary" %>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
     </div>
   </div>
 </div>

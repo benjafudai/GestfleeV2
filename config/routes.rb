@@ -43,8 +43,11 @@ Rails.application.routes.draw do
   # Health check
   get "up" => "rails/health#show", as: :rails_health_check
 
-  # Root → login si no autenticado, dashboard si autenticado
-  root "dashboards#show"
+  # Raíz: dashboard con sesión iniciada, página de presentación pública sin ella
+  authenticated :user do
+    root "dashboards#show", as: :authenticated_root
+  end
+  root "pages#home"
   get "/dashboard", to: "dashboards#show"
 
   # Sprint 1: flota + documentos + asignaciones

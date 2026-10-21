@@ -51,7 +51,7 @@ RSpec.describe FuelFill, type: :model do
       expect { fill!(odometer: 11_250) }.to change(Notification, :count).by(2) # 5 km/l, limit is 8 km/l (20% under 10)
 
       expect(Notification.last(2).map(&:user)).to contain_exactly(admin, analista)
-      expect(Notification.last.title).to eq("Alerta de Consumo: AB1234")
+      expect(Notification.last.title).to eq("Alerta de consumo: AB1234")
     end
 
     it "stays quiet for a normal fill" do
@@ -70,7 +70,7 @@ RSpec.describe FuelFill, type: :model do
       fuel_fill = FuelFill.new(company: company, vehicle: vehicle, user: admin, odometer: 1, liters: 1, cost: 1, date: Date.current)
 
       expect(fuel_fill).not_to be_valid
-      expect(fuel_fill.errors[:ticket]).to include("la fotografía de la boleta es obligatoria para registrar cargas.")
+      expect(fuel_fill.errors[:ticket]).to include("es obligatoria: sube una foto de la boleta para registrar la carga")
     end
 
     it "must be an image" do

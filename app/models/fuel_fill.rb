@@ -2,6 +2,7 @@ class FuelFill < ApplicationRecord
   include CompanyScoped
   include VehicleAssignable
   vehicle_assignable_actor :user
+  before_validation :assign_company_from_vehicle
 
   belongs_to :vehicle
   belongs_to :user
@@ -10,9 +11,9 @@ class FuelFill < ApplicationRecord
   has_one :expense, as: :source, dependent: :destroy
   has_many :notifications, as: :notifiable, dependent: :destroy
 
-  validates :liters, presence: true, numericality: { greater_than: 0 }
-  validates :cost, presence: true, numericality: { greater_than_or_equal_to: 0 }
-  validates :odometer, presence: true, numericality: { greater_than: 0 }
+  validates :liters, presence: true, numericality: { greater_than: 0, allow_nil: true }
+  validates :cost, presence: true, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
+  validates :odometer, presence: true, numericality: { greater_than: 0, allow_nil: true }
   validates :date, presence: true
   validates :currency, inclusion: { in: %w[CLP USD] }
   validate :ticket_must_be_attached
@@ -24,8 +25,13 @@ class FuelFill < ApplicationRecord
 
   private
 
+  # Superadmin (sin empresa) registra cargas en vehículos de cualquier empresa: la carga hereda la empresa del vehículo.
+  def assign_company_from_vehicle
+    self.company ||= vehicle&.company
+  end
+
   def ticket_must_be_attached
-    errors.add(:ticket, "la fotografía de la boleta es obligatoria para registrar cargas.") unless ticket.attached?
+    errors.add(:ticket, "es obligatoria: sube una foto de la boleta para registrar la carga") unless ticket.attached?
   end
 
   def ticket_must_be_image
@@ -65,14 +71,18 @@ class FuelFill < ApplicationRecord
     end
   end
 
+  def format_km_per_liter(value)
+    ActiveSupport::NumberHelper.number_to_rounded(value, precision: 2, separator: ",", delimiter: ".")
+  end
+
   def notify_admins_of_anomaly(avg)
     admins = company.users.where(role: [:admin, :superadmin, :analista])
     admins.each do |admin|
       Notification.create!(
         user: admin,
         notifiable: self,
-        title: "Alerta de Consumo: #{vehicle.plate}",
-        message: "Posible anomalía registrada. El rendimiento detectado (#{km_per_liter.round(2)} km/l) es significativamente inferior al promedio histórico (#{avg.round(2)} km/l)."
+        title: "Alerta de consumo: #{vehicle.plate}",
+        message: "Posible anomalía registrada. El rendimiento detectado (#{format_km_per_liter(km_per_liter)} km/l) es significativamente inferior al promedio histórico (#{format_km_per_liter(avg)} km/l)."
       )
     end
   end
@@ -85,7 +95,11 @@ class FuelFill < ApplicationRecord
       amount: cost,
       currency: currency,
       date: date,
-      description: "Carga de combustible (#{liters}L) a los #{odometer} km. #{notes}"
+      description: [
+        "Carga de combustible (#{ActiveSupport::NumberHelper.number_to_rounded(liters, precision: 2, strip_insignificant_zeros: true, separator: ",", delimiter: ".")} L) " \
+        "a los #{ActiveSupport::NumberHelper.number_to_delimited(odometer, delimiter: ".")} km.",
+        notes.presence
+      ].compact.join(" ")
     ).save!
   end
 end

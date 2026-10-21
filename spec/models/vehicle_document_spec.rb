@@ -16,14 +16,14 @@ RSpec.describe VehicleDocument, type: :model do
     record = document
 
     expect(record).not_to be_valid
-    expect(record.errors[:file]).to include("debe adjuntar un archivo PDF")
+    expect(record.errors[:file]).to include("es obligatorio: adjunta un archivo PDF")
   end
 
   it "rejects files that aren't PDFs" do
     record = document(file: png_file)
 
     expect(record).not_to be_valid
-    expect(record.errors[:file]).to include("debe ser un archivo PDF")
+    expect(record.errors[:file]).to include("debe estar en formato PDF")
   end
 
   it "needs a due date" do

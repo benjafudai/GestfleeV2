@@ -1,49 +1,71 @@
-<div class="container mt-4" style="max-width: 800px;">
+<% notifications = @notifications.to_a %>
+<% unread_count = notifications.count { |n| !n.read? } %>
+<div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-      <h1 class="h3 fw-bold mb-1"><i class="bi bi-bell-fill me-2 text-primary"></i>Mis Notificaciones</h1>
-      <p class="text-muted mb-0">Revisa las alertas y avisos del sistema.</p>
+      <h1 class="h3 mb-0"><i class="bi bi-bell me-2"></i>Notificaciones</h1>
+      <p class="text-muted mb-0">
+        <% if unread_count.positive? %>
+          Tienes <%= unread_count == 1 ? "1 notificación sin leer" : "#{number_with_delimiter(unread_count)} notificaciones sin leer" %>.
+        <% else %>
+          Avisos del sistema sobre documentos, consumo y solicitudes.
+        <% end %>
+      </p>
     </div>
-    <% if @notifications.unread.any? %>
-      <%= button_to "Marcar todas como leídas", mark_all_as_read_notifications_path, method: :patch, class: "btn btn-primary btn-sm" %>
+    <% if unread_count.positive? %>
+      <%= button_to mark_all_as_read_notifications_path, method: :patch, class: "btn btn-outline-primary text-nowrap" do %>
+        <i class="bi bi-check2-all me-1"></i>Marcar todas como leídas
+      <% end %>
     <% end %>
   </div>
 
-  <div class="card shadow-sm">
-    <div class="card-body p-0">
-      <% if @notifications.any? %>
-        <ul class="list-group list-group-flush">
-          <% @notifications.each do |notification| %>
-            <li class="list-group-item <%= 'bg-primary-subtle' unless notification.read? %>">
-              <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
-                <div>
-                  <div class="d-flex align-items-center gap-2">
-                    <span class="fw-semibold"><%= notification.title %></span>
-                    <% unless notification.read? %>
-                      <span class="badge text-bg-primary rounded-pill">Nueva</span>
-                    <% end %>
-                  </div>
-                  <p class="text-muted small mb-1 mt-1"><%= notification.message %></p>
+  <div class="card">
+    <% if notifications.any? %>
+      <ul class="list-group list-group-flush">
+        <% notifications.each do |notification| %>
+          <% unread = !notification.read? %>
+          <li class="list-group-item py-3">
+            <div class="d-flex align-items-start gap-3">
+              <%# Las nuevas llevan un punto azul sobre el ícono (junto al título, la etiqueta «Nueva» se partía a otra línea en celular). %>
+              <span class="position-relative flex-shrink-0">
+                <%= notification_icon_circle(notification) %>
+                <% if unread %>
+                  <span class="position-absolute top-0 end-0 p-1 bg-primary border border-2 border-white rounded-circle" title="Nueva">
+                    <span class="visually-hidden">Nueva</span>
+                  </span>
+                <% end %>
+              </span>
+              <div class="flex-grow-1 min-w-0">
+                <div class="<%= unread ? 'fw-bold' : 'text-muted' %> text-break"><%= notification_title(notification) %></div>
+                <p class="text-muted small mb-0 mt-1 text-break"><%= notification_message_text(notification) %></p>
+                <div class="d-flex flex-wrap align-items-center column-gap-3 row-gap-1 mt-2 small">
+                  <span class="text-muted text-nowrap" title="<%= l(notification.created_at, format: :long) %>">
+                    <i class="bi bi-clock me-1"></i>hace <%= time_ago_in_words(notification.created_at) %>
+                  </span>
                   <% if notification.notifiable_type == 'PasswordResetRequest' && current_user.superadmin? %>
-                    <%= link_to "Ver solicitud", password_reset_request_path(notification.notifiable_id), class: "small" %>
+                    <%= link_to password_reset_request_path(notification.notifiable_id), class: "fw-bold text-nowrap" do %>
+                      <i class="bi bi-key me-1"></i>Ver solicitud
+                    <% end %>
                   <% end %>
-                </div>
-                <div class="text-end">
-                  <p class="text-muted small mb-1"><%= time_ago_in_words(notification.created_at) %> atrás</p>
-                  <% unless notification.read? %>
-                    <%= button_to "Marcar leída", mark_as_read_notification_path(notification), method: :patch, class: "btn btn-sm btn-link p-0" %>
+                  <% if unread %>
+                    <%= button_to mark_as_read_notification_path(notification), method: :patch, class: "btn btn-link btn-sm p-0 fw-bold text-decoration-none text-nowrap", form: { class: "d-inline" } do %>
+                      <i class="bi bi-check2 me-1"></i>Marcar como leída
+                    <% end %>
                   <% end %>
                 </div>
               </div>
-            </li>
-          <% end %>
-        </ul>
-      <% else %>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <div class="card-body">
         <div class="text-center py-5 text-muted">
-          <i class="bi bi-bell-slash d-block mb-2 fs-3 opacity-50"></i>
-          No tienes notificaciones por el momento.
+          <i class="bi bi-bell-slash d-block opacity-50"></i>
+          <p class="mb-1 fw-bold text-body">No tienes notificaciones</p>
+          <p class="small mb-0">Aquí verás los avisos de documentos por vencer, consumo de combustible y otros eventos.</p>
         </div>
-      <% end %>
-    </div>
+      </div>
+    <% end %>
   </div>
 </div>
