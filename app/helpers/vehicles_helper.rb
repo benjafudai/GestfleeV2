@@ -80,10 +80,12 @@ module VehiclesHelper
     invalid ? tag.div(content, class: "field_with_errors") : content
   end
 
-  # Texto de la opción de un chofer: avisa si ya maneja otro vehículo.
+  # Texto de la opción de un posible responsable: indica si es administrador y avisa si
+  # ya tiene otro vehículo.
   def vehicle_driver_option_label(driver)
+    label = driver.admin? ? "#{driver.email} · Administrador" : driver.email
     plate = driver.active_assignment&.vehicle&.plate
-    plate ? "#{driver.email} (ya asignado a #{plate})" : driver.email
+    plate ? "#{label} (ya asignado a #{plate})" : label
   end
 
   # "11 de junio de 2026 · hace 4 meses".

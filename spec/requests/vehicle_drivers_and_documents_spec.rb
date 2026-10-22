@@ -46,6 +46,24 @@ RSpec.describe 'Vehicle drivers and documents', type: :request do
       expect(response.body).not_to include(outsider.email)
     end
 
+    it 'can leave the company admin in charge of the vehicle' do
+      admin = company_admin(company)
+      mechanic = create_user(:mecanico, company: company)
+
+      get new_vehicle_vehicle_assignment_path(vehicle)
+      expect(response.body).to include("#{admin.email} · Administrador")
+      expect(response.body).not_to include(mechanic.email)
+
+      post vehicle_vehicle_assignments_path(vehicle),
+           params: { vehicle_assignment: { user_id: admin.id, started_on: Date.current } }
+
+      expect(response).to redirect_to(vehicle_path(vehicle))
+      expect(vehicle.reload.active_assignment.user).to eq(admin)
+
+      get vehicle_path(vehicle)
+      expect(response.body).to include("Responsable del vehículo")
+    end
+
     it 'uploads, updates and deletes a document' do
       post vehicle_vehicle_documents_path(vehicle),
            params: { vehicle_document: { doc_type: 'revision_tecnica', due_on: Date.current + 10, file: pdf } }

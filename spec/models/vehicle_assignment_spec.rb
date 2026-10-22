@@ -12,12 +12,19 @@ RSpec.describe VehicleAssignment, type: :model do
     expect(VehicleAssignment.active).to include(assignment)
   end
 
-  it 'only accepts drivers' do
+  it 'accepts a company admin as the person in charge' do
+    assignment = assign_vehicle(company_admin(company), vehicle)
+
+    expect(assignment).to be_persisted
+    expect(vehicle.active_assignment.user).to be_admin
+  end
+
+  it 'only accepts drivers and admins' do
     assignment = VehicleAssignment.new(user: create_user(:mecanico, company: company), vehicle: vehicle,
                                        started_on: Date.current)
 
     expect(assignment).not_to be_valid
-    expect(assignment.errors[:user]).to include('debe tener rol de chofer')
+    expect(assignment.errors[:user]).to include('debe tener rol de chofer o administrador')
   end
 
   it 'rejects a driver from another company' do
@@ -34,7 +41,7 @@ RSpec.describe VehicleAssignment, type: :model do
                                        started_on: Date.current)
 
     expect(assignment).not_to be_valid
-    expect(assignment.errors[:vehicle]).to include('ya tiene un chofer asignado actualmente')
+    expect(assignment.errors[:vehicle]).to include('ya tiene un responsable asignado actualmente')
   end
 
   it 'does not give a driver two vehicles at once' do
