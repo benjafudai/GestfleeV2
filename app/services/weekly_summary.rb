@@ -53,6 +53,8 @@ class WeeklySummary
         incidents: incidents,
         checklists: checklists,
         low_stock_parts: low_stock_parts,
+        low_stock_products: low_stock_products,
+        deliveries: deliveries,
         pending_supply_requests: SupplyRequest.where(company: company).where.not(status: :delivered).count
       }
     end
@@ -126,6 +128,21 @@ class WeeklySummary
   def low_stock_parts
     Part.where(company: company).where(stock: ..LOW_STOCK).order(:stock, :name).limit(LIST_LIMIT)
         .map { |part| { name: part.name, sku: part.sku, stock: part.stock.to_f, unit: part.unit_of_measure } }
+  end
+
+  # Productos que vende la empresa con stock igual o menor a su mínimo.
+  def low_stock_products
+    Product.where(company: company).low_stock.order(:name).limit(LIST_LIMIT)
+           .map { |product| { name: product.name, code: product.code, stock: product.stock.to_f, min_stock: product.min_stock.to_f, unit: product.unit } }
+  end
+
+  # Entregas de productos de la semana y lo entregado por producto (sin las anuladas).
+  def deliveries
+    week = Delivery.where(company: company, delivered_at: times)
+    by_product = DeliveryLine.joins(:delivery, :product).merge(week.delivered).group("products.name", "products.unit")
+                             .order(Arel.sql("SUM(delivery_lines.quantity) DESC")).limit(LIST_LIMIT).sum(:quantity)
+    { delivered: week.delivered.count, cancelled: week.cancelled.count,
+      by_product: by_product.map { |(name, unit), quantity| { name: name, unit: unit, quantity: quantity.to_f } } }
   end
 
   def to_clp(amount, currency)

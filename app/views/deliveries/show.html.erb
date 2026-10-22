@@ -1,0 +1,85 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center gap-2 mb-4">
+    <div class="min-w-0">
+      <h1 class="h3 mb-0 text-break"><i class="bi bi-truck me-2"></i>Entrega a <%= @delivery.customer %></h1>
+      <p class="text-muted mb-0"><%= l(@delivery.delivered_at, format: "%d/%m/%Y a las %H:%M") %> · <%= delivery_status_badge(@delivery) %></p>
+    </div>
+    <%= link_to deliveries_path, class: "btn btn-outline-secondary", title: "Volver", "aria-label": "Volver" do %>
+      <i class="bi bi-arrow-left"></i><span class="d-none d-sm-inline ms-1">Volver</span>
+    <% end %>
+  </div>
+
+  <% if @delivery.cancelled? %>
+    <div class="alert alert-secondary">
+      Anulada el <%= l(@delivery.cancelled_at, format: "%d/%m/%Y %H:%M") %><%= " por #{@delivery.cancelled_by.email}" if @delivery.cancelled_by %>.
+      Lo entregado volvió al stock.<%= " Motivo: #{@delivery.cancel_reason}" if @delivery.cancel_reason %>
+    </div>
+  <% end %>
+
+  <div class="row gx-4">
+    <div class="col-lg-7">
+      <div class="card mb-4">
+        <div class="card-header bg-white"><%= inventory_card_title("Productos entregados", icon: "bi-box-seam") %></div>
+        <ul class="list-group list-group-flush">
+          <% @delivery.lines.includes(:product).each do |line| %>
+            <li class="list-group-item d-flex justify-content-between align-items-center gap-2">
+              <span class="text-break"><%= line.product.name %></span>
+              <span class="fw-bold text-nowrap"><%= quantity_with_unit(line.quantity, line.product.unit) %></span>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+
+      <% if @delivery.notes.present? %>
+        <div class="card mb-4">
+          <div class="card-header bg-white"><%= inventory_card_title("Notas", icon: "bi-sticky") %></div>
+          <div class="card-body"><%= simple_format(@delivery.notes, class: "mb-0") %></div>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="col-lg-5">
+      <div class="card mb-4">
+        <div class="card-header bg-white"><%= inventory_card_title("Datos", icon: "bi-info-circle") %></div>
+        <dl class="card-body row mb-0 small">
+          <dt class="col-4 text-muted fw-normal">Cliente</dt><dd class="col-8 text-break"><%= @delivery.customer %></dd>
+          <dt class="col-4 text-muted fw-normal">Dirección</dt><dd class="col-8 text-break"><%= @delivery.address || "—" %></dd>
+          <dt class="col-4 text-muted fw-normal">Chofer</dt><dd class="col-8 text-break"><%= @delivery.driver&.email || "Sin chofer" %></dd>
+          <dt class="col-4 text-muted fw-normal">Vehículo</dt><dd class="col-8 mb-0"><%= @delivery.vehicle&.plate || "—" %></dd>
+        </dl>
+      </div>
+
+      <% if @delivery.receipt.attached? %>
+        <div class="card mb-4">
+          <div class="card-header bg-white"><%= inventory_card_title("Comprobante", icon: "bi-receipt") %></div>
+          <div class="card-body">
+            <% if @delivery.receipt.image? %>
+              <%= link_to rails_blob_path(@delivery.receipt, disposition: "inline"), target: "_blank", rel: "noopener" do %>
+                <%= image_tag rails_blob_path(@delivery.receipt, disposition: "inline"), class: "img-fluid rounded", style: "max-height: 360px",
+                              alt: "Comprobante de la entrega" %>
+              <% end %>
+            <% else %>
+              <%= link_to rails_blob_path(@delivery.receipt, disposition: "inline"), class: "btn btn-outline-primary", target: "_blank", rel: "noopener" do %>
+                <i class="bi bi-file-earmark me-1"></i>Ver comprobante
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <% if policy(@delivery).cancel? %>
+        <div class="card border-danger-subtle">
+          <div class="card-header bg-white"><%= inventory_card_title("Anular entrega", icon: "bi-x-circle", tone: "danger") %></div>
+          <div class="card-body">
+            <p class="small text-muted">Úsalo si la entrega se registró por error o el cliente la devolvió. Lo entregado vuelve al stock.</p>
+            <%= form_with url: cancel_delivery_path(@delivery), method: :patch, local: true,
+                  data: { turbo_confirm: "¿Anular esta entrega y devolver los productos al stock?" } do %>
+              <%= text_field_tag :cancel_reason, nil, class: "form-control mb-2", placeholder: "Motivo (opcional)", maxlength: 255, "aria-label": "Motivo" %>
+              <%= submit_tag "Anular entrega", class: "btn btn-outline-danger w-100" %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

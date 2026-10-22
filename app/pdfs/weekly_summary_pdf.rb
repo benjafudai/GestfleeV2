@@ -174,12 +174,39 @@ class WeeklySummaryPdf
     note "Solicitudes de suministro sin entregar: #{@data[:pending_supply_requests]}."
     if parts.empty?
       note "No hay repuestos con stock bajo (#{WeeklySummary::LOW_STOCK} o menos)."
-      return
+    else
+      rows = parts.map { |part| [clean(part[:name]), clean(part[:sku]), quantity(part[:stock], part[:unit])] }
+      data_table(["Repuesto con stock bajo", "Código", "Stock"], rows, widths: [nil, 110, 80]) do |table|
+        table.column(2).align = :right
+      end
     end
+    low_stock_products
+    deliveries
+  end
 
-    rows = parts.map { |part| [clean(part[:name]), clean(part[:sku]), "#{number(part[:stock])} #{clean(part[:unit])}"] }
-    data_table(["Repuesto con stock bajo", "Código", "Stock"], rows, widths: [nil, 110, 80]) do |table|
-      table.column(2).align = :right
+  def deliveries
+    deliveries = @data[:deliveries]
+    return if deliveries[:delivered].zero? && deliveries[:cancelled].zero?
+
+    cancelled = deliveries[:cancelled].positive? ? " (#{deliveries[:cancelled]} #{plural(deliveries[:cancelled], 'anulada', 'anuladas')})" : ""
+    note "Entregas de productos en la semana: #{deliveries[:delivered]}#{cancelled}."
+    return if deliveries[:by_product].empty?
+
+    rows = deliveries[:by_product].map { |row| [clean(row[:name]), quantity(row[:quantity], row[:unit])] }
+    data_table(["Producto entregado", "Cantidad"], rows, widths: [nil, 120]) do |table|
+      table.column(1).align = :right
+    end
+  end
+
+  def low_stock_products
+    products = @data[:low_stock_products]
+    return if products.empty?
+
+    rows = products.map do |product|
+      [clean(product[:name]), clean(product[:code]).presence || "-", quantity(product[:stock], product[:unit]), number(product[:min_stock])]
+    end
+    data_table(["Producto bajo el mínimo", "Código", "Stock", "Mínimo"], rows, widths: [nil, 90, 80, 60]) do |table|
+      table.columns(2..3).align = :right
     end
   end
 
@@ -235,6 +262,11 @@ class WeeklySummaryPdf
     rounded = value.to_f.round(precision)
     rounded = rounded.to_i if rounded == rounded.to_i
     ActiveSupport::NumberHelper.number_to_delimited(rounded, delimiter: ".", separator: ",")
+  end
+
+  # "13,5 kg", "2 cajas": cantidad con la unidad concordada, como en la app.
+  def quantity(value, unit)
+    clean("#{number(value)} #{ApplicationController.helpers.unit_of_measure_label(value, unit)}")
   end
 
   def plural(count, one, many)

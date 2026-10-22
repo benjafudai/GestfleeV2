@@ -1,0 +1,21 @@
+<% unit = line.product&.unit %>
+<div class="row g-2 align-items-end mb-2" data-line>
+  <div class="col-12 col-sm-7">
+    <label class="form-label small mb-1" for="delivery_lines_attributes_<%= index %>_product_id">Producto</label>
+    <select class="form-select" name="delivery[lines_attributes][<%= index %>][product_id]" id="delivery_lines_attributes_<%= index %>_product_id" data-line-product>
+      <option value="">Elige un producto</option>
+      <%= delivery_product_options(products, line.product_id) %>
+    </select>
+  </div>
+  <div class="col-9 col-sm-4">
+    <label class="form-label small mb-1" for="delivery_lines_attributes_<%= index %>_quantity">Cantidad</label>
+    <div class="input-group">
+      <input type="number" step="any" min="0" class="form-control" name="delivery[lines_attributes][<%= index %>][quantity]"
+             id="delivery_lines_attributes_<%= index %>_quantity" value="<%= decimal_field_value(line.quantity) %>" inputmode="decimal">
+      <span class="input-group-text" data-line-unit><%= unit || "—" %></span>
+    </div>
+  </div>
+  <div class="col-3 col-sm-1 text-end">
+    <button type="button" class="btn btn-outline-danger" data-remove-line title="Quitar" aria-label="Quitar producto"><i class="bi bi-trash"></i></button>
+  </div>
+</div>

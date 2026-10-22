@@ -10,6 +10,7 @@ RSpec.describe WeeklySummaryPdf do
     vehicle = create_vehicle(company: company, plate: "AB1234")
     VehicleDocument.create!(vehicle: vehicle, doc_type: :seguro, due_on: Date.new(2026, 10, 10), file: pdf_file)
     Expense.create!(company: company, category: :tolls, amount: 10_000, date: Date.new(2026, 10, 13))
+    Product.create!(company: company, name: "Posta negra 🥩", unit: "kg", stock: 10, min_stock: 40)
 
     output = described_class.new(summary).render
 

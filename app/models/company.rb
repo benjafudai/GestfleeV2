@@ -12,6 +12,8 @@ class Company < ApplicationRecord
   has_many :maintenance_plans, dependent: :destroy
   has_many :supply_requests, dependent: :destroy
   has_many :parts, dependent: :destroy
+  has_many :deliveries, dependent: :destroy
+  has_many :products, dependent: :destroy
   has_many :checklist_submissions, dependent: :destroy
   has_many :part_fitments, dependent: :destroy
   has_many :roadside_assistance_events, dependent: :destroy

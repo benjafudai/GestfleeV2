@@ -68,6 +68,30 @@ RSpec.describe WeeklySummary do
     expect(data[:low_stock_parts]).to be_empty
   end
 
+  it "lists the products under their minimum" do
+    Product.create!(company: company, name: "Posta negra", unit: "kg", stock: 10, min_stock: 40)
+    Product.create!(company: company, name: "Lomo vetado", unit: "kg", stock: 100, min_stock: 40)
+
+    expect(summary.to_h[:low_stock_products]).to eq([{ name: "Posta negra", code: nil, stock: 10.0, min_stock: 40.0, unit: "kg" }])
+  end
+
+  it "counts the week's deliveries and adds up what was delivered" do
+    driver = create_user(:chofer, company: company)
+    lomo = Product.create!(company: company, name: "Lomo vetado", unit: "kg", stock: 100)
+    deliver = lambda do |at, quantity|
+      travel_to(at) do
+        Delivery.new(company: company, driver: driver, customer: "Cliente",
+                     lines_attributes: [{ product_id: lomo.id, quantity: quantity }]).tap { |d| d.register(by: driver) }
+      end
+    end
+    deliver.call(Time.zone.local(2026, 10, 13, 10), 10)
+    deliver.call(Time.zone.local(2026, 10, 15, 10), 5)
+    deliver.call(Time.zone.local(2026, 10, 16, 10), 7).cancel(by: driver)
+    deliver.call(Time.zone.local(2026, 10, 19, 10), 20) # semana siguiente
+
+    expect(summary.to_h[:deliveries]).to eq(delivered: 2, cancelled: 1, by_product: [{ name: "Lomo vetado", unit: "kg", quantity: 15.0 }])
+  end
+
   it "lists parts with low stock" do
     create_part(company: company, name: "Filtro de aire", stock: 2)
     create_part(company: company, name: "Aceite", stock: 40)

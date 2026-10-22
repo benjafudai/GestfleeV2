@@ -1,0 +1,69 @@
+<% company_products = policy_scope(Product) %>
+<% categories = company_products.where.not(category: nil).distinct.order(:category).pluck(:category) %>
+<% units = company_products.distinct.order(:unit).pluck(:unit) %>
+<%= form_with(model: product, local: true) do |f| %>
+  <%= render "shared/form_errors", object: product, subject: "el producto" %>
+
+  <div class="card mb-4">
+    <div class="card-header bg-white">
+      <%= inventory_card_title("Datos del producto", icon: "bi-card-text") %>
+    </div>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-8">
+          <%= f.label :name, class: "form-label" do %>Nombre <span class="text-danger">*</span><% end %>
+          <%= f.text_field :name, class: "form-control", required: true, maxlength: 120 %>
+        </div>
+        <div class="col-md-4">
+          <%= f.label :code, class: "form-label" do %>Código <span class="text-muted fw-normal">(opcional)</span><% end %>
+          <%= f.text_field :code, class: "form-control", maxlength: 40 %>
+        </div>
+
+        <div class="col-sm-6 col-md-4">
+          <%= f.label :category, class: "form-label" do %>Categoría <span class="text-muted fw-normal">(opcional)</span><% end %>
+          <%= f.text_field :category, class: "form-control", list: "product-categories", maxlength: 60 %>
+          <datalist id="product-categories">
+            <% categories.each do |category| %><option value="<%= category %>"></option><% end %>
+          </datalist>
+        </div>
+        <div class="col-sm-6 col-md-4">
+          <%= f.label :unit, class: "form-label" do %>Unidad de medida <span class="text-danger">*</span><% end %>
+          <%= f.text_field :unit, class: "form-control", list: "product-units", required: true, maxlength: 40 %>
+          <datalist id="product-units">
+            <% units.each do |unit| %><option value="<%= unit %>"></option><% end %>
+          </datalist>
+          <div class="form-text">En singular: el plural se agrega solo.</div>
+        </div>
+        <% if product.new_record? %>
+          <div class="col-sm-6 col-md-4">
+            <%= f.label :stock, class: "form-label" do %>Stock actual <span class="text-danger">*</span><% end %>
+            <%= f.number_field :stock, value: decimal_field_value(product.stock), step: :any, min: 0, class: "form-control", required: true %>
+            <div class="form-text">Lo que hay hoy. Después se mueve con entradas y salidas.</div>
+          </div>
+        <% end %>
+        <div class="col-sm-6 col-md-4">
+          <%= f.label :min_stock, class: "form-label" do %>Stock mínimo <span class="text-muted fw-normal">(opcional)</span><% end %>
+          <%= f.number_field :min_stock, value: decimal_field_value(product.min_stock), step: :any, min: 0, class: "form-control" %>
+          <div class="form-text">Con esto o menos, se marca como bajo el mínimo.</div>
+        </div>
+        <div class="col-4 col-sm-2 col-md-3">
+          <%= f.label :currency, "Moneda", class: "form-label" %>
+          <%= f.select :currency, Product::CURRENCIES, {}, { class: "form-select" } %>
+        </div>
+        <div class="col-8 col-sm-4 col-md-5">
+          <%= f.label :price, class: "form-label" do %>Precio por unidad <span class="text-muted fw-normal">(opcional)</span><% end %>
+          <%= f.number_field :price, value: decimal_field_value(product.price), step: :any, min: 0, class: "form-control" %>
+        </div>
+        <div class="col-12">
+          <%= f.label :notes, class: "form-label" do %>Notas <span class="text-muted fw-normal">(opcional)</span><% end %>
+          <%= f.text_area :notes, rows: 2, class: "form-control", maxlength: 1000 %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-end gap-2 mt-4">
+    <%= link_to "Cancelar", product.persisted? ? product_path(product) : products_path, class: "btn btn-outline-secondary" %>
+    <%= f.submit yield(:submit_text), class: "btn btn-primary" %>
+  </div>
+<% end %>
