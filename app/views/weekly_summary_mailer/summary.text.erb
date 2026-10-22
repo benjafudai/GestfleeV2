@@ -1,0 +1,12 @@
+GestFlee - Resumen semanal de <%= @summary.company.name %>
+<%= @summary.period_label %>. El detalle va en el PDF adjunto.
+
+Gasto de la semana: <%= format_money(@data[:expenses][:total_clp], "CLP") %>
+Combustible: <%= number_with_precision(@data[:fuel][:liters], precision: 1, strip_insignificant_zeros: true, delimiter: ".", separator: ",") %> L
+Órdenes de trabajo abiertas: <%= @data[:work_orders][:open_count] %>
+Documentos vencidos: <%= @data[:documents][:expired] %>
+Documentos por vencer (30 días): <%= @data[:documents][:expiring] %>
+
+Abrir GestFlee: <%= root_url %>
+
+Recibes este correo porque eres administrador de <%= @summary.company.name %> en GestFlee o te agregaron a la lista del resumen. Un administrador puede apagarlo en «Resumen semanal».

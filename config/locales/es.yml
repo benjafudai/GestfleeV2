@@ -239,6 +239,7 @@ es:
         photos: "Fotos"
       company:
         name: "Nombre"
+        weekly_summary_emails: "Correos adicionales"
         rut: "RUT"
         users: "Usuarios"
       company/users:

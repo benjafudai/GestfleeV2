@@ -30,6 +30,9 @@ Rails.application.routes.draw do
   end
 
   resources :alerts, only: [:index]
+  resource :weekly_summary, only: %i[show update], path: "resumen_semanal" do
+    post :deliver
+  end
   resources :failure_analytics, only: [:index]
   resources :notifications, only: [:index] do
     member do

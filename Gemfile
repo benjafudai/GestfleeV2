@@ -89,3 +89,7 @@ gem "pundit-matchers", "~> 4.0", :groups => [:development, :test]
 
 # Ruby 3.4+ ya no trae csv por defecto; lo usa la carga de la biblioteca (BibliotecaImporter).
 gem "csv"
+
+# PDF del resumen semanal por empresa (WeeklySummaryPdf).
+gem "prawn", "~> 2.5"
+gem "prawn-table", "~> 0.2"

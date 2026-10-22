@@ -106,7 +106,8 @@ module NavigationHelper
         { title: "Análisis", items: [
           nav_item("Costos", expenses_path, "fa-coins", "/expenses"),
           nav_item("Análisis de fallas", failure_analytics_path, "fa-chart-line", "/failure_analytics"),
-          nav_item("Alertas", alerts_path, "fa-circle-exclamation", "/alerts", tone: :danger)
+          nav_item("Alertas", alerts_path, "fa-circle-exclamation", "/alerts", tone: :danger),
+          nav_item("Resumen semanal", weekly_summary_path, "fa-file-pdf", "/resumen_semanal")
         ] },
         { title: "Administración", items: [
           nav_item("Usuarios", users_path, "fa-users", "/users")
