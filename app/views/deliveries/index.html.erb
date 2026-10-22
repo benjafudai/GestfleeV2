@@ -1,0 +1,101 @@
+<% own = current_user.chofer? %>
+<% filtered = @filters.any? %>
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center gap-2 mb-4">
+    <div class="min-w-0">
+      <h1 class="h3 mb-0"><i class="bi bi-truck me-2"></i><%= own ? "Mis entregas" : "Entregas" %></h1>
+      <p class="text-muted mb-0">
+        <%= own ? "Registra cada entrega al cliente: el stock se descuenta solo." : "Lo que entregan los choferes. Cada entrega descuenta stock de productos." %>
+      </p>
+    </div>
+    <% if policy(Delivery).create? %>
+      <%= link_to new_delivery_path, class: "btn btn-primary text-nowrap" do %>
+        <i class="bi bi-plus-lg me-1"></i>Nueva<span class="d-none d-sm-inline"> entrega</span>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-body d-flex align-items-center gap-3">
+      <span class="gf-action-icon is-primary"><i class="bi bi-calendar-check"></i></span>
+      <div class="min-w-0">
+        <div class="small text-muted"><%= own ? "Tus entregas de hoy" : "Entregas de hoy" %></div>
+        <div class="h4 mb-0"><%= @today_count %></div>
+      </div>
+    </div>
+  </div>
+
+  <% unless own %>
+    <%= form_with url: deliveries_path, method: :get, class: "card mb-3" do %>
+      <div class="card-body">
+        <div class="row g-2 align-items-end">
+          <div class="col-12 col-md-3">
+            <%= label_tag :driver_id, "Chofer", class: "form-label small text-muted mb-1" %>
+            <%= select_tag :driver_id, options_from_collection_for_select(@drivers, :id, :email, @filters["driver_id"]), include_blank: "Todos", class: "form-select" %>
+          </div>
+          <div class="col-6 col-md-2">
+            <%= label_tag :status, "Estado", class: "form-label small text-muted mb-1" %>
+            <%= select_tag :status, options_for_select([["Entregadas", "delivered"], ["Anuladas", "cancelled"]], @filters["status"]), include_blank: "Todas", class: "form-select" %>
+          </div>
+          <div class="col-6 col-md-2">
+            <%= label_tag :from, "Desde", class: "form-label small text-muted mb-1" %>
+            <%= date_field_tag :from, @filters["from"], class: "form-control" %>
+          </div>
+          <div class="col-6 col-md-2">
+            <%= label_tag :to, "Hasta", class: "form-label small text-muted mb-1" %>
+            <%= date_field_tag :to, @filters["to"], class: "form-control" %>
+          </div>
+          <div class="col-6 col-md-3 d-flex gap-2">
+            <%= submit_tag "Filtrar", class: "btn btn-outline-primary flex-fill", name: nil %>
+            <% if filtered %>
+              <%= link_to deliveries_path, class: "btn btn-outline-secondary", title: "Quitar filtros", "aria-label": "Quitar filtros" do %>
+                <i class="bi bi-x-lg"></i>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+
+  <div class="card">
+    <% if @deliveries.any? %>
+      <div class="list-group list-group-flush">
+        <% @deliveries.each do |delivery| %>
+          <%= link_to delivery, class: "list-group-item list-group-item-action py-3" do %>
+            <div class="d-flex justify-content-between align-items-start gap-2">
+              <div class="min-w-0">
+                <div class="fw-bold text-break <%= 'text-decoration-line-through text-muted' if delivery.cancelled? %>"><%= delivery.customer %></div>
+                <div class="small text-muted text-break"><%= delivery_lines_summary(delivery) %></div>
+                <div class="small text-muted mt-1">
+                  <i class="bi bi-clock me-1"></i><%= l(delivery.delivered_at, format: "%d/%m/%Y %H:%M") %>
+                  <% unless own %>
+                    <span class="ms-2 text-break"><i class="bi bi-person me-1"></i><%= delivery.driver&.email || "Sin chofer" %></span>
+                  <% end %>
+                  <% if delivery.vehicle %>
+                    <span class="ms-2"><i class="bi bi-truck me-1"></i><%= delivery.vehicle.plate %></span>
+                  <% end %>
+                </div>
+              </div>
+              <div class="flex-shrink-0"><%= delivery_status_badge(delivery) %></div>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="text-center py-5 px-3 text-muted">
+        <i class="bi bi-truck d-block opacity-50"></i>
+        <% if filtered %>
+          <p class="mb-1 fw-bold text-body">Ninguna entrega coincide con el filtro</p>
+          <p class="small mb-0"><%= link_to "Ver todas las entregas", deliveries_path %></p>
+        <% else %>
+          <p class="mb-1 fw-bold text-body">Todavía no hay entregas</p>
+          <p class="small mb-0">
+            <%= policy(Delivery).create? ? "Registra la primera con el botón «Nueva entrega»." : "Cuando los choferes registren entregas, aparecerán aquí." %>
+          </p>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+  <%= render "shared/pagination", pagy: @pagy %>
+</div>

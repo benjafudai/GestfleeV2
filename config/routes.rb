@@ -11,6 +11,12 @@ Rails.application.routes.draw do
       patch :change_status
     end
   end
+  resources :products, path: "productos" do
+    resources :product_movements, only: :create, path: "movimientos"
+  end
+  resources :deliveries, only: %i[index show new create], path: "entregas" do
+    patch :cancel, on: :member, path: "anular"
+  end
   resources :parts do
     resources :part_quotes, only: %i[create destroy]
   end
@@ -30,6 +36,9 @@ Rails.application.routes.draw do
   end
 
   resources :alerts, only: [:index]
+  resource :weekly_summary, only: %i[show update], path: "resumen_semanal" do
+    post :deliver
+  end
   resources :failure_analytics, only: [:index]
   resources :notifications, only: [:index] do
     member do

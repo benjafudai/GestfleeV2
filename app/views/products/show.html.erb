@@ -1,0 +1,171 @@
+<% value = @product.price && @product.stock * @product.price %>
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center gap-2 mb-4">
+    <div class="min-w-0">
+      <h1 class="h3 mb-0 text-break"><i class="bi bi-box-seam me-2"></i><%= @product.name %></h1>
+      <p class="text-muted mb-0">
+        <%= safe_join([@product.code && "Código #{@product.code}", @product.category, "Unidad: #{@product.unit}"].compact, " · ") %>
+      </p>
+    </div>
+    <div class="d-flex flex-wrap justify-content-end gap-2">
+      <% if policy(@product).edit? %>
+        <%= link_to edit_product_path(@product), class: "btn btn-outline-primary", title: "Editar", "aria-label": "Editar" do %>
+          <i class="bi bi-pencil"></i><span class="d-none d-sm-inline ms-1">Editar</span>
+        <% end %>
+      <% end %>
+      <%= link_to products_path, class: "btn btn-outline-secondary", title: "Volver", "aria-label": "Volver" do %>
+        <i class="bi bi-arrow-left"></i><span class="d-none d-sm-inline ms-1">Volver</span>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-lg-4">
+      <div class="card h-100">
+        <div class="card-body d-flex align-items-center gap-3">
+          <span class="gf-action-icon <%= @product.stock.positive? && !@product.low_stock? ? 'is-success' : 'is-warning' %>">
+            <i class="bi <%= @product.low_stock? || !@product.stock.positive? ? 'bi-exclamation-triangle' : 'bi-box-seam' %>"></i>
+          </span>
+          <div class="min-w-0">
+            <div class="small text-muted">Stock actual</div>
+            <% if @product.stock.positive? %>
+              <div class="h4 mb-0"><%= format_quantity(@product.stock) %> <span class="d-block d-sm-inline fs-6 fw-normal text-muted"><%= unit_of_measure_label(@product.stock, @product.unit) %></span></div>
+            <% else %>
+              <div class="h4 mb-0 text-danger">Sin stock</div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-lg-4">
+      <div class="card h-100">
+        <div class="card-body d-flex align-items-center gap-3">
+          <span class="gf-action-icon is-primary"><i class="bi bi-speedometer"></i></span>
+          <div class="min-w-0">
+            <div class="small text-muted">Stock mínimo</div>
+            <% if @product.min_stock %>
+              <div class="h4 mb-0"><%= format_quantity(@product.min_stock) %></div>
+              <div class="small <%= @product.low_stock? ? 'text-danger fw-bold' : 'text-muted' %>"><%= @product.low_stock? ? "Bajo el mínimo" : "Sobre el mínimo" %></div>
+            <% else %>
+              <div class="h4 mb-0 text-muted">—</div>
+              <div class="small text-muted">Sin definir</div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-lg-4">
+      <div class="card h-100">
+        <div class="card-body d-flex align-items-center gap-3">
+          <span class="gf-action-icon is-success"><i class="bi bi-cash-coin"></i></span>
+          <div class="min-w-0">
+            <div class="small text-muted">Valor en stock</div>
+            <% if value %>
+              <div class="h4 mb-0"><%= format_money(value, @product.currency) %></div>
+              <div class="small text-muted"><%= format_money(@product.price, @product.currency) %> por <%= @product.unit %></div>
+            <% else %>
+              <div class="h4 mb-0 text-muted">—</div>
+              <div class="small text-muted">Sin precio</div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <% if @movement %>
+      <div class="col-lg-4">
+        <div class="card">
+          <div class="card-header bg-white">
+            <%= inventory_card_title("Mover stock", icon: "bi-arrow-left-right") %>
+          </div>
+          <div class="card-body">
+            <%= form_with model: @movement, url: product_product_movements_path(@product), local: true do |f| %>
+              <%= render "shared/form_errors", object: @movement, subject: "el movimiento" %>
+              <div class="btn-group w-100 mb-3" role="group" aria-label="Tipo de movimiento">
+                <% [["entry", "Entrada", "bi-box-arrow-in-down", "success"], ["withdrawal", "Salida", "bi-box-arrow-up", "danger"],
+                    ["adjustment", "Ajuste", "bi-clipboard-check", "secondary"]].each do |kind, label, icon, tone| %>
+                  <%= f.radio_button :kind, kind, class: "btn-check", id: "movement_kind_#{kind}", autocomplete: "off" %>
+                  <label class="btn btn-outline-<%= tone %>" for="movement_kind_<%= kind %>"><i class="bi <%= icon %> me-1"></i><%= label %></label>
+                <% end %>
+              </div>
+              <div class="mb-3">
+                <%= f.label :quantity, class: "form-label" do %>Cantidad (<%= @product.unit %>) <span class="text-danger">*</span><% end %>
+                <%= f.number_field :quantity, value: decimal_field_value(@movement.quantity), step: :any, min: 0, class: "form-control", required: true %>
+                <div class="form-text">En un ajuste, escribe lo que contaste: reemplaza al stock actual.</div>
+              </div>
+              <div class="mb-3">
+                <%= f.label :note, class: "form-label" do %>Nota <span class="text-muted fw-normal">(opcional)</span><% end %>
+                <%= f.text_field :note, class: "form-control", placeholder: "Ej.: venta a cliente, compra a proveedor", maxlength: 255 %>
+              </div>
+              <%= f.submit "Registrar", class: "btn btn-primary w-100" %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="<%= @movement ? 'col-lg-8' : 'col-12' %>">
+      <div class="card">
+        <div class="card-header bg-white">
+          <%= inventory_card_title("Movimientos", icon: "bi-clock-history") %>
+        </div>
+        <% if @movements.any? %>
+          <div class="table-responsive">
+            <table class="table align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th class="d-none d-sm-table-cell">Fecha</th>
+                  <th>Movimiento</th>
+                  <th class="text-end">Quedó</th>
+                  <th class="d-none d-md-table-cell">Por</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @movements.each do |movement| %>
+                  <tr>
+                    <td class="d-none d-sm-table-cell text-nowrap small"><%= l(movement.created_at, format: "%d/%m/%Y %H:%M") %></td>
+                    <td>
+                      <div class="small text-muted d-sm-none"><%= l(movement.created_at, format: "%d/%m/%Y %H:%M") %></div>
+                      <div><span class="text-muted small me-1"><%= movement.kind_label %></span><%= product_movement_quantity(movement, @product.unit) %></div>
+                      <% if movement.delivery && policy(movement.delivery).show? %>
+                        <div class="small text-break"><%= link_to movement.note, delivery_path(movement.delivery) %></div>
+                      <% elsif movement.note.present? %>
+                        <div class="small text-muted text-break"><%= movement.note %></div>
+                      <% end %>
+                    </td>
+                    <td class="text-end text-nowrap"><%= quantity_with_unit(movement.stock_after, @product.unit) %></td>
+                    <td class="d-none d-md-table-cell small text-muted text-break"><%= movement.user&.email || "—" %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        <% else %>
+          <div class="text-center py-4 px-3 text-muted">
+            <i class="bi bi-clock-history d-block opacity-50"></i>
+            <p class="mb-0 small">Todavía no hay movimientos.</p>
+          </div>
+        <% end %>
+      </div>
+      <%= render "shared/pagination", pagy: @pagy %>
+
+      <% if @product.notes.present? %>
+        <div class="card mt-4">
+          <div class="card-header bg-white"><%= inventory_card_title("Notas", icon: "bi-sticky") %></div>
+          <div class="card-body"><%= simple_format(@product.notes, class: "mb-0") %></div>
+        </div>
+      <% end %>
+
+      <% if policy(@product).destroy? %>
+        <div class="d-flex justify-content-end mt-4">
+          <%= button_to product_path(@product), method: :delete, class: "btn btn-sm btn-outline-danger",
+                form: { data: { turbo_confirm: "¿Eliminar «#{@product.name}» y su historial de movimientos?" } } do %>
+            <i class="bi bi-trash me-1"></i>Eliminar producto
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -48,4 +48,36 @@ RSpec.describe Company, type: :model do
       end
     end
   end
+
+  describe "weekly summary" do
+    it "is on until the company turns it off" do
+      company = create_company
+
+      expect(company.weekly_summary_enabled?).to be(true)
+      company.update!(weekly_summary_enabled: "0")
+      expect(company.reload.weekly_summary_enabled?).to be(false)
+    end
+
+    it "sends it to the admins and the extra emails, without repeats" do
+      company = create_company
+      company.update!(weekly_summary_emails: "Gerencia@uno.cl; admin@uno.cl\ngerencia@uno.cl")
+
+      expect(company.weekly_summary_recipients).to eq(["admin@uno.cl", "gerencia@uno.cl"])
+    end
+
+    it "rejects invalid extra emails" do
+      company = create_company
+      company.weekly_summary_emails = "bien@uno.cl, mal@, otro"
+
+      expect(company).not_to be_valid
+      expect(company.errors[:weekly_summary_emails].first).to eq("tiene correos no válidos: mal@, otro")
+    end
+
+    it "allows up to #{Company::WEEKLY_SUMMARY_MAX_EXTRA_EMAILS} extra emails" do
+      company = create_company
+      company.weekly_summary_emails = Array.new(Company::WEEKLY_SUMMARY_MAX_EXTRA_EMAILS + 1) { |i| "c#{i}@uno.cl" }.join(",")
+
+      expect(company).not_to be_valid
+    end
+  end
 end

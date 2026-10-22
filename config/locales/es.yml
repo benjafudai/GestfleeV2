@@ -139,6 +139,10 @@ es:
       notification: "notificación"
       part: "repuesto"
       part_quote: "cotización"
+      product: "producto"
+      product_movement: "movimiento de stock"
+      delivery: "entrega"
+      delivery_line: "producto entregado"
       password_reset_request: "solicitud de clave"
       supply_request: "solicitud de suministro"
       supply_request_line: "línea de solicitud"
@@ -239,6 +243,7 @@ es:
         photos: "Fotos"
       company:
         name: "Nombre"
+        weekly_summary_emails: "Correos adicionales"
         rut: "RUT"
         users: "Usuarios"
       company/users:
@@ -276,6 +281,30 @@ es:
         vehicle: "Vehículo"
         description: "Descripción"
         documents: "Documentos"
+      product:
+        name: "Nombre"
+        code: "Código"
+        category: "Categoría"
+        unit: "Unidad de medida"
+        stock: "Stock"
+        min_stock: "Stock mínimo"
+        price: "Precio"
+        currency: "Moneda"
+        notes: "Notas"
+      delivery:
+        customer: "Cliente"
+        address: "Dirección"
+        notes: "Notas"
+        receipt: "Comprobante"
+        driver: "Chofer"
+        cancel_reason: "Motivo"
+      delivery/lines:
+        product: "Producto"
+        quantity: "Cantidad"
+      product_movement:
+        kind: "Tipo de movimiento"
+        quantity: "Cantidad"
+        note: "Nota"
       part:
         sku: "SKU"
         name: "Nombre"

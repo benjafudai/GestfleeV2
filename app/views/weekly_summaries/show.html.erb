@@ -1,0 +1,101 @@
+<% data = @summary.to_h %>
+<% docs = data[:documents] %>
+<% admins = @company.users.where(role: :admin).order(:email).pluck(:email) %>
+<% mail_ready = WeeklySummarySender.mail_configured? %>
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="h3 mb-0"><i class="bi bi-file-earmark-pdf me-2"></i>Resumen semanal</h1>
+      <p class="text-muted mb-0">Un PDF con lo más importante de la semana de <%= @company.name %>, por correo cada lunes.</p>
+    </div>
+  </div>
+
+  <% unless mail_ready %>
+    <div class="alert alert-info d-flex gap-2" role="alert">
+      <i class="bi bi-info-circle flex-shrink-0 mt-1"></i>
+      <div>El envío por correo se activa cuando se configure el correo del servidor. Mientras tanto puedes descargar el PDF.</div>
+    </div>
+  <% end %>
+
+  <div class="row g-4">
+    <div class="col-lg-7">
+      <div class="card h-100">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center gap-2">
+          <%= incident_card_title("Semana pasada", icon: "bi-calendar-week") %>
+          <span class="small text-muted text-nowrap"><%= @summary.period_label.delete_prefix("Semana ") %></span>
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+            <% [
+                 ["Gasto de la semana", format_money(data[:expenses][:total_clp], "CLP"), "bi-wallet2", "primary"],
+                 ["Combustible", "#{number_with_precision(data[:fuel][:liters], precision: 1, strip_insignificant_zeros: true, delimiter: '.', separator: ',')} L", "bi-fuel-pump", "primary"],
+                 ["Órdenes abiertas", data[:work_orders][:open_count], "bi-tools", "primary"],
+                 ["Documentos vencidos", docs[:expired], "bi-exclamation-octagon", docs[:expired].positive? ? "danger" : "secondary"]
+               ].each do |label, value, icon, tone| %>
+              <div class="col-sm-6">
+                <div class="d-flex align-items-center gap-3 p-3 border rounded-3 h-100">
+                  <%= incident_icon_circle(icon, tone) %>
+                  <div class="min-w-0">
+                    <div class="fs-5 fw-bold lh-1 text-nowrap"><%= value %></div>
+                    <div class="small text-muted mt-1"><%= label %></div>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+          <p class="small text-muted mt-3 mb-0">
+            El PDF también trae los documentos por vencer en 30 días, las órdenes abiertas, los gastos por categoría,
+            incidentes, checklists y lo que tenga stock bajo (repuestos y productos).
+          </p>
+          <div class="d-flex flex-wrap gap-2 mt-4">
+            <%= link_to weekly_summary_path(format: :pdf), class: "btn btn-primary", data: { turbo: false } do %>
+              <i class="bi bi-download me-1"></i>Descargar PDF
+            <% end %>
+            <%= button_to deliver_weekly_summary_path, class: "btn btn-outline-primary", form_class: "button_to",
+                  disabled: !mail_ready, title: (mail_ready ? nil : "Falta configurar el correo del servidor") do %>
+              <i class="bi bi-envelope me-1"></i>Enviármelo ahora
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-5">
+      <div class="card h-100">
+        <div class="card-header bg-white">
+          <%= incident_card_title("Envío por correo", icon: "bi-envelope-paper") %>
+        </div>
+        <div class="card-body">
+          <%= form_with model: @company, url: weekly_summary_path, method: :patch do |f| %>
+            <%= render "shared/form_errors", object: @company, subject: "la configuración" %>
+
+            <div class="form-check form-switch mb-3">
+              <%= f.check_box :weekly_summary_enabled, { checked: @company.weekly_summary_enabled?, class: "form-check-input", role: "switch" }, "1", "0" %>
+              <%= f.label :weekly_summary_enabled, "Enviar el resumen cada lunes en la mañana", class: "form-check-label" %>
+            </div>
+
+            <div class="mb-3">
+              <div class="form-label">Lo reciben los administradores</div>
+              <div class="d-flex flex-wrap gap-2">
+                <% admins.each do |email| %>
+                  <span class="badge text-bg-light border fw-normal text-break"><%= email %></span>
+                <% end %>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :weekly_summary_emails, class: "form-label" do %>Correos adicionales <span class="text-muted fw-normal">(opcional)</span><% end %>
+              <%= f.text_area :weekly_summary_emails, rows: 3, class: "form-control",
+                    placeholder: "gerencia@empresa.cl, contabilidad@empresa.cl" %>
+              <div class="form-text">Separados por coma o uno por línea. Hasta <%= Company::WEEKLY_SUMMARY_MAX_EXTRA_EMAILS %> correos.</div>
+            </div>
+
+            <div class="d-flex justify-content-end">
+              <%= f.submit "Guardar", class: "btn btn-primary" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

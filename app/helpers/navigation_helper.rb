@@ -24,6 +24,13 @@ module NavigationHelper
     items.find { |item| nav_item_active?(item) } || fallback_nav_item
   end
 
+  # El chofer ve «Mis entregas» solo si su empresa registra productos.
+  def company_sells_products?
+    return @company_sells_products if defined?(@company_sells_products)
+
+    @company_sells_products = current_user.company_id.present? && Product.unscoped.exists?(company_id: current_user.company_id)
+  end
+
   def user_initials(user)
     user.email.to_s.first.upcase
   end
@@ -78,7 +85,9 @@ module NavigationHelper
         { title: "Inventario", items: [
           nav_item("Repuestos", parts_path, "fa-boxes-stacked", "/parts"),
           nav_item("Buscar repuesto", part_search_path, "fa-magnifying-glass", "/buscar_repuestos"),
-          nav_item("Suministros", supply_requests_path, "fa-cart-plus", "/supply_requests")
+          nav_item("Suministros", supply_requests_path, "fa-cart-plus", "/supply_requests"),
+          nav_item("Productos", products_path, "fa-cubes", "/productos"),
+          nav_item("Entregas", deliveries_path, "fa-truck-ramp-box", "/entregas")
         ] },
         { title: "Análisis", items: [
           nav_item("Costos", expenses_path, "fa-coins", "/expenses"),
@@ -101,12 +110,15 @@ module NavigationHelper
         { title: "Inventario", items: [
           nav_item("Repuestos", parts_path, "fa-boxes-stacked", "/parts"),
           nav_item("Buscar repuesto", part_search_path, "fa-magnifying-glass", "/buscar_repuestos"),
-          nav_item("Suministros", supply_requests_path, "fa-cart-plus", "/supply_requests")
+          nav_item("Suministros", supply_requests_path, "fa-cart-plus", "/supply_requests"),
+          nav_item("Productos", products_path, "fa-cubes", "/productos"),
+          nav_item("Entregas", deliveries_path, "fa-truck-ramp-box", "/entregas")
         ] },
         { title: "Análisis", items: [
           nav_item("Costos", expenses_path, "fa-coins", "/expenses"),
           nav_item("Análisis de fallas", failure_analytics_path, "fa-chart-line", "/failure_analytics"),
-          nav_item("Alertas", alerts_path, "fa-circle-exclamation", "/alerts", tone: :danger)
+          nav_item("Alertas", alerts_path, "fa-circle-exclamation", "/alerts", tone: :danger),
+          nav_item("Resumen semanal", weekly_summary_path, "fa-file-pdf", "/resumen_semanal")
         ] },
         { title: "Administración", items: [
           nav_item("Usuarios", users_path, "fa-users", "/users")
@@ -118,8 +130,9 @@ module NavigationHelper
           nav_item("Mi unidad", dashboard_path, "fa-gauge-high", :dashboard),
           nav_item("Checklist del día", checklist_submissions_path, "fa-clipboard-check", "/checklist_submissions"),
           nav_item("Incidentes", incidents_path, "fa-triangle-exclamation", "/incidents"),
-          nav_item("Combustible", fuel_fills_path, "fa-gas-pump", "/fuel_fills")
-        ] }
+          nav_item("Combustible", fuel_fills_path, "fa-gas-pump", "/fuel_fills"),
+          (nav_item("Mis entregas", deliveries_path, "fa-truck-ramp-box", "/entregas") if company_sells_products?)
+        ].compact }
       ]
     when "mecanico"
       [
@@ -147,7 +160,9 @@ module NavigationHelper
           nav_item("Combustible", fuel_fills_path, "fa-gas-pump", "/fuel_fills"),
           nav_item("Repuestos", parts_path, "fa-boxes-stacked", "/parts"),
           nav_item("Buscar repuesto", part_search_path, "fa-magnifying-glass", "/buscar_repuestos"),
-          nav_item("Suministros", supply_requests_path, "fa-cart-plus", "/supply_requests")
+          nav_item("Suministros", supply_requests_path, "fa-cart-plus", "/supply_requests"),
+          nav_item("Productos", products_path, "fa-cubes", "/productos"),
+          nav_item("Entregas", deliveries_path, "fa-truck-ramp-box", "/entregas")
         ] }
       ]
     when "bodeguero"
@@ -156,7 +171,9 @@ module NavigationHelper
         { title: "Inventario", items: [
           nav_item("Repuestos", parts_path, "fa-boxes-stacked", "/parts"),
           nav_item("Buscar repuesto", part_search_path, "fa-magnifying-glass", "/buscar_repuestos"),
-          nav_item("Suministros", supply_requests_path, "fa-cart-plus", "/supply_requests")
+          nav_item("Suministros", supply_requests_path, "fa-cart-plus", "/supply_requests"),
+          nav_item("Productos", products_path, "fa-cubes", "/productos"),
+          nav_item("Entregas", deliveries_path, "fa-truck-ramp-box", "/entregas")
         ] }
       ]
     else

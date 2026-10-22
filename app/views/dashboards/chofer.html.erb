@@ -5,9 +5,16 @@
        link_to new_checklist_submission_path, class: "btn btn-primary text-nowrap" do
          safe_join([tag.i(class: "bi bi-clipboard-check me-1"), "Completar checklist del día"])
        end
-     end %>
+     end
+     delivery_action = if company_sells_products?
+       link_to new_delivery_path, class: "btn btn-outline-primary text-nowrap" do
+         safe_join([tag.i(class: "bi bi-box-seam me-1"), "Registrar entrega"])
+       end
+     end
+     actions = [checklist_action, delivery_action].compact %>
   <%= render "dashboards/welcome", icon: "bi-truck", title: "Mi unidad",
-        subtitle: dashboard_greeting(current_user), action: checklist_action %>
+        subtitle: dashboard_greeting(current_user),
+        action: (tag.div(safe_join(actions), class: "d-grid d-sm-flex gap-2") if actions.any?) %>
 
   <% if @vehicle %>
     <div class="row g-3">

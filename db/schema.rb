@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_08_180000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_22_200000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -94,6 +94,35 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_08_180000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.jsonb "configuration", default: {}
+  end
+
+  create_table "deliveries", force: :cascade do |t|
+    t.bigint "company_id", null: false
+    t.bigint "driver_id"
+    t.bigint "vehicle_id"
+    t.string "customer", null: false
+    t.string "address"
+    t.text "notes"
+    t.datetime "delivered_at", null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "cancelled_at"
+    t.bigint "cancelled_by_id"
+    t.string "cancel_reason"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cancelled_by_id"], name: "index_deliveries_on_cancelled_by_id"
+    t.index ["company_id", "delivered_at"], name: "index_deliveries_on_company_id_and_delivered_at"
+    t.index ["company_id"], name: "index_deliveries_on_company_id"
+    t.index ["driver_id"], name: "index_deliveries_on_driver_id"
+    t.index ["vehicle_id"], name: "index_deliveries_on_vehicle_id"
+  end
+
+  create_table "delivery_lines", force: :cascade do |t|
+    t.bigint "delivery_id", null: false
+    t.bigint "product_id", null: false
+    t.decimal "quantity", precision: 12, scale: 3, null: false
+    t.index ["delivery_id"], name: "index_delivery_lines_on_delivery_id"
+    t.index ["product_id"], name: "index_delivery_lines_on_product_id"
   end
 
   create_table "expenses", force: :cascade do |t|
@@ -262,6 +291,38 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_08_180000) do
     t.datetime "updated_at", null: false
     t.index ["admin_id"], name: "index_password_reset_requests_on_admin_id"
     t.index ["user_id"], name: "index_password_reset_requests_on_user_id"
+  end
+
+  create_table "product_movements", force: :cascade do |t|
+    t.bigint "product_id", null: false
+    t.bigint "user_id"
+    t.integer "kind", null: false
+    t.decimal "quantity", precision: 12, scale: 3, null: false
+    t.decimal "stock_after", precision: 12, scale: 3, null: false
+    t.string "note"
+    t.datetime "created_at", null: false
+    t.bigint "delivery_id"
+    t.index ["delivery_id"], name: "index_product_movements_on_delivery_id"
+    t.index ["product_id"], name: "index_product_movements_on_product_id"
+    t.index ["user_id"], name: "index_product_movements_on_user_id"
+  end
+
+  create_table "products", force: :cascade do |t|
+    t.bigint "company_id", null: false
+    t.string "name", null: false
+    t.string "code"
+    t.string "category"
+    t.string "unit", null: false
+    t.decimal "stock", precision: 12, scale: 3, default: "0.0", null: false
+    t.decimal "min_stock", precision: 12, scale: 3
+    t.decimal "price", precision: 12, scale: 2
+    t.string "currency", default: "CLP", null: false
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id", "code"], name: "index_products_on_company_id_and_code", unique: true, where: "(code IS NOT NULL)"
+    t.index ["company_id", "name"], name: "index_products_on_company_id_and_name"
+    t.index ["company_id"], name: "index_products_on_company_id"
   end
 
   create_table "push_subscriptions", force: :cascade do |t|
@@ -500,6 +561,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_08_180000) do
   add_foreign_key "checklist_submissions", "users"
   add_foreign_key "checklist_submissions", "vehicles"
   add_foreign_key "checklist_templates", "companies"
+  add_foreign_key "deliveries", "companies"
+  add_foreign_key "deliveries", "users", column: "cancelled_by_id", on_delete: :nullify
+  add_foreign_key "deliveries", "users", column: "driver_id", on_delete: :nullify
+  add_foreign_key "deliveries", "vehicles", on_delete: :nullify
+  add_foreign_key "delivery_lines", "deliveries"
+  add_foreign_key "delivery_lines", "products"
   add_foreign_key "expenses", "companies"
   add_foreign_key "expenses", "vehicles"
   add_foreign_key "fuel_fills", "companies"
@@ -523,6 +590,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_08_180000) do
   add_foreign_key "parts", "companies"
   add_foreign_key "password_reset_requests", "users"
   add_foreign_key "password_reset_requests", "users", column: "admin_id"
+  add_foreign_key "product_movements", "deliveries", on_delete: :nullify
+  add_foreign_key "product_movements", "products"
+  add_foreign_key "product_movements", "users", on_delete: :nullify
+  add_foreign_key "products", "companies"
   add_foreign_key "push_subscriptions", "users"
   add_foreign_key "roadside_assistance_events", "companies"
   add_foreign_key "roadside_assistance_events", "users"
