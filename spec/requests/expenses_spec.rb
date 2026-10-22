@@ -24,6 +24,17 @@ RSpec.describe "Expenses", type: :request do
       expect(response.body).to include("Copec Los Ángeles")
     end
 
+    it "has the total, the month and the average ready in dollars for the currency selector" do
+      allow(CurrencyConverter).to receive(:usd_to_clp).and_return(900)
+      expense.update!(date: Date.current.prev_month)
+      Expense.create!(company: company, category: :fuel, amount: 90_000, date: Date.current, provider: "Shell")
+
+      get expenses_path
+
+      usd_amounts = Nokogiri::HTML(response.body).css('[data-currency="USD"]').map { |node| node.text.strip }
+      expect(usd_amounts).to eq(["US$150,00", "US$100,00", "US$75,00"])
+    end
+
     it "renders the detail" do
       get expense_path(expense)
 
