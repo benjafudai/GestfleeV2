@@ -6,6 +6,8 @@ class Delivery < ApplicationRecord
   MAX_LINES = 30
   RECEIPT_MAX_SIZE = 10.megabytes
   RECEIPT_TYPES = %w[image/jpeg image/png image/webp image/heic image/heif application/pdf].freeze
+  PHOTO_TYPES = RECEIPT_TYPES - %w[application/pdf]
+  RECIPIENT_RELATIONS = [ "Cliente", "Familiar", "Trabajador o encargado", "Conserje o portería", "Vecino", "Otro" ].freeze
 
   belongs_to :driver, class_name: "User", optional: true
   belongs_to :vehicle, optional: true
@@ -13,17 +15,26 @@ class Delivery < ApplicationRecord
   has_many :lines, class_name: "DeliveryLine", dependent: :delete_all, inverse_of: :delivery
   has_many :product_movements, dependent: :nullify
   has_one_attached :receipt
+  # Foto de la entrega, como la que pide Mercado Libre: el producto entregado o quien lo recibe.
+  has_one_attached :photo
 
   enum :status, { delivered: 0, cancelled: 1 }
 
   accepts_nested_attributes_for :lines, reject_if: ->(attrs) { attrs[:product_id].blank? && attrs[:quantity].blank? }
 
-  normalizes :customer, :address, with: ->(value) { value.strip.presence }
+  normalizes :customer, :address, :recipient_name, :recipient_relation, with: ->(value) { value.strip.presence }
+  normalizes :recipient_rut, with: ->(value) { Rut.format(value.strip).presence }
 
   validates :customer, presence: true, length: { maximum: 120 }
   validates :address, length: { maximum: 200 }
   validates :notes, length: { maximum: 1000 }
   validates :cancel_reason, length: { maximum: 255 }
+  # Las entregas anteriores al comprobante no lo tienen; se exige solo al registrar una nueva.
+  validates :recipient_name, presence: true, on: :create
+  validates :recipient_name, length: { maximum: 120 }
+  validates :recipient_relation, inclusion: { in: RECIPIENT_RELATIONS }, allow_nil: true
+  validate :recipient_rut_is_valid
+  validate :photo_is_valid
   validate :has_lines
   validate :products_not_repeated
   validate :receipt_is_valid
@@ -79,6 +90,20 @@ class Delivery < ApplicationRecord
   def products_not_repeated
     repeated = lines.map(&:product).compact.tally.select { |_, count| count > 1 }.keys
     errors.add(:base, "Hay productos repetidos: #{repeated.map(&:name).join(', ')}. Suma las cantidades en una sola línea") if repeated.any?
+  end
+
+  def recipient_rut_is_valid
+    errors.add(:recipient_rut, "no es válido. Revisa el número y el dígito verificador") if recipient_rut && !Rut.valid?(recipient_rut)
+  end
+
+  def photo_is_valid
+    if !photo.attached?
+      errors.add(:photo, "es obligatoria. Saca una foto de lo entregado o de quien recibe") if new_record?
+      return
+    end
+
+    errors.add(:photo, "debe ser una imagen") unless PHOTO_TYPES.include?(photo.content_type)
+    errors.add(:photo, "no puede pesar más de 10 MB") if photo.byte_size > RECEIPT_MAX_SIZE
   end
 
   def receipt_is_valid

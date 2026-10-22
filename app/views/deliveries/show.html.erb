@@ -16,6 +16,8 @@
     </div>
   <% end %>
 
+  <%= render "proof", delivery: @delivery %>
+
   <div class="row gx-4">
     <div class="col-lg-7">
       <div class="card mb-4">
@@ -51,16 +53,16 @@
 
       <% if @delivery.receipt.attached? %>
         <div class="card mb-4">
-          <div class="card-header bg-white"><%= inventory_card_title("Comprobante", icon: "bi-receipt") %></div>
+          <div class="card-header bg-white"><%= inventory_card_title("Guía o factura", icon: "bi-receipt") %></div>
           <div class="card-body">
             <% if @delivery.receipt.image? %>
               <%= link_to rails_blob_path(@delivery.receipt, disposition: "inline"), target: "_blank", rel: "noopener" do %>
                 <%= image_tag rails_blob_path(@delivery.receipt, disposition: "inline"), class: "img-fluid rounded", style: "max-height: 360px",
-                              alt: "Comprobante de la entrega" %>
+                              alt: "Guía o factura de la entrega" %>
               <% end %>
             <% else %>
               <%= link_to rails_blob_path(@delivery.receipt, disposition: "inline"), class: "btn btn-outline-primary", target: "_blank", rel: "noopener" do %>
-                <i class="bi bi-file-earmark me-1"></i>Ver comprobante
+                <i class="bi bi-file-earmark me-1"></i>Ver guía o factura
               <% end %>
             <% end %>
           </div>

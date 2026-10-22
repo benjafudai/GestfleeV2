@@ -80,7 +80,7 @@ RSpec.describe WeeklySummary do
     lomo = Product.create!(company: company, name: "Lomo vetado", unit: "kg", stock: 100)
     deliver = lambda do |at, quantity|
       travel_to(at) do
-        Delivery.new(company: company, driver: driver, customer: "Cliente",
+        Delivery.new(company: company, driver: driver, customer: "Cliente", recipient_name: "Juan", photo: png_file,
                      lines_attributes: [{ product_id: lomo.id, quantity: quantity }]).tap { |d| d.register(by: driver) }
       end
     end
