@@ -1,0 +1,31 @@
+<%# "Instalar app" button; hidden until the browser allows installing (see install_app_controller.js). %>
+<span data-controller="install-app">
+  <button type="button" class="<%= button_class %>" data-install-app-target="button"
+          data-action="install-app#install" title="Instalar GestFlee en este dispositivo"
+          aria-label="Instalar app" hidden>
+    <i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i>
+    <span class="gf-install-label">Instalar app</span>
+  </button>
+
+  <div class="modal fade" tabindex="-1" aria-labelledby="gfInstallIosTitle" aria-hidden="true" data-install-app-target="iosHelp">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content text-body">
+        <div class="modal-header">
+          <h2 class="modal-title h5" id="gfInstallIosTitle">Instalar GestFlee en el iPhone</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <ol class="mb-0">
+            <li class="mb-2">Abra esta página en <strong>Safari</strong>.</li>
+            <li class="mb-2">Toque el botón <strong>Compartir</strong> <i class="fa-solid fa-arrow-up-from-bracket" aria-hidden="true"></i> en la barra de abajo.</li>
+            <li class="mb-2">Elija <strong>Agregar a inicio</strong>.</li>
+            <li>Toque <strong>Agregar</strong>. El ícono de GestFlee quedará en su pantalla de inicio.</li>
+          </ol>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Entendido</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</span>

@@ -16,6 +16,9 @@ application.register("failures-chart", FailuresChartController)
 import GeolocationController from "./geolocation_controller"
 application.register("geolocation", GeolocationController)
 
+import InstallAppController from "./install_app_controller"
+application.register("install-app", InstallAppController)
+
 import LogoutController from "./logout_controller"
 application.register("logout", LogoutController)
 

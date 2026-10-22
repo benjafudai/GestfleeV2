@@ -18,6 +18,8 @@
       <span><%= current_user.company&.name || "Panel global" %></span>
     </span>
 
+    <%= render "shared/install_app", button_class: "btn btn-sm btn-outline-primary gf-install-btn" %>
+
     <%= link_to notifications_path, class: "gf-icon-btn gf-bell", title: "Notificaciones", "aria-label": "Notificaciones" do %>
       <i class="fa-regular fa-bell"></i>
       <% if unread_count.positive? %>
