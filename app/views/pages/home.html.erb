@@ -38,9 +38,12 @@
         <span class="gf-brand-mark"><i class="fa-solid fa-truck-fast" aria-hidden="true"></i></span>
         <span class="gf-brand-name">GestFlee</span>
       <% end %>
-      <%= link_to new_user_session_path, class: "btn btn-outline-light btn-sm" do %>
-        <i class="fa-solid fa-arrow-right-to-bracket me-1" aria-hidden="true"></i> Iniciar sesión
-      <% end %>
+      <div class="gf-landing-nav-actions">
+        <%= render "shared/install_app", button_class: "btn btn-light btn-sm gf-install-btn" %>
+        <%= link_to new_user_session_path, class: "btn btn-outline-light btn-sm" do %>
+          <i class="fa-solid fa-arrow-right-to-bracket me-1" aria-hidden="true"></i> Iniciar sesión
+        <% end %>
+      </div>
     </div>
   </header>
 

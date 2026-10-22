@@ -57,6 +57,15 @@
         document.addEventListener("turbo:visit", function () { root.classList.remove("gf-drawer-open"); });
       })();
 
+      /* Keep the browser's install prompt for the "Instalar app" button
+         (install_app_controller.js); it fires once, often before Stimulus loads. */
+      window.addEventListener("beforeinstallprompt", function (event) {
+        event.preventDefault();
+        window.gfInstallPrompt = event;
+        window.dispatchEvent(new Event("gf:installable"));
+      });
+      window.addEventListener("appinstalled", function () { window.gfInstallPrompt = null; });
+
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", function () {
           navigator.serviceWorker.register("/service_worker.js");

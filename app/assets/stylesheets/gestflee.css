@@ -338,6 +338,9 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 .gf-org-chip i { color: var(--primary); font-size: 0.75rem; }
 .gf-org-chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
+.gf-install-btn { display: inline-flex; align-items: center; gap: 6px; margin-right: 4px; border-radius: 999px; white-space: nowrap; }
+.gf-install-btn[hidden] { display: none; }
+
 .gf-icon-btn {
   position: relative;
   width: 36px;
@@ -1188,6 +1191,8 @@ body.gf-public { background: var(--bg); }
 
 .gf-landing-nav { position: absolute; inset: 0 0 auto; z-index: 2; padding: 18px 0; }
 .gf-landing-nav .gf-landing-wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.gf-landing-nav-actions { display: flex; align-items: center; gap: 8px; }
+.gf-landing-nav-actions .btn { white-space: nowrap; }
 .gf-landing-brand { display: inline-flex; align-items: center; gap: 10px; color: #fff; text-decoration: none; }
 .gf-landing-brand:hover { color: #fff; }
 .gf-landing-brand .gf-brand-name { font-size: 1.15rem; font-weight: 700; }
@@ -1278,4 +1283,13 @@ body.gf-public { background: var(--bg); }
   .gf-landing-cta .btn { flex: 1 1 100%; }
   .gf-landing-section { padding: 52px 0; }
   .gf-landing-grid, .gf-landing-roles { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 429.98px) {
+  .gf-landing-nav .gf-landing-wrap { gap: 10px; }
+  .gf-landing-nav-actions { gap: 6px; }
+  .gf-landing-nav-actions > a i { display: none; }
+}
+@media (max-width: 379.98px) {
+  .gf-install-label { display: none; }
 }
