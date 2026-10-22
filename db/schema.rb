@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_22_200000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_22_210000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -110,6 +110,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_22_200000) do
     t.string "cancel_reason"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "recipient_name"
+    t.string "recipient_rut"
+    t.string "recipient_relation"
     t.index ["cancelled_by_id"], name: "index_deliveries_on_cancelled_by_id"
     t.index ["company_id", "delivered_at"], name: "index_deliveries_on_company_id_and_delivered_at"
     t.index ["company_id"], name: "index_deliveries_on_company_id"

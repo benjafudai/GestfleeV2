@@ -59,7 +59,8 @@ class DeliveriesController < ApplicationController
   end
 
   def delivery_params
-    permitted = params.require(:delivery).permit(:customer, :address, :notes, :receipt, :driver_id,
+    permitted = params.require(:delivery).permit(:customer, :address, :notes, :receipt, :driver_id, :photo,
+                                                 :recipient_name, :recipient_rut, :recipient_relation,
                                                  lines_attributes: %i[product_id quantity])
     permitted.delete(:driver_id) if current_user.chofer?
     if permitted[:driver_id].present? && !company_drivers.exists?(id: permitted[:driver_id])

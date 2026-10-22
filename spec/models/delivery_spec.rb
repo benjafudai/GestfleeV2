@@ -7,7 +7,7 @@ RSpec.describe Delivery do
   let(:cajas) { Product.create!(company: company, name: "Hamburguesas", unit: "caja", stock: 10) }
 
   def build_delivery(lines)
-    Delivery.new(company: company, driver: driver, customer: "Restaurante El Toro",
+    Delivery.new(company: company, driver: driver, customer: "Restaurante El Toro", recipient_name: "Juan Pérez", photo: png_file,
                  lines_attributes: lines.map { |product, quantity| { product_id: product.id, quantity: quantity } })
   end
 
@@ -65,6 +65,48 @@ RSpec.describe Delivery do
 
     expect(delivery.register(by: driver)).to be(false)
     expect(delivery.errors[:receipt]).to include("debe ser una foto o un PDF")
+  end
+
+  it "needs who received it and a photo, like a proof of delivery" do
+    delivery = build_delivery([[lomo, 1]])
+    delivery.recipient_name = " "
+    delivery.photo = nil
+
+    expect(delivery.register(by: driver)).to be(false)
+    expect(delivery.errors.full_messages).to include(
+      "El nombre de quien recibe no puede estar en blanco",
+      "La foto de la entrega es obligatoria. Saca una foto de lo entregado o de quien recibe"
+    )
+    expect(lomo.reload.stock).to eq(100)
+  end
+
+  it "only takes an image as the delivery photo" do
+    delivery = build_delivery([[lomo, 1]])
+    delivery.photo.attach(pdf_file)
+
+    expect(delivery.register(by: driver)).to be(false)
+    expect(delivery.errors[:photo]).to include("debe ser una imagen")
+  end
+
+  it "checks the recipient's RUT and writes it with dots and dash" do
+    delivery = build_delivery([[lomo, 1]])
+    delivery.recipient_rut = "12345678-0"
+    expect(delivery.register(by: driver)).to be(false)
+    expect(delivery.errors[:recipient_rut].first).to start_with("no es válido")
+
+    delivery.recipient_rut = "123456785"
+    delivery.recipient_relation = "Familiar"
+    expect(delivery.register(by: driver)).to be(true)
+    expect(delivery.reload).to have_attributes(recipient_rut: "12.345.678-5", recipient_relation: "Familiar")
+  end
+
+  it "can still cancel a delivery registered before the proof was asked" do
+    delivery = build_delivery([[lomo, 2]]).tap { |d| d.register(by: driver) }
+    delivery.photo.purge
+    delivery.update_columns(recipient_name: nil)
+
+    expect(delivery.reload.cancel(by: company_admin(company))).to be(true)
+    expect(lomo.reload.stock).to eq(100)
   end
 
   it "gives the stock back when cancelled" do

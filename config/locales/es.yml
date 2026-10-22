@@ -296,6 +296,10 @@ es:
         address: "Dirección"
         notes: "Notas"
         receipt: "Comprobante"
+        photo: "La foto de la entrega"
+        recipient_name: "El nombre de quien recibe"
+        recipient_rut: "El RUT de quien recibe"
+        recipient_relation: "Relación con el cliente"
         driver: "Chofer"
         cancel_reason: "Motivo"
       delivery/lines:

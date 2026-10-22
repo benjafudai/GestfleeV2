@@ -7,12 +7,12 @@ RSpec.describe "Deliveries", type: :request do
   let!(:lomo) { Product.create!(company: company, name: "Lomo vetado", unit: "kg", stock: 100) }
 
   def deliver(quantity, customer: "Restaurante El Toro", **extra)
-    post deliveries_path, params: { delivery: { customer: customer,
+    post deliveries_path, params: { delivery: { customer: customer, recipient_name: "Juan Pérez", photo: uploaded(png_file),
                                                 lines_attributes: { "0" => { product_id: lomo.id, quantity: quantity } }, **extra } }
   end
 
   def registered(by:, customer: "Cliente previo")
-    Delivery.new(company: company, driver: by, customer: customer,
+    Delivery.new(company: company, driver: by, customer: customer, recipient_name: "Juan Pérez", photo: png_file,
                  lines_attributes: [{ product_id: lomo.id, quantity: 10 }]).tap { |d| d.register(by: by) }
   end
 
@@ -30,6 +30,23 @@ RSpec.describe "Deliveries", type: :request do
       expect(delivery).to have_attributes(driver: driver, vehicle: vehicle, customer: "Restaurante El Toro")
       expect(delivery.receipt).to be_attached
       expect(lomo.reload.stock).to eq(87.5)
+    end
+
+    it "shows who received it and the photo on the delivery" do
+      deliver("2", recipient_name: "María Soto", recipient_rut: "7654321-6", recipient_relation: "Trabajador o encargado")
+
+      delivery = Delivery.unscoped.last
+      expect(delivery.photo).to be_attached
+      follow_redirect!
+      expect(response.body).to include("Recibió María Soto", "Trabajador o encargado · RUT 7.654.321-6", "Foto de la entrega a María Soto")
+    end
+
+    it "asks again for the photo when it's missing" do
+      deliver("2", photo: nil)
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include("La foto de la entrega es obligatoria")
+      expect(lomo.reload.stock).to eq(100)
     end
 
     it "can't register it in another driver's name" do
