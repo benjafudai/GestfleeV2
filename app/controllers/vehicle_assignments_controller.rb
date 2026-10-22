@@ -13,7 +13,7 @@ class VehicleAssignmentsController < ApplicationController
     @assignment = @vehicle.vehicle_assignments.build(assignment_params)
     authorize @assignment
     if @assignment.save
-      redirect_to @vehicle, notice: "Chofer asignado correctamente."
+      redirect_to @vehicle, notice: "Responsable asignado correctamente."
     else
       @available_drivers = available_drivers
       render :new, status: :unprocessable_entity
@@ -39,8 +39,9 @@ class VehicleAssignmentsController < ApplicationController
     @assignment = @vehicle.vehicle_assignments.find(params[:id])
   end
 
+  # Choferes primero, después administradores.
   def available_drivers
-    @vehicle.company.users.where(role: :chofer).order(:email)
+    @vehicle.company.users.where(role: %i[chofer admin]).order(role: :desc, email: :asc)
   end
 
   def assignment_params

@@ -6,21 +6,21 @@
     <div class="col-lg-8 col-xl-6">
       <div class="d-flex justify-content-between align-items-center mb-4">
         <div class="min-w-0">
-          <h1 class="h3 mb-0"><i class="bi bi-person-plus me-2"></i>Asignar chofer</h1>
+          <h1 class="h3 mb-0"><i class="bi bi-person-plus me-2"></i>Asignar responsable</h1>
           <p class="text-muted mb-0"><%= vehicle_identity(@vehicle) %></p>
         </div>
       </div>
       <div class="card">
         <div class="card-body p-4">
           <% if current_assignment %>
-            <%# El vehículo ya tiene chofer: no tiene sentido mostrar un formulario que siempre fallará. %>
+            <%# El vehículo ya tiene responsable: no tiene sentido mostrar un formulario que siempre fallará. %>
             <div class="alert alert-warning d-flex gap-2 mb-0" role="alert">
               <i class="bi bi-exclamation-triangle flex-shrink-0 mt-1"></i>
               <div>
-                <p class="fw-bold mb-1">Este vehículo ya tiene chofer</p>
+                <p class="fw-bold mb-1">Este vehículo ya tiene responsable</p>
                 <p class="mb-0">
                   Está asignado a <strong class="text-break"><%= current_assignment.user.email %></strong>.
-                  Termina esa asignación desde la <%= link_to "ficha del vehículo", vehicle_path(@vehicle), class: "alert-link" %> antes de asignar otro chofer.
+                  Termina esa asignación desde la <%= link_to "ficha del vehículo", vehicle_path(@vehicle), class: "alert-link" %> antes de asignar a otra persona.
                 </p>
               </div>
             </div>
@@ -33,8 +33,8 @@
             <div class="alert alert-warning d-flex gap-2 mb-0" role="alert">
               <i class="bi bi-exclamation-triangle flex-shrink-0 mt-1"></i>
               <div>
-                <p class="fw-bold mb-1">No hay choferes registrados en la empresa</p>
-                <p class="mb-0">Primero agrega un usuario con rol <strong>Chofer</strong> y luego vuelve a asignarlo a este vehículo.</p>
+                <p class="fw-bold mb-1">No hay choferes ni administradores en la empresa</p>
+                <p class="mb-0">Primero agrega un usuario con rol <strong>Chofer</strong> o <strong>Administrador</strong> y luego vuelve a asignarlo a este vehículo.</p>
               </div>
             </div>
             <div class="d-flex justify-content-end gap-2 mt-4">
@@ -49,13 +49,13 @@
               <div class="row g-3">
                 <div class="col-12">
                   <%= vehicle_field_with_errors(user_error) do %>
-                    <%= f.label :user_id, class: "form-label" do %>Chofer <span class="text-danger">*</span><% end %>
+                    <%= f.label :user_id, class: "form-label" do %>Responsable <span class="text-danger">*</span><% end %>
                     <%= f.select :user_id,
                           drivers.map { |u| [vehicle_driver_option_label(u), u.id] },
-                          { prompt: "Selecciona un chofer" },
+                          { prompt: "Selecciona un chofer o administrador" },
                           class: "form-select" %>
                   <% end %>
-                  <div class="form-text">Un chofer puede tener un solo vehículo asignado a la vez.</div>
+                  <div class="form-text">Puede ser un chofer o un administrador. Cada persona puede tener un solo vehículo asignado a la vez.</div>
                 </div>
 
                 <div class="col-sm-6">
@@ -72,7 +72,7 @@
 
               <div class="d-flex justify-content-end gap-2 mt-4">
                 <%= link_to "Cancelar", vehicle_path(@vehicle), class: "btn btn-outline-secondary" %>
-                <%= f.submit "Asignar chofer", class: "btn btn-primary" %>
+                <%= f.submit "Asignar responsable", class: "btn btn-primary" %>
               </div>
             <% end %>
           <% end %>

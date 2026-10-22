@@ -11,7 +11,7 @@ class VehicleAssignment < ApplicationRecord
 
   # Validations
   validates :started_on, presence: true
-  validate :user_must_be_chofer
+  validate :user_must_be_chofer_or_admin
   validate :user_must_belong_to_same_company
   validate :vehicle_has_no_active_assignment, on: :create
   validate :chofer_has_no_active_assignment, on: :create
@@ -19,9 +19,10 @@ class VehicleAssignment < ApplicationRecord
 
   private
 
-  def user_must_be_chofer
+  # El responsable puede ser un chofer o un administrador de la empresa.
+  def user_must_be_chofer_or_admin
     return unless user
-    errors.add(:user, "debe tener rol de chofer") unless user.chofer?
+    errors.add(:user, "debe tener rol de chofer o administrador") unless user.chofer? || user.admin?
   end
 
   def user_must_belong_to_same_company
@@ -32,7 +33,7 @@ class VehicleAssignment < ApplicationRecord
   def vehicle_has_no_active_assignment
     return unless vehicle
     if vehicle.vehicle_assignments.active.exists?
-      errors.add(:vehicle, "ya tiene un chofer asignado actualmente")
+      errors.add(:vehicle, "ya tiene un responsable asignado actualmente")
     end
   end
 
