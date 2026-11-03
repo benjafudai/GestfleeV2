@@ -1,5 +1,6 @@
 class ExpensesController < ApplicationController
   before_action :authenticate_user!
+  requires_feature :costos
   before_action :set_expense, only: %i[ show edit update destroy ]
 
   # GET /expenses or /expenses.json

@@ -3,7 +3,7 @@ module NavigationHelper
   #   label, path, icon (Font Awesome name), match (path prefix or :dashboard),
   #   tone (:danger to highlight the item).
   def sidebar_sections
-    @sidebar_sections ||= build_sidebar_sections
+    @sidebar_sections ||= visible_sections(build_sidebar_sections)
   end
 
   def nav_item_active?(item)
@@ -56,6 +56,29 @@ module NavigationHelper
 
   def nav_item(label, path, icon, match, tone: nil)
     { label: label, path: path, icon: icon, match: match, tone: tone }
+  end
+
+  # Sección del menú que corresponde a cada ruta, para esconder las que el
+  # superadmin desactivó (ver Feature). Las que no están aquí siempre se ven.
+  NAV_FEATURES = {
+    "/checklist" => :checklists, "/checklist_submissions" => :checklists,
+    "/fuel_fills" => :combustible, "/work_orders" => :ordenes_trabajo,
+    "/maintenance_plans" => :planes_mantencion, "/incidents" => :incidentes,
+    "/parts" => :repuestos, "/buscar_repuestos" => :buscar_repuesto,
+    "/supply_requests" => :suministros, "/productos" => :productos,
+    "/entregas" => :entregas, "/expenses" => :costos,
+    "/failure_analytics" => :analisis_fallas, "/alerts" => :alertas,
+    "/resumen_semanal" => :resumen_semanal
+  }.freeze
+
+  def visible_sections(sections)
+    sections.filter_map do |section|
+      items = section[:items].select do |item|
+        key = NAV_FEATURES[item[:match]]
+        key.nil? || current_user.feature?(key)
+      end
+      section.merge(items: items) if items.any?
+    end
   end
 
   def build_sidebar_sections

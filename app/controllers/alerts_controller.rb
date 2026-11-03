@@ -1,5 +1,6 @@
 class AlertsController < ApplicationController
   before_action :authenticate_user!
+  requires_feature :alertas
 
   def index
     authorize :alert, :index?

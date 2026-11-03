@@ -1,4 +1,9 @@
 module ApplicationHelper
+  # ¿La sección está activa para quien mira? Ver Feature.
+  def feature_on?(key)
+    current_user.present? && current_user.feature?(key)
+  end
+
   # Color de la etiqueta según el estado, igual en todas las pantallas.
   STATUS_TONES = {
     "ok" => "success", "active" => "success", "approved" => "success", "resolved" => "success",

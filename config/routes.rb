@@ -28,7 +28,9 @@ Rails.application.routes.draw do
   resources :password_reset_requests, only: [:index, :show, :update] do
     patch :reject, on: :member
   end
-  resources :companies, only: [:index, :new, :create, :edit, :update, :destroy]
+  resources :companies, only: [:index, :new, :create, :edit, :update, :destroy] do
+    resource :features, only: [:edit, :update], controller: "company_features", path: "funciones"
+  end
   resources :users do
     patch :unlock, on: :member
     resources :user_documents, only: %i[new create edit update destroy]

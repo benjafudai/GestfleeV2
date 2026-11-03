@@ -1,5 +1,6 @@
 class FuelFillsController < ApplicationController
   before_action :authenticate_user!
+  requires_feature :combustible
   before_action :set_vehicle, only: %i[new create index]
   before_action :set_fuel_fill, only: %i[show edit update destroy]
 

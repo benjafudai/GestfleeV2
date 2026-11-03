@@ -3,6 +3,7 @@
 # del vehículo elegido.
 class PartSearchesController < ApplicationController
   before_action :authenticate_user!
+  requires_feature :buscar_repuesto
 
   def show
     authorize :part_search

@@ -21,7 +21,7 @@ class WeeklySummarySender
     result = Result.new(sent: [], skipped: [], failed: [])
     Company.order(:name).find_each do |company|
       recipients = company.weekly_summary_recipients
-      if !company.weekly_summary_enabled? || recipients.empty?
+      if !company.weekly_summary_enabled? || !Feature.company_enabled?(company, :resumen_semanal) || recipients.empty?
         result.skipped << company.name
         next
       end

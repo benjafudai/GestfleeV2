@@ -3,6 +3,7 @@ class WeeklySummariesController < ApplicationController
   MAIL_ERRORS = [Net::SMTPError, IOError, SocketError, SystemCallError, Timeout::Error, OpenSSL::SSL::SSLError].freeze
 
   before_action :authenticate_user!
+  requires_feature :resumen_semanal
   before_action :set_company
 
   def show

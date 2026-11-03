@@ -1,5 +1,6 @@
 class ChecklistSubmissionsController < ApplicationController
   before_action :authenticate_user!
+  requires_feature :checklists
   before_action :set_submission, only: %i[show review]
 
   def index

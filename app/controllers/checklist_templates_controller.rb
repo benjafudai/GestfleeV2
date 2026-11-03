@@ -1,5 +1,6 @@
 class ChecklistTemplatesController < ApplicationController
   before_action :authenticate_user!
+  requires_feature :checklists
   before_action :set_template, only: %i[show edit update destroy]
 
   def index

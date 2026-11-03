@@ -17,6 +17,7 @@ class Company < ApplicationRecord
   has_many :checklist_submissions, dependent: :destroy
   has_many :part_fitments, dependent: :destroy
   has_many :roadside_assistance_events, dependent: :destroy
+  has_many :feature_overrides, as: :subject, dependent: :delete_all
 
   validates :name, presence: true
   validates :rut, presence: true, uniqueness: true

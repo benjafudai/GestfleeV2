@@ -1,5 +1,6 @@
 class ProductsController < ApplicationController
   before_action :authenticate_user!
+  requires_feature :productos
   before_action :set_product, only: %i[show edit update destroy]
 
   def index

@@ -1,5 +1,6 @@
 class PartQuotesController < ApplicationController
   before_action :authenticate_user!
+  requires_feature :repuestos
   before_action :set_part
 
   def create

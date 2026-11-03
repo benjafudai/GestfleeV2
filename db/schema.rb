@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_22_210000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_03_190000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -145,6 +145,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_22_210000) do
     t.index ["company_id"], name: "index_expenses_on_company_id"
     t.index ["source_type", "source_id"], name: "index_expenses_on_source"
     t.index ["vehicle_id"], name: "index_expenses_on_vehicle_id"
+  end
+
+  create_table "feature_overrides", force: :cascade do |t|
+    t.string "subject_type", null: false
+    t.bigint "subject_id", null: false
+    t.string "feature", null: false
+    t.boolean "enabled", null: false
+    t.date "expires_on"
+    t.bigint "granted_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["granted_by_id"], name: "index_feature_overrides_on_granted_by_id"
+    t.index ["subject_type", "subject_id", "feature"], name: "index_feature_overrides_on_subject_and_feature", unique: true
+    t.index ["subject_type", "subject_id"], name: "index_feature_overrides_on_subject"
   end
 
   create_table "fuel_fills", force: :cascade do |t|
@@ -572,6 +586,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_22_210000) do
   add_foreign_key "delivery_lines", "products"
   add_foreign_key "expenses", "companies"
   add_foreign_key "expenses", "vehicles"
+  add_foreign_key "feature_overrides", "users", column: "granted_by_id", on_delete: :nullify
   add_foreign_key "fuel_fills", "companies"
   add_foreign_key "fuel_fills", "users"
   add_foreign_key "fuel_fills", "vehicles"

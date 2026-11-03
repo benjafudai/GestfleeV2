@@ -1,5 +1,6 @@
 class SupplyRequestsController < ApplicationController
   before_action :authenticate_user!
+  requires_feature :suministros
   before_action :set_supply_request, only: %i[show edit update destroy change_status]
 
   def index
