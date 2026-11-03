@@ -1,5 +1,6 @@
 class MaintenancePlansController < ApplicationController
   before_action :authenticate_user!
+  requires_feature :planes_mantencion
   before_action :set_maintenance_plan, only: %i[ show edit update destroy ]
 
   # GET /maintenance_plans or /maintenance_plans.json

@@ -1,5 +1,6 @@
 class FailureAnalyticsController < ApplicationController
   before_action :authenticate_user!
+  requires_feature :analisis_fallas
 
   def index
     authorize :failure_analytics, :index?

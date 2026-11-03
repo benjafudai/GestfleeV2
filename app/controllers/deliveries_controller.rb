@@ -1,5 +1,6 @@
 class DeliveriesController < ApplicationController
   before_action :authenticate_user!
+  requires_feature :entregas
   before_action :set_delivery, only: %i[show cancel]
 
   def index

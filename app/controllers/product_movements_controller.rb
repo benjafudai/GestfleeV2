@@ -1,5 +1,6 @@
 class ProductMovementsController < ApplicationController
   before_action :authenticate_user!
+  requires_feature :productos
 
   def create
     @product = Product.find(params[:product_id])

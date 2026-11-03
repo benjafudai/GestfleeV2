@@ -23,94 +23,104 @@
   </div>
 
   <div class="row g-3 mb-4">
-    <div class="col-md-4">
-      <%= dashboard_action_card "Órdenes de trabajo", "Crea y gestiona las órdenes de mantención de la flota.",
-            path: work_orders_path, link_text: "Ver órdenes de trabajo", icon: "bi-tools" %>
-    </div>
-    <div class="col-md-4">
-      <%= dashboard_action_card "Inventario", "Consulta el stock y los costos de los repuestos disponibles.",
-            path: parts_path, link_text: "Ver inventario", icon: "bi-boxes", tone: :success %>
-    </div>
-    <div class="col-md-4">
-      <%= dashboard_action_card "Solicitudes de suministros", "Pide a bodega los repuestos que necesitas para tus órdenes de trabajo.",
-            path: supply_requests_path, link_text: "Ver solicitudes", icon: "bi-inboxes", tone: :info %>
-    </div>
+    <% if feature_on?(:ordenes_trabajo) %>
+      <div class="col-md-4">
+        <%= dashboard_action_card "Órdenes de trabajo", "Crea y gestiona las órdenes de mantención de la flota.",
+              path: work_orders_path, link_text: "Ver órdenes de trabajo", icon: "bi-tools" %>
+      </div>
+    <% end %>
+    <% if feature_on?(:repuestos) %>
+      <div class="col-md-4">
+        <%= dashboard_action_card "Inventario", "Consulta el stock y los costos de los repuestos disponibles.",
+              path: parts_path, link_text: "Ver inventario", icon: "bi-boxes", tone: :success %>
+      </div>
+    <% end %>
+    <% if feature_on?(:suministros) %>
+      <div class="col-md-4">
+        <%= dashboard_action_card "Solicitudes de suministros", "Pide a bodega los repuestos que necesitas para tus órdenes de trabajo.",
+              path: supply_requests_path, link_text: "Ver solicitudes", icon: "bi-inboxes", tone: :info %>
+      </div>
+    <% end %>
   </div>
 
   <div class="row g-3 align-items-start">
-    <div class="col-lg-7">
-      <div class="card">
-        <div class="card-header bg-white d-flex flex-wrap justify-content-between align-items-center gap-2">
-          <h2 class="h6 mb-0">Órdenes de trabajo recientes</h2>
-          <%= link_to work_orders_path, class: "btn btn-sm btn-link px-0 text-nowrap" do %>Ver todas <i class="bi bi-arrow-right"></i><% end %>
-        </div>
-        <% if @recent_work_orders.any? %>
-          <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-              <thead class="table-light">
-                <tr>
-                  <th>OT</th>
-                  <th>Vehículo</th>
-                  <th class="d-none d-sm-table-cell">Fecha</th>
-                  <th>Estado</th>
-                  <th class="text-end">Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% @recent_work_orders.each do |wo| %>
+    <% if feature_on?(:ordenes_trabajo) %>
+      <div class="col-lg-7">
+        <div class="card">
+          <div class="card-header bg-white d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <h2 class="h6 mb-0">Órdenes de trabajo recientes</h2>
+            <%= link_to work_orders_path, class: "btn btn-sm btn-link px-0 text-nowrap" do %>Ver todas <i class="bi bi-arrow-right"></i><% end %>
+          </div>
+          <% if @recent_work_orders.any? %>
+            <div class="table-responsive">
+              <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
                   <tr>
-                    <td class="text-muted fw-bold">#<%= wo.id %></td>
-                    <td class="fw-bold text-body"><%= wo.vehicle&.plate || "—" %></td>
-                    <td class="d-none d-sm-table-cell text-nowrap"><%= l(wo.created_at, format: :short) %></td>
-                    <td><%= status_badge(work_order_status_label(wo.status), wo.status) %></td>
-                    <td class="text-end">
-                      <div class="gf-row-actions">
-                        <%= link_to wo, class: "btn btn-sm btn-outline-primary", title: "Ver", "aria-label": "Ver" do %>
-                          <i class="bi bi-eye"></i>
-                        <% end %>
-                      </div>
-                    </td>
+                    <th>OT</th>
+                    <th>Vehículo</th>
+                    <th class="d-none d-sm-table-cell">Fecha</th>
+                    <th>Estado</th>
+                    <th class="text-end">Acciones</th>
                   </tr>
-                <% end %>
-              </tbody>
-            </table>
-          </div>
-        <% else %>
-          <div class="text-center py-5 px-3 text-muted">
-            <i class="bi bi-tools d-block opacity-50"></i>
-            <p class="mb-1 fw-bold text-body">No hay órdenes de trabajo</p>
-            <p class="small mb-0">Las órdenes nuevas aparecerán aquí.</p>
-          </div>
-        <% end %>
-      </div>
-    </div>
-
-    <div class="col-lg-5">
-      <div class="card">
-        <div class="card-header bg-white d-flex flex-wrap justify-content-between align-items-center gap-2">
-          <h2 class="h6 mb-0">Mis solicitudes en curso</h2>
-          <%= link_to supply_requests_path, class: "btn btn-sm btn-link px-0 text-nowrap" do %>Ver todas <i class="bi bi-arrow-right"></i><% end %>
+                </thead>
+                <tbody>
+                  <% @recent_work_orders.each do |wo| %>
+                    <tr>
+                      <td class="text-muted fw-bold">#<%= wo.id %></td>
+                      <td class="fw-bold text-body"><%= wo.vehicle&.plate || "—" %></td>
+                      <td class="d-none d-sm-table-cell text-nowrap"><%= l(wo.created_at, format: :short) %></td>
+                      <td><%= status_badge(work_order_status_label(wo.status), wo.status) %></td>
+                      <td class="text-end">
+                        <div class="gf-row-actions">
+                          <%= link_to wo, class: "btn btn-sm btn-outline-primary", title: "Ver", "aria-label": "Ver" do %>
+                            <i class="bi bi-eye"></i>
+                          <% end %>
+                        </div>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          <% else %>
+            <div class="text-center py-5 px-3 text-muted">
+              <i class="bi bi-tools d-block opacity-50"></i>
+              <p class="mb-1 fw-bold text-body">No hay órdenes de trabajo</p>
+              <p class="small mb-0">Las órdenes nuevas aparecerán aquí.</p>
+            </div>
+          <% end %>
         </div>
-        <% if @pending_supply_requests.any? %>
-          <ul class="list-group list-group-flush">
-            <% @pending_supply_requests.each do |req| %>
-              <li class="list-group-item list-group-item-action position-relative d-flex justify-content-between align-items-center gap-3">
-                <div class="min-w-0">
-                  <%= link_to req.vehicle.plate, req, class: "fw-bold text-body stretched-link" %>
-                  <div class="small text-muted">#<%= req.id %> · <%= l(req.created_at, format: :short) %></div>
-                </div>
-                <%= status_badge(SupplyRequest.human_status(req.status), req.status) %>
-              </li>
-            <% end %>
-          </ul>
-        <% else %>
-          <div class="text-center py-5 px-3 text-muted">
-            <i class="bi bi-inboxes d-block opacity-50"></i>
-            <p class="mb-1 fw-bold text-body">No tienes solicitudes en curso</p>
-            <p class="small mb-0">Cuando pidas repuestos a bodega, podrás seguirlas desde aquí.</p>
-          </div>
-        <% end %>
       </div>
-    </div>
+    <% end %>
+
+    <% if feature_on?(:suministros) %>
+      <div class="col-lg-5">
+        <div class="card">
+          <div class="card-header bg-white d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <h2 class="h6 mb-0">Mis solicitudes en curso</h2>
+            <%= link_to supply_requests_path, class: "btn btn-sm btn-link px-0 text-nowrap" do %>Ver todas <i class="bi bi-arrow-right"></i><% end %>
+          </div>
+          <% if @pending_supply_requests.any? %>
+            <ul class="list-group list-group-flush">
+              <% @pending_supply_requests.each do |req| %>
+                <li class="list-group-item list-group-item-action position-relative d-flex justify-content-between align-items-center gap-3">
+                  <div class="min-w-0">
+                    <%= link_to req.vehicle.plate, req, class: "fw-bold text-body stretched-link" %>
+                    <div class="small text-muted">#<%= req.id %> · <%= l(req.created_at, format: :short) %></div>
+                  </div>
+                  <%= status_badge(SupplyRequest.human_status(req.status), req.status) %>
+                </li>
+              <% end %>
+            </ul>
+          <% else %>
+            <div class="text-center py-5 px-3 text-muted">
+              <i class="bi bi-inboxes d-block opacity-50"></i>
+              <p class="mb-1 fw-bold text-body">No tienes solicitudes en curso</p>
+              <p class="small mb-0">Cuando pidas repuestos a bodega, podrás seguirlas desde aquí.</p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
   </div>
 </div>

@@ -1,5 +1,6 @@
 class WorkOrdersController < ApplicationController
   before_action :authenticate_user!
+  requires_feature :ordenes_trabajo
   before_action :set_work_order, only: %i[ show edit update destroy change_status ]
 
   # GET /work_orders or /work_orders.json

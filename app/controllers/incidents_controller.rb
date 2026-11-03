@@ -1,5 +1,6 @@
 class IncidentsController < ApplicationController
   before_action :authenticate_user!
+  requires_feature :incidentes
   before_action :set_incident, only: %i[ show edit update ]
 
   def index

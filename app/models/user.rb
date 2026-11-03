@@ -38,9 +38,15 @@ class User < ApplicationRecord
   has_many :notifications, dependent: :destroy
   has_many :push_subscriptions, dependent: :destroy
   has_many :roadside_assistance_events, dependent: :destroy
+  has_many :feature_overrides, as: :subject, dependent: :delete_all
   has_many :password_reset_requests, dependent: :destroy
   has_many :resolved_password_reset_requests, class_name: 'PasswordResetRequest', foreign_key: :admin_id, dependent: :nullify
   has_many :fuel_fills, dependent: :destroy
   has_many :supply_requests, dependent: :destroy
   has_many :work_orders, foreign_key: :mechanic_id, dependent: :nullify, inverse_of: :mechanic
+
+  # ¿Puede usar esta sección? Ver Feature (el superadmin la apaga o enciende).
+  def feature?(key)
+    Feature.enabled?(self, key)
+  end
 end

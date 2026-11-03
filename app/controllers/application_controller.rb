@@ -1,6 +1,7 @@
 class ApplicationController < ActionController::Base
     include Pundit::Authorization
     include Pagy::Method
+    include RequiresFeature
 
     # Para PaperTrail: registra quién hizo cada cambio
     before_action :set_paper_trail_whodunnit

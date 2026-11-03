@@ -22,26 +22,36 @@
   </div>
 
   <div class="row g-3 mb-4">
-    <div class="col-md-6 col-xl-4">
-      <%= dashboard_action_card "Costos", "Analiza los gastos registrados por vehículo y período.",
-            path: expenses_path, link_text: "Ver costos", icon: "bi-wallet2" %>
-    </div>
-    <div class="col-md-6 col-xl-4">
-      <%= dashboard_action_card "Combustible", "Rendimiento y consumo de combustible de la flota.",
-            path: fuel_fills_path, link_text: "Ver combustible", icon: "bi-fuel-pump", tone: :warning %>
-    </div>
-    <div class="col-md-6 col-xl-4">
-      <%= dashboard_action_card "Inventario", "Stock y valorización de los repuestos en bodega.",
-            path: parts_path, link_text: "Ver inventario", icon: "bi-boxes", tone: :success %>
-    </div>
-    <div class="col-md-6 col-xl-6">
-      <%= dashboard_action_card "Alertas", "Documentos vencidos o próximos a vencer.",
-            path: alerts_path, link_text: "Ver alertas", icon: "bi-shield-exclamation", tone: :danger %>
-    </div>
-    <div class="col-md-12 col-xl-6">
-      <%= dashboard_action_card "Fallas y mantención", "Fallas, costo de repuestos y tiempo fuera de servicio.",
-            path: failure_analytics_path, link_text: "Ver análisis", icon: "bi-clipboard2-pulse", tone: :info %>
-    </div>
+    <% if feature_on?(:costos) %>
+      <div class="col-md-6 col-xl-4">
+        <%= dashboard_action_card "Costos", "Analiza los gastos registrados por vehículo y período.",
+              path: expenses_path, link_text: "Ver costos", icon: "bi-wallet2" %>
+      </div>
+    <% end %>
+    <% if feature_on?(:combustible) %>
+      <div class="col-md-6 col-xl-4">
+        <%= dashboard_action_card "Combustible", "Rendimiento y consumo de combustible de la flota.",
+              path: fuel_fills_path, link_text: "Ver combustible", icon: "bi-fuel-pump", tone: :warning %>
+      </div>
+    <% end %>
+    <% if feature_on?(:repuestos) %>
+      <div class="col-md-6 col-xl-4">
+        <%= dashboard_action_card "Inventario", "Stock y valorización de los repuestos en bodega.",
+              path: parts_path, link_text: "Ver inventario", icon: "bi-boxes", tone: :success %>
+      </div>
+    <% end %>
+    <% if feature_on?(:alertas) %>
+      <div class="col-md-6 col-xl-6">
+        <%= dashboard_action_card "Alertas", "Documentos vencidos o próximos a vencer.",
+              path: alerts_path, link_text: "Ver alertas", icon: "bi-shield-exclamation", tone: :danger %>
+      </div>
+    <% end %>
+    <% if feature_on?(:analisis_fallas) %>
+      <div class="col-md-12 col-xl-6">
+        <%= dashboard_action_card "Fallas y mantención", "Fallas, costo de repuestos y tiempo fuera de servicio.",
+              path: failure_analytics_path, link_text: "Ver análisis", icon: "bi-clipboard2-pulse", tone: :info %>
+      </div>
+    <% end %>
   </div>
 
   <div class="card">

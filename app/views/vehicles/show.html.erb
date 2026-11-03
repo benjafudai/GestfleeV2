@@ -70,10 +70,12 @@
         </ul>
         <%# En columna angosta (xl) los botones quedan uno bajo otro; a todo el ancho, lado a lado. %>
         <div class="card-body d-flex flex-wrap gap-2 border-top">
-          <%= link_to vehicle_fuel_fills_path(@vehicle), class: "btn btn-outline-primary flex-fill text-nowrap" do %>
-            <i class="bi bi-fuel-pump me-1"></i>Cargas de combustible
+          <% if current_user.feature?(:combustible) %>
+            <%= link_to vehicle_fuel_fills_path(@vehicle), class: "btn btn-outline-primary flex-fill text-nowrap" do %>
+              <i class="bi bi-fuel-pump me-1"></i>Cargas de combustible
+            <% end %>
           <% end %>
-          <% if @vehicle.vehicle_model && policy(@vehicle).generate_plan? %>
+          <% if @vehicle.vehicle_model && policy(@vehicle).generate_plan? && current_user.feature?(:planes_mantencion) %>
             <%= button_to generate_plan_vehicle_path(@vehicle), class: "btn btn-outline-primary w-100 text-nowrap", form_class: "button_to flex-fill",
                   form: { data: { turbo_confirm: "Se crearán los planes de mantención y los repuestos de #{@vehicle.vehicle_model.name}. Lo que ya exista no se toca. ¿Continuar?" } } do %>
               <i class="bi bi-magic me-1"></i>Crear plan desde la biblioteca
